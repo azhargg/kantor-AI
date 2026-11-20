@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Sagitarius — AI Workspace & Automation Dashboard</title>
+  <title>SAGITARIUS — Interactive AI Workspace &amp; Automation</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -20,12 +20,6 @@
             obsidian: '#07090e',
             panel: '#0d111a',
             panel2: '#131926',
-            gold: {
-              300: '#fde68a',
-              400: '#fbbf24',
-              500: '#f59e0b',
-              600: '#d97706',
-            }
           }
         }
       }
@@ -39,7 +33,7 @@
     }
     .dash-card {
       background: #0d111a;
-      border: 1px solid rgba(251, 191, 36, 0.14);
+      border: 1px solid rgba(251, 191, 36, 0.16);
     }
     .dash-card-active {
       background: #131926;
@@ -50,6 +44,9 @@
       background: rgba(245, 158, 11, 0.12);
       color: #fbbf24;
       border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+    .gold-glow {
+      box-shadow: 0 0 40px rgba(245, 158, 11, 0.16);
     }
     .custom-scroll::-webkit-scrollbar {
       width: 6px;
@@ -73,300 +70,481 @@
 </head>
 <body class="min-h-screen flex flex-col selection:bg-amber-500 selection:text-black">
 
-  <!-- TOP NAVBAR -->
-  <header class="sticky top-0 z-40 h-16 border-b border-amber-500/15 bg-[#07090e]/95 backdrop-blur-md">
-    <div class="h-full px-4 lg:px-6 flex items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <button onclick="toggleSidebarMobile()" class="lg:hidden p-2 rounded-xl bg-panel2 border border-amber-500/20 text-amber-300 cursor-pointer">
-          <i data-lucide="menu" class="w-4 h-4"></i>
-        </button>
-
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 via-amber-500 to-yellow-700 flex items-center justify-center shadow-lg shadow-amber-500/20 text-black font-extrabold">
-          <i data-lucide="crosshair" class="w-5 h-5"></i>
+  <!-- ==================== INTERACTIVE LANDING PAGE ==================== -->
+  <div id="landingView" class="min-h-screen flex flex-col justify-between bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.12),transparent_55%)]">
+    <!-- Landing Topbar -->
+    <nav class="border-b border-amber-500/15 bg-[#07090e]/85 backdrop-blur-md sticky top-0 z-30">
+      <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <img src="./Gemini_Generated_Image_ss6vu0ss6vu0ss6v.jpg" alt="Logo Sagitarius" class="w-9 h-9 rounded-xl object-cover border border-amber-400/40 shadow-md shadow-amber-500/15" />
+          <span class="font-extrabold tracking-widest text-sm sm:text-base text-amber-400">SAGITARIUS</span>
         </div>
+        <div class="flex items-center gap-2.5">
+          <button onclick="enterDashboard('workspace')" class="px-3.5 py-2 rounded-xl text-xs font-semibold text-amber-200 hover:bg-amber-500/10 border border-amber-500/25 transition cursor-pointer">
+            Mode Cepat
+          </button>
+          <button onclick="enterDashboard('workspace')" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black shadow-lg shadow-amber-500/20 transition cursor-pointer">
+            Buka Dashboard AI →
+          </button>
+        </div>
+      </div>
+    </nav>
 
-        <div>
-          <div class="flex items-center gap-2">
-            <span id="brandTitleDisplay" class="font-extrabold text-base tracking-wide text-amber-400">SAGITARIUS</span>
-            <span id="headerStatsBadge" class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-mono font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/25">
-              10 Divisi • 34 Agen
-            </span>
+    <!-- Landing Main Content -->
+    <main class="max-w-6xl w-full mx-auto px-4 py-10 sm:py-14 space-y-12">
+      <!-- Hero Split -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-7 space-y-5">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono">
+            <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+            <span>MULTI-AGENT WORKSPACE • MOTIONCRAFT • N8N</span>
           </div>
-          <p class="text-[11px] text-slate-400 hidden sm:block">AI Command &amp; Workflow Console</p>
+
+          <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+            Eksekusi Konten &amp; Alur Otomatis Bersama <span class="text-amber-400">SAGITARIUS</span>
+          </h1>
+
+          <p class="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
+            Kelola riset, naskah, <strong>Character Sheet</strong>, arahan gerak fisika <strong>MotionCraft</strong>, otomasi salin ke <strong>Google Flow</strong>, dan penjadwalan posting terpisah berbasis saldo token dalam satu panel hitam-emas.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-3 pt-1">
+            <button onclick="enterDashboard('workspace')" class="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black font-extrabold text-sm shadow-xl shadow-amber-500/20 active:scale-[0.99] transition cursor-pointer">
+              <i data-lucide="arrow-right-circle" class="w-4 h-4"></i>
+              <span>Masuk ke Dashboard Sagitarius</span>
+            </button>
+            <button onclick="enterDashboard('billing')" class="flex items-center gap-2 px-5 py-3.5 rounded-xl bg-panel2 hover:bg-slate-800 text-amber-200 font-semibold text-sm border border-amber-500/25 transition cursor-pointer">
+              <i data-lucide="coins" class="w-4 h-4 text-amber-400"></i>
+              <span>Atur Model &amp; Token</span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 pt-3 max-w-lg">
+            <div class="dash-card rounded-xl p-3">
+              <p class="text-lg sm:text-xl font-extrabold font-mono text-amber-400" id="landingDivCount">10</p>
+              <p class="text-[11px] text-slate-400">Divisi Spesialis</p>
+            </div>
+            <div class="dash-card rounded-xl p-3">
+              <p class="text-lg sm:text-xl font-extrabold font-mono text-amber-400" id="landingAgentCount">34</p>
+              <p class="text-[11px] text-slate-400">Agen Aktif</p>
+            </div>
+            <div class="dash-card rounded-xl p-3">
+              <p class="text-lg sm:text-xl font-extrabold font-mono text-emerald-400">2 Wallet</p>
+              <p class="text-[11px] text-slate-400">Token AI &amp; Jadwal</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Logo Showcase Card -->
+        <div class="lg:col-span-5 flex justify-center">
+          <div id="logoTiltCard" onmousemove="handleLogoTilt(event)" onmouseleave="resetLogoTilt()"
+            class="dash-card gold-glow rounded-3xl p-5 sm:p-6 max-w-sm w-full transition-transform duration-150 ease-out cursor-pointer"
+            onclick="enterDashboard('workspace')">
+            <div class="relative overflow-hidden rounded-2xl border border-amber-400/30 bg-black aspect-square mb-4">
+              <img src="./Gemini_Generated_Image_ss6vu0ss6vu0ss6v.jpg" alt="Sagitarius Gold & Black Emblem" class="w-full h-full object-cover" />
+            </div>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs font-mono uppercase tracking-wider text-amber-400">Emblem Resmi</p>
+                <p class="text-sm font-bold text-white">SAGITARIUS AI CORE</p>
+              </div>
+              <span class="px-3 py-1 rounded-lg bg-amber-500/15 border border-amber-500/35 text-xs font-bold text-amber-300">
+                Launch →
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono bg-panel2 border border-amber-500/25 text-amber-300">
-          <span>AI:</span>
-          <strong id="headerAiTokens">100</strong>
-        </div>
-        <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono bg-panel2 border border-emerald-500/25 text-emerald-300">
-          <span>Jadwal:</span>
-          <strong id="headerScheduleTokens">50</strong>
-        </div>
-
-        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span class="hidden md:inline">Online</span>
-        </div>
-
-        <button onclick="openPostActionModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold transition cursor-pointer">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-          <span>Flow &amp; Jadwal</span>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- MAIN SHELL (LEFT SIDEBAR + CONTENT) -->
-  <div class="flex-1 flex min-h-0 relative">
-
-    <!-- MOBILE BACKDROP -->
-    <div id="sidebarBackdrop" onclick="toggleSidebarMobile(false)" class="fixed inset-0 z-30 bg-black/70 hidden lg:hidden"></div>
-
-    <!-- LEFT SIDEBAR -->
-    <aside id="leftSidebar" class="fixed lg:static inset-y-0 left-0 top-16 z-30 w-64 shrink-0 border-r border-amber-500/15 bg-[#0a0e17] -translate-x-full lg:translate-x-0 transition-transform duration-200 flex flex-col justify-between p-4 custom-scroll overflow-y-auto">
-      <div class="space-y-5">
-        <div>
-          <p class="px-2.5 mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-500">Workspace</p>
-          <nav class="space-y-1">
-            <button id="nav-workspace" onclick="switchSection('workspace')" class="nav-btn nav-item-active w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition cursor-pointer">
-              <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-              <span>Command Center</span>
-            </button>
-            <button id="nav-divisions" onclick="switchSection('divisions')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 border border-transparent transition cursor-pointer">
-              <i data-lucide="users" class="w-4 h-4"></i>
-              <span>Denah Divisi &amp; Agen</span>
-            </button>
-            <button id="nav-billing" onclick="switchSection('billing')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 border border-transparent transition cursor-pointer">
-              <i data-lucide="coins" class="w-4 h-4"></i>
-              <span>Model &amp; Wallet Token</span>
-            </button>
-            <button id="nav-output" onclick="switchSection('output')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 border border-transparent transition cursor-pointer">
-              <i data-lucide="file-check-2" class="w-4 h-4"></i>
-              <span>Hasil Laporan</span>
-            </button>
-          </nav>
-        </div>
-
-        <div>
-          <p class="px-2.5 mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-500">Tools &amp; Log</p>
-          <nav class="space-y-1">
-            <button onclick="openPostActionModal(); toggleSidebarMobile(false);" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 transition cursor-pointer">
-              <i data-lucide="film" class="w-4 h-4 text-amber-400"></i>
-              <span>Copas Flow AI &amp; Jadwal</span>
-            </button>
-            <button onclick="toggleHistoryModal(); toggleSidebarMobile(false);" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 transition cursor-pointer">
-              <i data-lucide="history" class="w-4 h-4 text-amber-400"></i>
-              <span>Riwayat Tugas</span>
-            </button>
-          </nav>
-        </div>
-      </div>
-
-      <!-- SIDEBAR TOKEN SUMMARY -->
-      <div class="mt-6 rounded-xl bg-panel2 border border-amber-500/20 p-3.5 space-y-2.5">
-        <div class="flex items-center justify-between text-[11px]">
-          <span class="text-slate-400">Provider Aktif</span>
-          <span id="sidebarProviderBadge" class="font-mono font-bold text-amber-400">ByKitsune</span>
-        </div>
-        <div class="flex items-center justify-between text-xs">
-          <span class="text-slate-300">Token AI</span>
-          <span id="sidebarAiTokens" class="font-mono font-bold text-amber-300">100</span>
-        </div>
-        <div class="flex items-center justify-between text-xs">
-          <span class="text-slate-300">Token Auto-Jadwal</span>
-          <span id="sidebarScheduleTokens" class="font-mono font-bold text-emerald-300">50</span>
-        </div>
-        <button type="button" onclick="topUpDemoTokens()" class="w-full py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 text-[11px] font-bold text-amber-300 transition cursor-pointer">
-          + Top-Up Saldo Token
-        </button>
-      </div>
-    </aside>
-
-    <!-- CONTENT AREA -->
-    <main class="flex-1 min-w-0 p-4 lg:p-6 space-y-6 max-w-6xl mx-auto w-full">
-
-      <!-- SECTION 1: COMMAND CENTER + MODEL & TOKEN -->
-      <section id="sec-command" class="dash-card rounded-2xl p-4 sm:p-6 space-y-5">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-500/15 pb-4">
+      <!-- Interactive Pipeline Explorer -->
+      <section class="dash-card rounded-2xl p-5 sm:p-6 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
           <div>
-            <span class="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-400">Sagitarius Command</span>
-            <h2 class="text-lg sm:text-xl font-bold text-white">Kasih Tugas ke Seluruh Kantor</h2>
+            <span class="text-[11px] font-mono uppercase tracking-wider text-amber-400">Interactive Workflow Preview</span>
+            <h2 class="text-lg sm:text-xl font-bold text-white">Klik Tahap untuk Mengintip Alur Kerja</h2>
           </div>
-          <div class="flex flex-wrap gap-1.5">
-            <button type="button" onclick="applyPreset('affiliate')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-panel2 hover:bg-amber-500/20 hover:text-amber-200 text-slate-300 border border-amber-500/20 transition cursor-pointer">
-              + Konten Affiliate
-            </button>
-            <button type="button" onclick="applyPreset('umkm')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-panel2 hover:bg-amber-500/20 hover:text-amber-200 text-slate-300 border border-amber-500/20 transition cursor-pointer">
-              + Promo Bisnis
-            </button>
-            <button type="button" onclick="applyPreset('drama')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-panel2 hover:bg-amber-500/20 hover:text-amber-200 text-slate-300 border border-amber-500/20 transition cursor-pointer">
-              + Short Video Viral
+          <span class="text-xs text-slate-400">Interaktif sebelum masuk dashboard</span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <button type="button" onclick="selectPipelineStep(0)" id="step-btn-0" class="pipeline-tab nav-item-active p-3 rounded-xl text-left transition cursor-pointer">
+            <span class="block text-[10px] font-mono opacity-80">STEP 01</span>
+            <span class="text-xs font-bold">Riset &amp; Naskah</span>
+          </button>
+          <button type="button" onclick="selectPipelineStep(1)" id="step-btn-1" class="pipeline-tab dash-card p-3 rounded-xl text-left text-slate-300 hover:border-amber-500/40 transition cursor-pointer">
+            <span class="block text-[10px] font-mono text-amber-400">STEP 02</span>
+            <span class="text-xs font-bold">Character Sheet</span>
+          </button>
+          <button type="button" onclick="selectPipelineStep(2)" id="step-btn-2" class="pipeline-tab dash-card p-3 rounded-xl text-left text-slate-300 hover:border-amber-500/40 transition cursor-pointer">
+            <span class="block text-[10px] font-mono text-amber-400">STEP 03</span>
+            <span class="text-xs font-bold">MotionCraft Physics</span>
+          </button>
+          <button type="button" onclick="selectPipelineStep(3)" id="step-btn-3" class="pipeline-tab dash-card p-3 rounded-xl text-left text-slate-300 hover:border-amber-500/40 transition cursor-pointer">
+            <span class="block text-[10px] font-mono text-amber-400">STEP 04</span>
+            <span class="text-xs font-bold">Flow AI &amp; Auto-Jadwal</span>
+          </button>
+        </div>
+
+        <div id="pipelineDetailBox" class="rounded-xl bg-[#07090e] border border-amber-500/20 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="space-y-1.5">
+            <span id="pipelineTag" class="inline-block text-[11px] font-mono font-bold text-amber-400">DIVISI 01–04 • RISET, STRATEGI &amp; NASKAH</span>
+            <h3 id="pipelineTitle" class="text-base font-bold text-white">Memetakan Masalah Audiens &amp; Naskah Hook</h3>
+            <p id="pipelineDesc" class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Menggali pain point audiens, merancang sudut pandang konten, dan menyusun naskah video pendek berkonversi tinggi menggunakan model ByKitsune atau BB Token.
+            </p>
+          </div>
+          <button onclick="enterDashboard('workspace')" class="shrink-0 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-extrabold transition cursor-pointer">
+            Coba di Dashboard →
+          </button>
+        </div>
+      </section>
+
+      <!-- Interactive Token Estimator -->
+      <section class="dash-card rounded-2xl p-5 sm:p-6">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          <div class="md:col-span-7 space-y-4">
+            <div>
+              <span class="text-[11px] font-mono uppercase tracking-wider text-amber-400">Interactive Token Estimator</span>
+              <h2 class="text-lg font-bold text-white">Simulasi Pemakaian Token AI &amp; Auto-Jadwal</h2>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs mb-1.5">
+                <span class="text-slate-300">Jumlah Run Generasi AI (5 Token / run):</span>
+                <span id="simAiRunsLabel" class="font-mono font-bold text-amber-400">4 run</span>
+              </div>
+              <input id="simAiSlider" type="range" min="1" max="20" value="4" oninput="updateTokenEstimator()" class="w-full accent-amber-400 cursor-pointer" />
+            </div>
+            <div>
+              <div class="flex justify-between text-xs mb-1.5">
+                <span class="text-slate-300">Jumlah Jadwal Posting Otomatis (3 Token / post):</span>
+                <span id="simSchedRunsLabel" class="font-mono font-bold text-emerald-400">5 post</span>
+              </div>
+              <input id="simSchedSlider" type="range" min="1" max="20" value="5" oninput="updateTokenEstimator()" class="w-full accent-emerald-400 cursor-pointer" />
+            </div>
+          </div>
+
+          <div class="md:col-span-5 rounded-2xl bg-[#07090e] border border-amber-500/25 p-4 space-y-3">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-slate-400">Estimasi Token AI:</span>
+              <span id="simAiTotal" class="font-mono font-bold text-amber-300 text-sm">20 Token AI</span>
+            </div>
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-slate-400">Estimasi Token Auto-Jadwal:</span>
+              <span id="simSchedTotal" class="font-mono font-bold text-emerald-300 text-sm">15 Token Jadwal</span>
+            </div>
+            <button onclick="enterDashboard('workspace')" class="w-full mt-2 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-extrabold transition cursor-pointer">
+              Masuk &amp; Jalankan Sekarang →
             </button>
           </div>
         </div>
+      </section>
+    </main>
 
-        <!-- MODEL & WALLET TOKEN PANEL -->
-        <div id="sec-billing" class="rounded-xl border border-amber-500/25 bg-[#090d15] p-4 space-y-3">
-          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
-            <span class="text-xs font-mono font-bold uppercase tracking-wider text-amber-400">
-              Provider Model &amp; Dompet Token Terpisah
-            </span>
-            <div class="flex flex-wrap items-center gap-2 text-xs font-mono">
-              <span class="rounded-lg border border-amber-500/35 bg-amber-500/10 px-2.5 py-1 text-amber-300">
-                Token AI: <strong id="aiTokenDisplay">100</strong>
+    <footer class="border-t border-amber-500/15 py-4 px-4 text-center text-xs text-slate-500">
+      SAGITARIUS • Hitam &amp; Emas Multi-Agent Console
+    </footer>
+  </div>
+
+  <!-- ==================== DASHBOARD WORKSPACE ==================== -->
+  <div id="dashboardView" class="hidden min-h-screen flex-col">
+
+    <!-- TOP NAVBAR -->
+    <header class="sticky top-0 z-40 h-16 border-b border-amber-500/15 bg-[#07090e]/95 backdrop-blur-md">
+      <div class="h-full px-4 lg:px-6 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleSidebarMobile()" class="lg:hidden p-2 rounded-xl bg-panel2 border border-amber-500/20 text-amber-300 cursor-pointer">
+            <i data-lucide="menu" class="w-4 h-4"></i>
+          </button>
+
+          <img src="./Gemini_Generated_Image_ss6vu0ss6vu0ss6v.jpg" alt="Sagitarius Logo" onclick="backToLanding()" class="w-9 h-9 rounded-xl object-cover border border-amber-400/40 cursor-pointer" title="Kembali ke Landing Page" />
+
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="brandTitleDisplay" class="font-extrabold text-base tracking-wide text-amber-400">SAGITARIUS</span>
+              <span id="headerStatsBadge" class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-mono font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/25">
+                10 Divisi • 34 Agen
               </span>
-              <span class="rounded-lg border border-emerald-500/35 bg-emerald-500/10 px-2.5 py-1 text-emerald-300">
-                Token Jadwal: <strong id="scheduleTokenDisplay">50</strong>
-              </span>
-              <button type="button" onclick="topUpDemoTokens()" class="rounded-lg border border-amber-500/30 bg-panel2 px-2.5 py-1 text-[11px] font-sans font-semibold text-amber-200 hover:bg-amber-500/20 cursor-pointer">
-                + Top-Up
+            </div>
+            <p class="text-[11px] text-slate-400 hidden sm:block">AI Command &amp; Workflow Console</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono bg-panel2 border border-amber-500/25 text-amber-300">
+            <span>AI:</span>
+            <strong id="headerAiTokens">100</strong>
+          </div>
+          <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono bg-panel2 border border-emerald-500/25 text-emerald-300">
+            <span>Jadwal:</span>
+            <strong id="headerScheduleTokens">50</strong>
+          </div>
+
+          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="hidden md:inline">Online</span>
+          </div>
+
+          <button onclick="openPostActionModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold transition cursor-pointer">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            <span>Flow &amp; Jadwal</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN SHELL (LEFT SIDEBAR + CONTENT) -->
+    <div class="flex-1 flex min-h-0 relative">
+
+      <!-- MOBILE BACKDROP -->
+      <div id="sidebarBackdrop" onclick="toggleSidebarMobile(false)" class="fixed inset-0 z-30 bg-black/70 hidden lg:hidden"></div>
+
+      <!-- LEFT SIDEBAR -->
+      <aside id="leftSidebar" class="fixed lg:static inset-y-0 left-0 top-16 z-30 w-64 shrink-0 border-r border-amber-500/15 bg-[#0a0e17] -translate-x-full lg:translate-x-0 transition-transform duration-200 flex flex-col justify-between p-4 custom-scroll overflow-y-auto">
+        <div class="space-y-5">
+          <div>
+            <p class="px-2.5 mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-500">Workspace</p>
+            <nav class="space-y-1">
+              <button onclick="backToLanding()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-amber-300 hover:bg-amber-500/10 border border-amber-500/20 transition cursor-pointer">
+                <i data-lucide="home" class="w-4 h-4"></i>
+                <span>Halaman Landing</span>
+              </button>
+              <button id="nav-workspace" onclick="switchSection('workspace')" class="nav-btn nav-item-active w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition cursor-pointer">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                <span>Command Center</span>
+              </button>
+              <button id="nav-divisions" onclick="switchSection('divisions')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 border border-transparent transition cursor-pointer">
+                <i data-lucide="users" class="w-4 h-4"></i>
+                <span>Denah Divisi &amp; Agen</span>
+              </button>
+              <button id="nav-billing" onclick="switchSection('billing')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 border border-transparent transition cursor-pointer">
+                <i data-lucide="coins" class="w-4 h-4"></i>
+                <span>Model &amp; Wallet Token</span>
+              </button>
+              <button id="nav-output" onclick="switchSection('output')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 border border-transparent transition cursor-pointer">
+                <i data-lucide="file-check-2" class="w-4 h-4"></i>
+                <span>Hasil Laporan</span>
+              </button>
+            </nav>
+          </div>
+
+          <div>
+            <p class="px-2.5 mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-500">Tools &amp; Log</p>
+            <nav class="space-y-1">
+              <button onclick="openPostActionModal(); toggleSidebarMobile(false);" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 transition cursor-pointer">
+                <i data-lucide="film" class="w-4 h-4 text-amber-400"></i>
+                <span>Copas Flow AI &amp; Jadwal</span>
+              </button>
+              <button onclick="toggleHistoryModal(); toggleSidebarMobile(false);" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 transition cursor-pointer">
+                <i data-lucide="history" class="w-4 h-4 text-amber-400"></i>
+                <span>Riwayat Tugas</span>
+              </button>
+            </nav>
+          </div>
+        </div>
+
+        <!-- SIDEBAR TOKEN SUMMARY -->
+        <div class="mt-6 rounded-xl bg-panel2 border border-amber-500/20 p-3.5 space-y-2.5">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="text-slate-400">Provider Aktif</span>
+            <span id="sidebarProviderBadge" class="font-mono font-bold text-amber-400">ByKitsune</span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-slate-300">Token AI</span>
+            <span id="sidebarAiTokens" class="font-mono font-bold text-amber-300">100</span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-slate-300">Token Auto-Jadwal</span>
+            <span id="sidebarScheduleTokens" class="font-mono font-bold text-emerald-300">50</span>
+          </div>
+          <button type="button" onclick="topUpDemoTokens()" class="w-full py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 text-[11px] font-bold text-amber-300 transition cursor-pointer">
+            + Top-Up Saldo Token
+          </button>
+        </div>
+      </aside>
+
+      <!-- CONTENT AREA -->
+      <main class="flex-1 min-w-0 p-4 lg:p-6 space-y-6 max-w-6xl mx-auto w-full">
+
+        <!-- SECTION 1: COMMAND CENTER + MODEL & TOKEN -->
+        <section id="sec-command" class="dash-card rounded-2xl p-4 sm:p-6 space-y-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-500/15 pb-4">
+            <div>
+              <span class="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-400">Sagitarius Command</span>
+              <h2 class="text-lg sm:text-xl font-bold text-white">Kasih Tugas ke Seluruh Kantor</h2>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" onclick="applyPreset('affiliate')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-panel2 hover:bg-amber-500/20 hover:text-amber-200 text-slate-300 border border-amber-500/20 transition cursor-pointer">
+                + Konten Affiliate
+              </button>
+              <button type="button" onclick="applyPreset('umkm')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-panel2 hover:bg-amber-500/20 hover:text-amber-200 text-slate-300 border border-amber-500/20 transition cursor-pointer">
+                + Promo Bisnis
+              </button>
+              <button type="button" onclick="applyPreset('drama')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-panel2 hover:bg-amber-500/20 hover:text-amber-200 text-slate-300 border border-amber-500/20 transition cursor-pointer">
+                + Short Video Viral
               </button>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <!-- MODEL & WALLET TOKEN PANEL -->
+          <div id="sec-billing" class="rounded-xl border border-amber-500/25 bg-[#090d15] p-4 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
+              <span class="text-xs font-mono font-bold uppercase tracking-wider text-amber-400">
+                Provider Model &amp; Dompet Token Terpisah
+              </span>
+              <div class="flex flex-wrap items-center gap-2 text-xs font-mono">
+                <span class="rounded-lg border border-amber-500/35 bg-amber-500/10 px-2.5 py-1 text-amber-300">
+                  Token AI: <strong id="aiTokenDisplay">100</strong>
+                </span>
+                <span class="rounded-lg border border-emerald-500/35 bg-emerald-500/10 px-2.5 py-1 text-emerald-300">
+                  Token Jadwal: <strong id="scheduleTokenDisplay">50</strong>
+                </span>
+                <button type="button" onclick="topUpDemoTokens()" class="rounded-lg border border-amber-500/30 bg-panel2 px-2.5 py-1 text-[11px] font-sans font-semibold text-amber-200 hover:bg-amber-500/20 cursor-pointer">
+                  + Top-Up
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div>
+                <label class="mb-1 block text-xs font-semibold text-slate-300">Pilih Model (ByKitsune &amp; BB Token)</label>
+                <select id="aiModelSelect" onchange="updateModelCostPreview()" class="w-full rounded-xl border border-slate-700 bg-panel2 px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+                  <option value="bykitsune|minimax-m3.1-flash|5" data-provider="ByKitsune" data-model="MiniMax M3.1 Flash" data-cost="5" selected>
+                    [ByKitsune] MiniMax M3.1 Flash — 5 Token AI / run (Hemat)
+                  </option>
+                  <option value="bykitsune|deepseek-v4-flash|4" data-provider="ByKitsune" data-model="DeepSeek V4 Flash" data-cost="4">
+                    [ByKitsune] DeepSeek V4 Flash — 4 Token AI / run (Margin Optimal)
+                  </option>
+                  <option value="bykitsune|minimax-m3|8" data-provider="ByKitsune" data-model="MiniMax M3" data-cost="8">
+                    [ByKitsune] MiniMax M3 — 8 Token AI / run
+                  </option>
+                  <option value="bykitsune|gpt-4o-mini|6" data-provider="ByKitsune" data-model="GPT-4o Mini" data-cost="6">
+                    [ByKitsune] GPT-4o Mini — 6 Token AI / run
+                  </option>
+                  <option value="bbtoken|minimax-m3.1-flash|5" data-provider="BB Token" data-model="MiniMax M3.1 Flash" data-cost="5">
+                    [BB Token] MiniMax M3.1 Flash — 5 Token AI / run
+                  </option>
+                  <option value="bbtoken|gemini-2.5-flash|5" data-provider="BB Token" data-model="Gemini 2.5 Flash" data-cost="5">
+                    [BB Token] Gemini 2.5 Flash — 5 Token AI / run
+                  </option>
+                  <option value="bbtoken|claude-3-5-sonnet|12" data-provider="BB Token" data-model="Claude 3.5 Sonnet" data-cost="12">
+                    [BB Token] Claude 3.5 Sonnet — 12 Token AI / run (Detail Tinggi)
+                  </option>
+                </select>
+              </div>
+
+              <div class="flex flex-col justify-center rounded-xl border border-slate-800 bg-panel2/80 px-3.5 py-2 text-xs">
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-400">Tarif Eksekusi AI:</span>
+                  <span id="aiCostPreview" class="font-mono font-semibold text-amber-300">5 Token AI (ByKitsune)</span>
+                </div>
+                <div class="mt-1 flex items-center justify-between">
+                  <span class="text-slate-400">Tarif Auto-Jadwal Posting:</span>
+                  <span id="scheduleCostPreview" class="font-mono font-semibold text-emerald-300">3 Token Jadwal</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- INPUT FORM -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="mb-1 block text-xs font-semibold text-slate-300">Pilih Model (ByKitsune &amp; BB Token)</label>
-              <select id="aiModelSelect" onchange="updateModelCostPreview()" class="w-full rounded-xl border border-slate-700 bg-panel2 px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
-                <option value="bykitsune|minimax-m3.1-flash|5" data-provider="ByKitsune" data-model="MiniMax M3.1 Flash" data-cost="5" selected>
-                  [ByKitsune] MiniMax M3.1 Flash — 5 Token AI / run (Hemat)
-                </option>
-                <option value="bykitsune|deepseek-v4-flash|4" data-provider="ByKitsune" data-model="DeepSeek V4 Flash" data-cost="4">
-                  [ByKitsune] DeepSeek V4 Flash — 4 Token AI / run (Margin Optimal)
-                </option>
-                <option value="bykitsune|minimax-m3|8" data-provider="ByKitsune" data-model="MiniMax M3" data-cost="8">
-                  [ByKitsune] MiniMax M3 — 8 Token AI / run
-                </option>
-                <option value="bykitsune|gpt-4o-mini|6" data-provider="ByKitsune" data-model="GPT-4o Mini" data-cost="6">
-                  [ByKitsune] GPT-4o Mini — 6 Token AI / run
-                </option>
-                <option value="bbtoken|minimax-m3.1-flash|5" data-provider="BB Token" data-model="MiniMax M3.1 Flash" data-cost="5">
-                  [BB Token] MiniMax M3.1 Flash — 5 Token AI / run
-                </option>
-                <option value="bbtoken|gemini-2.5-flash|5" data-provider="BB Token" data-model="Gemini 2.5 Flash" data-cost="5">
-                  [BB Token] Gemini 2.5 Flash — 5 Token AI / run
-                </option>
-                <option value="bbtoken|claude-3-5-sonnet|12" data-provider="BB Token" data-model="Claude 3.5 Sonnet" data-cost="12">
-                  [BB Token] Claude 3.5 Sonnet — 12 Token AI / run (Detail Tinggi)
-                </option>
-              </select>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Nama Brand / Produk *</label>
+              <input id="productInput" type="text" placeholder="Contoh: Crocs Classic / Kopi Susu Gula Aren"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-panel2 border border-slate-700/80 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition" />
             </div>
-
-            <div class="flex flex-col justify-center rounded-xl border border-slate-800 bg-panel2/80 px-3.5 py-2 text-xs">
-              <div class="flex items-center justify-between">
-                <span class="text-slate-400">Tarif Eksekusi AI:</span>
-                <span id="aiCostPreview" class="font-mono font-semibold text-amber-300">5 Token AI (ByKitsune)</span>
-              </div>
-              <div class="mt-1 flex items-center justify-between">
-                <span class="text-slate-400">Tarif Auto-Jadwal Posting:</span>
-                <span id="scheduleCostPreview" class="font-mono font-semibold text-emerald-300">3 Token Jadwal</span>
-              </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Target Audiens &amp; Platform</label>
+              <input id="audienceInput" type="text" placeholder="Contoh: Mahasiswa di TikTok &amp; Reels"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-panel2 border border-slate-700/80 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition" />
             </div>
           </div>
-        </div>
 
-        <!-- INPUT FORM -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Nama Brand / Produk *</label>
-            <input id="productInput" type="text" placeholder="Contoh: Crocs Classic / Kopi Susu Gula Aren"
-              class="w-full px-3.5 py-2.5 rounded-xl bg-panel2 border border-slate-700/80 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition" />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Target Audiens &amp; Platform</label>
-            <input id="audienceInput" type="text" placeholder="Contoh: Mahasiswa di TikTok &amp; Reels"
-              class="w-full px-3.5 py-2.5 rounded-xl bg-panel2 border border-slate-700/80 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition" />
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Instruksi / Brief Utama *</label>
-          <textarea id="briefInput" rows="3" placeholder="Tulis perintah singkat, misal: Riset masalah audiens, buatkan character sheet, hook 3 detik, naskah, prompt gerak fisika MotionCraft, caption SEO, sampai skrip closing WhatsApp."
-            class="w-full px-3.5 py-2.5 rounded-xl bg-panel2 border border-slate-700/80 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition"></textarea>
-        </div>
-
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
-          <div class="flex items-center gap-2 text-xs text-slate-400">
-            <i data-lucide="cpu" class="w-4 h-4 text-amber-400 shrink-0"></i>
-            <span>Alur: <strong class="text-slate-200">Riset → Strategi → Naskah → Character Sheet → MotionCraft → QC</strong></span>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Instruksi / Brief Utama *</label>
+            <textarea id="briefInput" rows="3" placeholder="Tulis perintah singkat, misal: Riset masalah audiens, buatkan character sheet, hook 3 detik, naskah, prompt gerak fisika MotionCraft, caption SEO, sampai skrip closing WhatsApp."
+              class="w-full px-3.5 py-2.5 rounded-xl bg-panel2 border border-slate-700/80 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition"></textarea>
           </div>
 
-          <button id="runOfficeBtn" onclick="startVirtualOffice()"
-            class="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold text-sm shadow-lg shadow-amber-500/20 active:scale-[0.99] transition cursor-pointer">
-            <i data-lucide="play" class="w-4 h-4 fill-current"></i>
-            <span id="runOfficeBtnText">Kerahkan 34 Agen AI</span>
-          </button>
-        </div>
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
+            <div class="flex items-center gap-2 text-xs text-slate-400">
+              <i data-lucide="cpu" class="w-4 h-4 text-amber-400 shrink-0"></i>
+              <span>Alur: <strong class="text-slate-200">Riset → Strategi → Naskah → Character Sheet → MotionCraft → QC</strong></span>
+            </div>
 
-        <div id="progressContainer" class="hidden mt-4 pt-4 border-t border-slate-800">
-          <div class="flex items-center justify-between gap-2 text-xs mb-2">
-            <span id="progressLabel" class="font-semibold text-amber-300 flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-              Mengaktifkan divisi...
+            <button id="runOfficeBtn" onclick="startVirtualOffice()"
+              class="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold text-sm shadow-lg shadow-amber-500/20 active:scale-[0.99] transition cursor-pointer">
+              <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+              <span id="runOfficeBtnText">Kerahkan 34 Agen AI</span>
+            </button>
+          </div>
+
+          <div id="progressContainer" class="hidden mt-4 pt-4 border-t border-slate-800">
+            <div class="flex items-center justify-between gap-2 text-xs mb-2">
+              <span id="progressLabel" class="font-semibold text-amber-300 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                Mengaktifkan divisi...
+              </span>
+              <span id="progressPercent" class="font-mono text-slate-400 shrink-0">0%</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+              <div id="progressBar" class="h-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-300 transition-all duration-500" style="width: 0%"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 2: DIVISIONS GRID -->
+        <section id="sec-divisions" class="space-y-3">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 id="denahHeading" class="text-sm sm:text-base font-bold text-white">Denah Operasional (10 Divisi • 34 Agen)</h3>
+              <p class="text-xs text-slate-400">Klik kartu divisi untuk melihat daftar agen, hasil kerja, atau mengulang divisi yang gagal</p>
+            </div>
+            <span id="activeDivisionCounter" class="text-xs font-mono px-2.5 py-1 rounded-lg bg-panel2 text-amber-300 border border-amber-500/25">
+              0 / 10 Selesai
             </span>
-            <span id="progressPercent" class="font-mono text-slate-400 shrink-0">0%</span>
           </div>
-          <div class="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
-            <div id="progressBar" class="h-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-300 transition-all duration-500" style="width: 0%"></div>
+
+          <div id="divisionsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+        </section>
+
+        <!-- SECTION 3: OUTPUT WORKSPACE -->
+        <section id="outputSection" class="hidden dash-card rounded-2xl p-4 sm:p-6 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+            <div>
+              <span class="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-400">Laporan Eksekutif</span>
+              <h3 id="outputHeading" class="text-lg font-bold text-white">Hasil Kerja Agen AI</h3>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <button onclick="openPostActionModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold transition cursor-pointer">
+                <i data-lucide="film" class="w-3.5 h-3.5"></i>
+                <span>Flow AI &amp; Jadwal</span>
+              </button>
+              <button onclick="copyAllResults()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-panel2 hover:bg-slate-800 text-xs font-semibold text-slate-200 border border-slate-700 transition cursor-pointer">
+                <i data-lucide="copy" class="w-3.5 h-3.5 text-amber-400"></i>
+                <span>Salin Semua</span>
+              </button>
+              <button onclick="downloadMarkdown()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-panel2 hover:bg-slate-800 text-xs font-semibold text-slate-200 border border-slate-700 transition cursor-pointer">
+                <i data-lucide="download" class="w-3.5 h-3.5 text-amber-400"></i>
+                <span>Unduh .MD</span>
+              </button>
+              <button id="sendWebhookBtn" onclick="sendToN8nWebhook(false)" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-xs font-semibold text-emerald-300 border border-emerald-500/40 transition cursor-pointer">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                <span>Kirim ke Server</span>
+              </button>
+            </div>
           </div>
-        </div>
-      </section>
 
-      <!-- SECTION 2: DIVISIONS GRID -->
-      <section id="sec-divisions" class="space-y-3">
-        <div class="flex items-center justify-between">
-          <div>
-            <h3 id="denahHeading" class="text-sm sm:text-base font-bold text-white">Denah Operasional (10 Divisi • 34 Agen)</h3>
-            <p class="text-xs text-slate-400">Klik kartu divisi untuk melihat daftar agen, hasil kerja, atau mengulang divisi yang gagal</p>
-          </div>
-          <span id="activeDivisionCounter" class="text-xs font-mono px-2.5 py-1 rounded-lg bg-panel2 text-amber-300 border border-amber-500/25">
-            0 / 10 Selesai
-          </span>
-        </div>
+          <div id="outputTabs" class="flex items-center gap-1.5 overflow-x-auto pb-2 custom-scroll"></div>
+          <div id="outputBody" class="space-y-4"></div>
+        </section>
 
-        <div id="divisionsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
-      </section>
+      </main>
+    </div>
 
-      <!-- SECTION 3: OUTPUT WORKSPACE -->
-      <section id="outputSection" class="hidden dash-card rounded-2xl p-4 sm:p-6 space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
-          <div>
-            <span class="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-400">Laporan Eksekutif</span>
-            <h3 id="outputHeading" class="text-lg font-bold text-white">Hasil Kerja Agen AI</h3>
-          </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <button onclick="openPostActionModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold transition cursor-pointer">
-              <i data-lucide="film" class="w-3.5 h-3.5"></i>
-              <span>Flow AI &amp; Jadwal</span>
-            </button>
-            <button onclick="copyAllResults()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-panel2 hover:bg-slate-800 text-xs font-semibold text-slate-200 border border-slate-700 transition cursor-pointer">
-              <i data-lucide="copy" class="w-3.5 h-3.5 text-amber-400"></i>
-              <span>Salin Semua</span>
-            </button>
-            <button onclick="downloadMarkdown()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-panel2 hover:bg-slate-800 text-xs font-semibold text-slate-200 border border-slate-700 transition cursor-pointer">
-              <i data-lucide="download" class="w-3.5 h-3.5 text-amber-400"></i>
-              <span>Unduh .MD</span>
-            </button>
-            <button id="sendWebhookBtn" onclick="sendToN8nWebhook(false)" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-xs font-semibold text-emerald-300 border border-emerald-500/40 transition cursor-pointer">
-              <i data-lucide="send" class="w-3.5 h-3.5"></i>
-              <span>Kirim ke Server</span>
-            </button>
-          </div>
-        </div>
-
-        <div id="outputTabs" class="flex items-center gap-1.5 overflow-x-auto pb-2 custom-scroll"></div>
-        <div id="outputBody" class="space-y-4"></div>
-      </section>
-
-    </main>
+    <footer class="border-t border-amber-500/15 py-4 px-4 text-center text-xs text-slate-500 bg-[#07090e]">
+      SAGITARIUS AI Console • Multi-Agent &amp; Automation Hub
+    </footer>
   </div>
-
-  <footer class="border-t border-amber-500/15 py-4 px-4 text-center text-xs text-slate-500 bg-[#07090e]">
-    SAGITARIUS AI Console • Multi-Agent &amp; Automation Hub
-  </footer>
 
   <!-- MODAL 2 OPSI (LANJUT FLOW AI / SIMPAN) + PENJADWALAN POSTING -->
   <div id="postActionModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
@@ -514,6 +692,29 @@
       schedule: "sagitarius_schedule_token_balance_v1"
     };
 
+    const PIPELINE_STEPS = [
+      {
+        tag: "STEP 01 • RISET, STRATEGI & NASKAH",
+        title: "Memetakan Masalah Audiens & Naskah Hook",
+        desc: "Menggali pain point audiens, merancang sudut pandang konten, dan menyusun naskah video pendek berkonversi tinggi menggunakan model ByKitsune atau BB Token."
+      },
+      {
+        tag: "STEP 02 • CHARACTER SHEET & VISUAL",
+        title: "Menjaga Konsistensi Karakter & Visual",
+        desc: "Menyusun spesifikasi karakter, pakaian, pencahayaan, dan rasio adegan agar konsisten dari awal hingga akhir."
+      },
+      {
+        tag: "STEP 03 • MOTIONCRAFT PHYSICS LAB",
+        title: "Arahan Gerak Berbasis Fisika & Zero-Shot Prompt",
+        desc: "Merancang dinamika gravitasi, momentum, pantulan, pergerakan kamera, dan durasi adegan siap tempel."
+      },
+      {
+        tag: "STEP 04 • GOOGLE FLOW & AUTO-JADWAL N8N",
+        title: "2 Opsi Lanjut Flow AI + Penjadwalan Terpisah",
+        desc: "Pilih lanjut salin & buka Google Flow atau simpan saja, lalu jadwalkan posting ke n8n menggunakan saldo Token Auto-Jadwal terpisah."
+      }
+    ];
+
     const DIVISIONS = [
       { id: 1, name: "Riset Pasar & Tren", icon: "search", color: "text-amber-400", agents: [
         { name: "Trend Hunter", role: "Pelacak topik & format viral" },
@@ -587,6 +788,67 @@
     document.getElementById("headerStatsBadge").textContent = `${DIVISIONS.length} Divisi • ${totalAgentsCount} Agen`;
     document.getElementById("runOfficeBtnText").textContent = `Kerahkan ${totalAgentsCount} Agen AI`;
     document.getElementById("denahHeading").textContent = `Denah Operasional (${DIVISIONS.length} Divisi • ${totalAgentsCount} Agen)`;
+    document.getElementById("landingDivCount").textContent = String(DIVISIONS.length);
+    document.getElementById("landingAgentCount").textContent = String(totalAgentsCount);
+
+    function enterDashboard(sectionKey = "workspace") {
+      document.getElementById("landingView").classList.add("hidden");
+      const dash = document.getElementById("dashboardView");
+      dash.classList.remove("hidden");
+      dash.classList.add("flex");
+      switchSection(sectionKey);
+      lucide.createIcons();
+    }
+
+    function backToLanding() {
+      const dash = document.getElementById("dashboardView");
+      dash.classList.add("hidden");
+      dash.classList.remove("flex");
+      document.getElementById("landingView").classList.remove("hidden");
+      toggleSidebarMobile(false);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      lucide.createIcons();
+    }
+
+    function handleLogoTilt(e) {
+      const card = document.getElementById("logoTiltCard");
+      if (!card) return;
+      const rect = card.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      card.style.transform = `perspective(800px) rotateX(${(-y * 10).toFixed(2)}deg) rotateY(${(x * 12).toFixed(2)}deg)`;
+    }
+
+    function resetLogoTilt() {
+      const card = document.getElementById("logoTiltCard");
+      if (card) card.style.transform = "perspective(800px) rotateX(0deg) rotateY(0deg)";
+    }
+
+    function selectPipelineStep(idx) {
+      const step = PIPELINE_STEPS[idx] || PIPELINE_STEPS[0];
+      document.querySelectorAll(".pipeline-tab").forEach((btn, i) => {
+        if (i === idx) {
+          btn.classList.add("nav-item-active");
+          btn.classList.remove("dash-card", "text-slate-300");
+        } else {
+          btn.classList.remove("nav-item-active");
+          btn.classList.add("dash-card", "text-slate-300");
+        }
+      });
+      document.getElementById("pipelineTag").textContent = step.tag;
+      document.getElementById("pipelineTitle").textContent = step.title;
+      document.getElementById("pipelineDesc").textContent = step.desc;
+    }
+
+    function updateTokenEstimator() {
+      const cfg = getSelectedModelConfig();
+      const aiRuns = Number(document.getElementById("simAiSlider")?.value || 4);
+      const schedRuns = Number(document.getElementById("simSchedSlider")?.value || 5);
+      document.getElementById("simAiRunsLabel").textContent = `${aiRuns} run`;
+      document.getElementById("simSchedRunsLabel").textContent = `${schedRuns} post`;
+      document.getElementById("simAiTotal").textContent = `${aiRuns * cfg.aiTokenCost} Token AI`;
+      document.getElementById("simSchedTotal").textContent = `${schedRuns * SCHEDULE_TOKEN_COST} Token Jadwal`;
+    }
 
     function toggleSidebarMobile(forceOpen) {
       const sb = document.getElementById("leftSidebar");
@@ -665,6 +927,7 @@
       const sideBadge = document.getElementById("sidebarProviderBadge");
       if (costEl) costEl.textContent = `${cfg.aiTokenCost} Token AI (${cfg.providerKey})`;
       if (sideBadge) sideBadge.textContent = cfg.providerKey;
+      updateTokenEstimator();
     }
 
     function renderTokenWalletUI() {
@@ -1301,6 +1564,7 @@
 
     renderTokenWalletUI();
     renderDivisions();
+    updateTokenEstimator();
     lucide.createIcons();
   </script>
 </body>
