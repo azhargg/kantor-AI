@@ -102,7 +102,7 @@
           </h1>
 
           <p class="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
-            Buat <strong>Storytelling Multi-Episode</strong> yang alurnya nyambung antar-episode dengan perhitungan <strong>Token × Jumlah Episode</strong> otomatis, atau gunakan <strong>AI Search &amp; Kirim Foto</strong> berbasis <strong>deepseek-v4-flash (DeepSeek · DEEPSEEK)</strong>.
+            Buat <strong>Storytelling Multi-Episode</strong> yang alurnya nyambung antar-episode lengkap dengan <strong>Caption &amp; Hashtag Tren</strong>, perhitungan <strong>Token × Jumlah Episode</strong> otomatis, serta <strong>AI Search &amp; Kirim Foto</strong> berbasis <strong>deepseek-v4-flash</strong>.
           </p>
 
           <div class="flex flex-wrap items-center gap-3 pt-1">
@@ -127,7 +127,7 @@
             </div>
             <div class="dash-card rounded-xl p-3">
               <p class="text-sm sm:text-base font-extrabold font-mono text-amber-300 truncate">1–12 Eps</p>
-              <p class="text-[11px] text-slate-400">Story Nyambung</p>
+              <p class="text-[11px] text-slate-400">Story + Caption</p>
             </div>
           </div>
         </div>
@@ -167,7 +167,7 @@
           </button>
           <button type="button" onclick="selectPipelineStep(1)" id="step-btn-1" class="pipeline-tab dash-card p-3 rounded-xl text-left text-slate-300 hover:border-amber-500/40 transition cursor-pointer">
             <span class="block text-[10px] font-mono text-amber-400">STEP 02</span>
-            <span class="text-xs font-bold">Story Nyambung</span>
+            <span class="text-xs font-bold">Story + Caption Tren</span>
           </button>
           <button type="button" onclick="selectPipelineStep(2)" id="step-btn-2" class="pipeline-tab dash-card p-3 rounded-xl text-left text-slate-300 hover:border-amber-500/40 transition cursor-pointer">
             <span class="block text-[10px] font-mono text-amber-400">STEP 03</span>
@@ -513,7 +513,7 @@
           <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
             <div class="flex items-center gap-2 text-xs text-slate-400">
               <i data-lucide="layers" class="w-4 h-4 text-amber-400 shrink-0"></i>
-              <span id="modeHelperText">Mode 10 Divisi: Riset → Strategi → Naskah → Character Sheet → MotionCraft → QC</span>
+              <span id="modeHelperText">Mode 10 Divisi: Riset → Strategi → Naskah → Character Sheet → Caption &amp; Hashtag Tren → MotionCraft → QC</span>
             </div>
 
             <button id="runOfficeBtn" onclick="startVirtualOffice()"
@@ -674,11 +674,7 @@
       endpoint: (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.protocol === "file:")
         ? "http://localhost:3001/v1/chat/completions"
         : "/api/chat",
-      model: "minimax-m3.1-flash",
-      webhookUrl: (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.protocol === "file:")
-        ? "http://localhost:3001/autopost"
-        : "https://ajarkontenn.app.n8n.cloud/webhook/kontenflow-autopost",
-      autoSendWebhookOnFinish: false
+      model: "minimax-m3.1-flash"
     };
 
     const AI_SEARCH_ENGINE = {
@@ -699,9 +695,9 @@
         desc: "Menggali pain point audiens, merancang sudut pandang konten, dan menyusun naskah video pendek berkonversi tinggi."
       },
       {
-        tag: "STEP 02 • STORYTELLING MULTI-EPISODE NYAMBUNG",
-        title: "Alur Cerita Bersambung dengan Kontinuitas Antar-Episode",
-        desc: "Setiap episode membawa ringkasan plot & karakter episode sebelumnya agar cerita terus nyambung, sementara Token AI otomatis dikalikan jumlah episode."
+        tag: "STEP 02 • STORYTELLING NYAMBUNG + CAPTION & HASHTAG TREN",
+        title: "Alur Cerita Bersambung Lengkap dengan Caption & Hashtag Tren",
+        desc: "Setiap episode meneruskan plot sebelumnya dan otomatis menyertakan caption siap posting + hashtag tren per episode."
       },
       {
         tag: "STEP 03 • MOTIONCRAFT PHYSICS LAB",
@@ -750,11 +746,17 @@
         { name: "Objection Handler", role: "Penjawab keraguan calon pembeli" },
         { name: "Guarantee Designer", role: "Penyusun jaminan peningkat kepercayaan" }
       ]},
-      { id: 7, name: "Distribusi & SEO", icon: "share-2", color: "text-amber-400", agents: [
-        { name: "Social SEO Specialist", role: "Riset kata kunci pencarian TikTok/IG" },
-        { name: "Caption Optimizer", role: "Penulis caption memancing komentar" },
-        { name: "Repurpose Strategist", role: "Adaptasi konten ke multi-platform" }
-      ]},
+      {
+        id: 7,
+        name: "Distribusi, Caption & Hashtag Tren",
+        icon: "share-2",
+        color: "text-amber-400",
+        agents: [
+          { name: "Trending Hashtag & SEO Specialist", role: "Menyusun hashtag tren & kata kunci pencarian aktif" },
+          { name: "Viral Caption Writer", role: "Menulis opsi caption siap posting yang memancing interaksi" },
+          { name: "Repurpose Strategist", role: "Adaptasi caption & tagar untuk TikTok, Reels & Shorts" }
+        ]
+      },
       { id: 8, name: "CRM & Skrip Closing", icon: "message-square", color: "text-amber-400", agents: [
         { name: "WA/DM Closer", role: "Skrip balas chat calon pembeli masuk" },
         { name: "Follow-Up Sequencer", role: "Pesan follow-up halus anti-ghosting" },
@@ -778,15 +780,35 @@
       }
     ];
 
-    let executionMode = "divisions"; // "divisions" | "story_series"
+    let executionMode = "divisions";
     let episodeCount = 4;
     let divisionStates = {};
     let divisionOutputs = {};
-    let storyEpisodes = []; // [{ episode: 1, title: "...", content: "..." }]
+    let storyEpisodes = [];
     let selectedOutputTab = "all";
     let isRunning = false;
     let attachedSearchPhoto = null;
     let searchChatHistory = [];
+
+    // ==================== ANTI-LOOP & OUTPUT SANITIZER ====================
+    function sanitizeModelOutput(rawText) {
+      let text = String(rawText || "");
+      // Cut repetitive hyphenated token loops like "we-c-we-c-we-c-..."
+      text = text.replace(/([A-Za-z0-9]{1,8}-){5,}/g, match => {
+        const parts = match.split("-").filter(Boolean);
+        return `${parts.slice(0, 4).join("-")} [loop dipotong] `;
+      });
+      // Cut long repeated short tokens separated by spaces/dashes
+      text = text.replace(/(\b[\w-]{1,10}\b(?:\s+|[-—]+)){10,}/g, match => {
+        const words = match.trim().split(/\s+/);
+        return `${words.slice(0, 6).join(" ")} [pengulangan dipotong] `;
+      });
+      // Cap extreme runaway length per single response
+      if (text.length > 6500) {
+        text = `${text.slice(0, 6500)}\n\n[Output dipotong agar ringkas dan bebas loop.]`;
+      }
+      return text.trim();
+    }
 
     function renderSagitariusLogos() {
       document.querySelectorAll(".sagitarius-logo-slot").forEach((slot, idx) => {
@@ -834,12 +856,12 @@
         btnStory.className = "px-3 py-2.5 rounded-xl text-xs font-bold bg-amber-500 text-black transition cursor-pointer";
         btnDiv.className = "px-3 py-2.5 rounded-xl text-xs font-bold bg-panel2 text-amber-200 border border-amber-500/30 hover:bg-slate-800 transition cursor-pointer";
         epBox.classList.remove("opacity-50", "pointer-events-none");
-        helper.textContent = "Mode Storytelling Nyambung: Setiap episode melanjutkan alur & konflik episode sebelumnya.";
+        helper.textContent = "Mode Storytelling Nyambung: Tiap episode nyambung + otomatis menyertakan Caption & Hashtag Tren.";
       } else {
         btnDiv.className = "px-3 py-2.5 rounded-xl text-xs font-bold bg-amber-500 text-black transition cursor-pointer";
         btnStory.className = "px-3 py-2.5 rounded-xl text-xs font-bold bg-panel2 text-amber-200 border border-amber-500/30 hover:bg-slate-800 transition cursor-pointer";
         epBox.classList.add("opacity-50", "pointer-events-none");
-        helper.textContent = "Mode 10 Divisi: Riset → Strategi → Naskah → Character Sheet → MotionCraft → QC";
+        helper.textContent = "Mode 10 Divisi: Riset → Strategi → Naskah → Character Sheet → Caption & Hashtag Tren → MotionCraft → QC";
       }
       updateTokenMultiplierCalculator();
     }
@@ -864,11 +886,11 @@
       const totalTokens = cfg.aiTokenCost * units;
 
       document.getElementById("calcOutputCountLabel").textContent = executionMode === "story_series"
-        ? `${units} Episode Nyambung`
+        ? `${units} Episode + Caption & Tagar`
         : `${DIVISIONS.length} Divisi (${totalAgentsCount} Agen)`;
 
       document.getElementById("calcTokenFormulaLabel").textContent = executionMode === "story_series"
-        ? `${cfg.aiTokenCost} Token × ${units} Eps = ${totalTokens} Token`
+        ? `${cfg.aiTokenCost} Token × ${units} Eps =${totalTokens} Token`
         : `${cfg.aiTokenCost} Token × 1 Run = ${totalTokens} Token`;
 
       document.getElementById("runOfficeBtnText").textContent = executionMode === "story_series"
@@ -926,8 +948,7 @@
           <div class="flex items-center justify-between gap-2 text-[11px] font-mono mb-1.5 ${isUser ? "text-amber-300" : "text-sky-300"}">
             <span>${isUser ? "KAMU" : "DEEPSEEK · DEEPSEEK"}</span>
             <div class="flex items-center gap-2">
-              <span>${AI_SEARCH_ENGINE.model}</span>
-              ${copyBtnHtml}
+              <span>${AI_SEARCH_ENGINE.model}</span>${copyBtnHtml}
             </div>
           </div>
           ${photoHtml}
@@ -988,7 +1009,7 @@
       try {
         const userContent = currentPhoto
           ? [
-              { type: "text", text: `${displayPrompt}\n[Lampiran Foto: ${currentPhoto.name}, ${currentPhoto.sizeKb} KB]` },
+              { type: "text", text: `${displayPrompt}\n[Lampiran Foto:${currentPhoto.name}, ${currentPhoto.sizeKb} KB]` },
               { type: "image_url", image_url: { url: currentPhoto.dataUrl } }
             ]
           : displayPrompt;
@@ -996,9 +1017,9 @@
         const messagesPayload = [
           {
             role: "system",
-            content: "Kamu adalah asisten AI Search & Vision Sagitarius. Jawab pertanyaan apa saja serta analisis foto yang dilampirkan pengguna dalam Bahasa Indonesia yang jelas dan terstruktur."
+            content: "Kamu adalah asisten AI Search & Vision Sagitarius. Jawab pertanyaan apa saja serta analisis foto yang dilampirkan pengguna dalam Bahasa Indonesia yang jelas, ringkas, dan bebas pengulangan kata/karakter aneh."
           },
-          ...searchChatHistory.slice(-6),
+          ...searchChatHistory.slice(-4),
           { role: "user", content: userContent }
         ];
 
@@ -1009,7 +1030,8 @@
             model: AI_SEARCH_ENGINE.model,
             provider: AI_SEARCH_ENGINE.provider,
             messages: messagesPayload,
-            temperature: 0.65
+            temperature: 0.55,
+            max_tokens: 1200
           })
         });
 
@@ -1019,17 +1041,18 @@
         }
 
         const data = await response.json();
-        const answer = (data.choices?.[0]?.message?.content || "Tidak ada respons teks.").trim();
+        const rawAnswer = data.choices?.[0]?.message?.content || "Tidak ada respons teks.";
+        const answer = sanitizeModelOutput(rawAnswer);
 
         const bubbleEl = document.querySelector(`#${loadingId} .search-bubble-text`);
         if (bubbleEl) bubbleEl.textContent = answer;
 
         searchChatHistory.push({ role: "user", content: displayPrompt });
-        searchChatHistory.push({ role: "assistant", content: answer });
+        searchChatHistory.push({ role: "assistant", content: answer.slice(0, 600) });
         if (statusEl) statusEl.textContent = `Selesai • ${AI_SEARCH_ENGINE.model}`;
       } catch (err) {
         const bubbleEl = document.querySelector(`#${loadingId} .search-bubble-text`);
-        if (bubbleEl) bubbleEl.textContent = `Gagal memanggil ${AI_SEARCH_ENGINE.model}: ${err.message}`;
+        if (bubbleEl) bubbleEl.textContent = `Gagal memanggil ${AI_SEARCH_ENGINE.model}:${err.message}`;
         if (statusEl) statusEl.textContent = "Error koneksi model";
         showToast("Gagal memanggil deepseek-v4-flash");
       } finally {
@@ -1172,7 +1195,7 @@
     function consumeAiTokens(totalNeeded) {
       const current = getAiTokenBalance();
       if (current < totalNeeded) {
-        showToast(`Token AI kurang (sisa ${current}, butuh ${totalNeeded}). Klik + Top-Up!`);
+        showToast(`Token AI kurang (sisa ${current}, butuh${totalNeeded}). Klik + Top-Up!`);
         return false;
       }
       saveAiTokenBalance(current - totalNeeded);
@@ -1237,22 +1260,22 @@
         syncEpisodeCount();
         prod.value = "Seri Drama Singkat: Pesan dari Masa Depan";
         aud.value = "Penonton TikTok Drama, Reels & Shorts";
-        brief.value = "Tokoh utama menemukan jam saku yang berdetak mundur menuju keputusan penting. Buat alur bersambung yang saling nyambung tiap episode dengan hook kuat, konflik naik bertahap, dan cliffhanger di akhir tiap episode.";
+        brief.value = "Tokoh utama menemukan jam saku yang berdetak mundur menuju keputusan penting. Buat alur bersambung yang saling nyambung tiap episode dengan hook kuat, konflik naik bertahap, cliffhanger di akhir tiap episode, plus caption & hashtag tren.";
       } else if (type === "affiliate") {
         setExecutionMode("divisions");
         prod.value = "Sandal Clog Nyaman & Ringan + Charms";
         aud.value = "Mahasiswa & anak muda aktif di TikTok & Shopee Video";
-        brief.value = "Buatkan paket konten affiliate lengkap: riset alasan beli, character sheet, 3 angle konten viral, naskah video 30 detik dengan hook kuat, prompt gerak MotionCraft, caption SEO, dan balasan DM.";
+        brief.value = "Buatkan paket konten affiliate lengkap: riset alasan beli, character sheet, 3 angle konten viral, naskah video 30 detik dengan hook kuat, caption & hashtag tren, prompt gerak MotionCraft, dan balasan DM.";
       } else {
         setExecutionMode("divisions");
         prod.value = "Kopi Susu Gula Aren & Paket Jualan";
         aud.value = "Mahasiswa & pekerja muda di TikTok & Instagram";
-        brief.value = "Rancang kampanye promosi 7 hari: analisis masalah pelanggan, susun penawaran promo, character sheet & visual prompt, prompt gerak fisika MotionCraft, dan skrip follow-up WhatsApp.";
+        brief.value = "Rancang kampanye promosi 7 hari: analisis masalah pelanggan, susun penawaran promo, character sheet & visual prompt, caption & hashtag tren, prompt gerak fisika MotionCraft, dan skrip follow-up WhatsApp.";
       }
       showToast("Template tugas siap dijalankan!");
     }
 
-    async function callLLM(systemPrompt, userPrompt) {
+    async function callLLM(systemPrompt, userPrompt, temp = 0.55) {
       const cfg = getSelectedModelConfig();
       const response = await fetch(SERVER_CONFIG.endpoint, {
         method: "POST",
@@ -1264,7 +1287,8 @@
             { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt }
           ],
-          temperature: 0.75
+          temperature: temp,
+          max_tokens: 1300
         })
       });
 
@@ -1274,14 +1298,15 @@
       }
 
       const data = await response.json();
-      return data.choices?.[0]?.message?.content || "";
+      const raw = data.choices?.[0]?.message?.content || "";
+      return sanitizeModelOutput(raw);
     }
 
     function buildDivisionTaskPrompt(divId, product, audience, brief) {
-      const ctx = `Produk/Judul: ${product} | Audiens & Platform: ${audience} | Brief: ${brief}`;
-      const prev1 = divisionOutputs[1] ? `\nRiset Divisi 1:\n${divisionOutputs[1].slice(0, 600)}` : "";
-      const prev4 = divisionOutputs[4] ? `\nNaskah Divisi 4:\n${divisionOutputs[4].slice(0, 600)}` : "";
-      const prev5 = divisionOutputs[5] ? `\nCharacter Sheet & Visual Divisi 5:\n${divisionOutputs[5].slice(0, 600)}` : "";
+      const ctx = `Produk/Judul: ${product} | Audiens & Platform: ${audience} | Brief:${brief}`;
+      const prev1 = divisionOutputs[1] ? `\nRiset Divisi 1:\n${divisionOutputs[1].slice(0, 450)}` : "";
+      const prev4 = divisionOutputs[4] ? `\nNaskah Divisi 4:\n${divisionOutputs[4].slice(0, 450)}` : "";
+      const prev5 = divisionOutputs[5] ? `\nCharacter Sheet & Visual Divisi 5:\n${divisionOutputs[5].slice(0, 450)}` : "";
 
       const tasks = {
         1: `${ctx}\nTugas Divisi Riset: Sebutkan 3 pain point utama audiens, 3 celah kompetitor, dan 3 tren format konten secara ringkas.`,
@@ -1290,7 +1315,7 @@
         4: `${ctx}${prev1}\nTugas Divisi Copywriting & Naskah: Tulis 2 naskah video pendek (30-45 detik) lengkap dengan hook, isi, dan CTA.`,
         5: `${ctx}${prev4}\nTugas Sutradara Visual & Character Sheet: Susun CHARACTER SHEET terstruktur (identitas, pakaian/detail fisik, pencahayaan, rasio aspek) + 2 prompt visual yang konsisten.`,
         6: `${ctx}\nTugas Penawaran & Konversi: Berikan ide bonus, jawaban 3 keraguan pembeli, dan kalimat jaminan.`,
-        7: `${ctx}${prev4}\nTugas Distribusi & SEO: Berikan 2 opsi caption siap posting, kata kunci SEO, dan hashtag relevan.`,
+        7: `${ctx}${prev4}\nWAJIB KERJAKAN CAPTION & HASHTAG TREN: Berikan (1) 3 opsi caption siap posting yang engaging untuk ${audience}, dan (2) daftar hashtag tren & kata kunci pencarian yang relevan dengan${product}. Jangan dikosongkan.`,
         8: `${ctx}\nTugas CRM & Skrip Closing: Tulis template balasan chat/DM calon pembeli dan 1 pesan follow-up ramah.`,
         9: `${ctx}\nTugas Quality Control: Berikan 5 langkah eksekusi prioritas hari ini.`,
         10: `${ctx}${prev5}\nTugas MotionCraft Physics Lab: Berikan (1) Arahan Gerak Berbasis Fisika, (2) Zero-Shot Motion Prompt siap pakai, dan (3) Durasi adegan, kamera & batas konsistensi gerak.`
@@ -1304,16 +1329,17 @@
       renderDivisions();
 
       try {
-        const systemPrompt = `Kamu adalah tim ${div.name} di Sagitarius AI (${div.agents.map(a => a.name).join(", ")}). Jawab ringkas, terstruktur, langsung ke inti, dalam Bahasa Indonesia natural.`;
-        const result = await callLLM(systemPrompt, buildDivisionTaskPrompt(divId, product, audience, brief));
-        divisionOutputs[divId] = result.trim();
+        const systemPrompt = `Kamu adalah tim ${div.name} di Sagitarius AI (${div.agents.map(a => a.name).join(", ")}). Jawab ringkas, terstruktur, langsung ke inti, dalam Bahasa Indonesia natural. Jangan pernah mengulang kata/karakter yang sama secara beruntun.`;
+        const result = await callLLM(systemPrompt, buildDivisionTaskPrompt(divId, product, audience, brief), 0.55);
+        divisionOutputs[divId] = result || "Output kosong dari model.";
         divisionStates[divId] = "done";
         renderDivisions();
         return true;
       } catch (err) {
+        divisionOutputs[divId] = `[Error Divisi ${String(divId).padStart(2, "0")}] ${err.message}`;
         divisionStates[divId] = "error";
         renderDivisions();
-        throw err;
+        return false;
       }
     }
 
@@ -1329,37 +1355,47 @@
 
       for (let ep = 1; ep <= totalEpisodes; ep++) {
         const pct = Math.round(((ep - 0.5) / totalEpisodes) * 100);
-        updateProgress(pct, `Menulis Episode ${ep} dari ${totalEpisodes} (nyambung dengan episode sebelumnya) via ${cfg.modelLabel}...`);
+        updateProgress(pct, `Menulis Episode ${ep}/${totalEpisodes} + Caption & Hashtag Tren via${cfg.modelLabel}...`);
 
-        const systemPrompt = `Kamu adalah penulis skenario & sutradara cerita bersambung di SAGITARIUS AI. Setiap episode WAJIB menyambung secara logis, emosional, dan naratif dari ringkasan episode sebelumnya tanpa mengulang pembukaan yang sama. Tulis dalam Bahasa Indonesia yang hidup dan terstruktur.`;
+        const systemPrompt = `Kamu adalah penulis skenario & spesialis distribusi konten di SAGITARIUS AI. Setiap episode WAJIB menyambung secara logis dari episode sebelumnya tanpa mengulang pembukaan yang sama, dan WAJIB menyertakan Caption serta Hashtag Tren di bagian akhir tiap episode. Tulis dalam Bahasa Indonesia yang jelas dan bebas pengulangan karakter/kata aneh.`;
 
         const userPrompt = [
           `Judul Seri: ${title}`,
           `Audiens & Platform: ${audience}`,
           `Premis Utama: ${premise}`,
-          `Episode Saat Ini: Episode ${ep} dari ${totalEpisodes}`,
+          `Episode Saat Ini: Episode ${ep} dari${totalEpisodes}`,
           continuityLog
-            ? `\nKONTEKS KONTINUITAS DARI EPISODE SEBELUMNYA (WAJIB DISAMBUNGKAN):\n${continuityLog}`
-            : `\nIni adalah Episode 1 (pembukaan cerita, perkenalan tokoh, hook awal, dan pemicu konflik pertama).`,
-          `\nFormat output Episode ${ep}:
-1. Judul Episode ${ep}
-2. Ringkasan Keterkaitan dengan Episode Sebelumnya (atau Pembukaan Seri jika Eps 1)
-3. Hook & Adegan Utama (termasuk narasi/dialog & arah gerak visual)
-4. Cliffhanger / Penutup Nyambung ke Episode ${ep < totalEpisodes ? ep + 1 : "Tamat"}`
+            ? `\nRINGKASAN KONTINUITAS EPISODE SEBELUMNYA (WAJIB DISAMBUNGKAN):\n${continuityLog}`
+            : `\nIni adalah Episode 1 (pembukaan cerita, perkenalan tokoh, hook awal, dan konflik pertama).`,
+          `\nFormat wajib untuk Episode ${ep}:
+1. Judul Episode${ep}
+2. Sambungan Alur dari Episode Sebelumnya (atau Pembukaan Seri jika Eps 1)
+3. Hook, Narasi/Dialog & Adegan Utama
+4. Cliffhanger Penutup (nyambung ke ${ep < totalEpisodes ? `Episode ${ep + 1}` : "Ending Seri"})
+5. Caption Siap Posting & Hashtag Tren (2 opsi caption + hashtag tren relevan untuk ${audience})`
         ].join("\n");
 
-        const epText = (await callLLM(systemPrompt, userPrompt)).trim();
-        storyEpisodes.push({
-          episode: ep,
-          title: `Episode ${ep}`,
-          content: epText
-        });
-
-        // Ringkas kontinuitas agar episode berikutnya nyambung rapi
-        continuityLog += `\n- Eps ${ep}: ${epText.slice(0, 420).replace(/\s+/g, " ")}...`;
+        try {
+          const epText = await callLLM(systemPrompt, userPrompt, 0.6);
+          storyEpisodes.push({
+            episode: ep,
+            title: `Episode ${ep}`,
+            content: epText || "Output episode kosong."
+          });
+          continuityLog += `\n- Eps ${ep}: ${epText.slice(0, 260).replace(/\s+/g, " ")}...`;
+          if (continuityLog.length > 1400) {
+            continuityLog = continuityLog.slice(-1400);
+          }
+        } catch (err) {
+          storyEpisodes.push({
+            episode: ep,
+            title: `Episode ${ep}`,
+            content: `[Gagal membuat Episode ${ep}]:${err.message}`
+          });
+        }
       }
 
-      updateProgress(100, `Selesai membuat ${totalEpisodes} Episode Storytelling yang saling nyambung!`);
+      updateProgress(100, `Selesai membuat ${totalEpisodes} Episode Storytelling + Caption & Hashtag Tren!`);
       saveToHistory(`${title} (${totalEpisodes} Eps)`, audience, premise, {
         story_series: storyEpisodes.map(s => `=== ${s.title.toUpperCase()} ===\n${s.content}`).join("\n\n")
       });
@@ -1413,11 +1449,11 @@
           for (let i = 0; i < DIVISIONS.length; i++) {
             const div = DIVISIONS[i];
             const pct = Math.round(((i + 0.5) / DIVISIONS.length) * 100);
-            updateProgress(pct, `Divisi ${String(div.id).padStart(2, "0")} (${div.name}) via ${cfg.modelLabel}...`);
+            updateProgress(pct, `Divisi ${String(div.id).padStart(2, "0")} (${div.name}) via${cfg.modelLabel}...`);
             await runSingleDivision(div.id, product, audience, brief);
           }
 
-          updateProgress(100, `Seluruh ${totalAgentsCount} Agen di ${DIVISIONS.length} Divisi selesai bekerja!`);
+          updateProgress(100, `Seluruh ${totalAgentsCount} Agen di${DIVISIONS.length} Divisi selesai bekerja!`);
           saveToHistory(product, audience, brief, divisionOutputs);
           renderOutputWorkspace(product);
           showToast(`Selesai! Terpakai ${totalCost} Token AI (${cfg.providerKey}).`);
@@ -1451,7 +1487,7 @@
           <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-800/90">
             <div class="flex items-center gap-2">
               <span class="px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">EPS ${String(ep.episode).padStart(2, "0")}</span>
-              <h4 class="font-bold text-sm text-white">${escapeHtml(seriesTitle)} — Episode ${ep.episode}</h4>
+              <h4 class="font-bold text-sm text-white">${escapeHtml(seriesTitle)} — Episode${ep.episode}</h4>
             </div>
             <button onclick="copyEpisodeText(${ep.episode})" class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-panel hover:bg-slate-800 text-[11px] font-semibold text-amber-300 border border-amber-500/20 transition cursor-pointer">
               <i data-lucide="copy" class="w-3 h-3"></i>
@@ -1539,222 +1575,4 @@
       const tabsEl = document.getElementById("outputTabs");
       const allTab = `<button onclick="selectOutputTab('all')" class="px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition cursor-pointer ${selectedOutputTab === 'all' ? 'bg-amber-500 text-black font-bold' : 'bg-panel2 text-slate-300 hover:bg-slate-800'}">Semua Divisi (${DIVISIONS.length})</button>`;
       const divTabs = DIVISIONS.map(d => `
-        <button onclick="selectOutputTab(${d.id})" class="px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition cursor-pointer ${selectedOutputTab === d.id ? 'bg-amber-500 text-black font-bold' : 'bg-panel2 text-slate-300 hover:bg-slate-800'}">
-          ${String(d.id).padStart(2, "0")}. ${d.name}
-        </button>
-      `).join("");
-      tabsEl.innerHTML = allTab + divTabs;
-
-      const bodyEl = document.getElementById("outputBody");
-      const targetDivs = selectedOutputTab === "all" ? DIVISIONS : DIVISIONS.filter(d => d.id === selectedOutputTab);
-
-      bodyEl.innerHTML = targetDivs.map(d => {
-        const content = divisionOutputs[d.id] || "Belum ada output.";
-        return `
-          <div class="rounded-2xl bg-panel2/80 border border-slate-800 p-4 sm:p-5 space-y-3">
-            <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-800/90">
-              <div class="flex items-center gap-2">
-                <i data-lucide="${d.icon}" class="w-4 h-4 ${d.color}"></i>
-                <h4 class="font-bold text-sm text-white">Divisi ${String(d.id).padStart(2, "0")}: ${d.name}</h4>
-                <span class="text-[11px] text-slate-500">(${d.agents.length} Agen)</span>
-              </div>
-              <button onclick="copyDivisionText(${d.id})" class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-panel hover:bg-slate-800 text-[11px] font-semibold text-amber-300 border border-amber-500/20 transition cursor-pointer">
-                <i data-lucide="copy" class="w-3 h-3"></i>
-                <span>Salin</span>
-              </button>
-            </div>
-            <div class="text-xs sm:text-sm text-slate-200 whitespace-pre-wrap leading-relaxed font-sans">${escapeHtml(content)}</div>
-          </div>
-        `;
-      }).join("");
-
-      lucide.createIcons();
-    }
-
-    function selectOutputTab(tabId) {
-      selectedOutputTab = tabId;
-      const heading = document.getElementById("outputHeading").textContent.replace("Paket Eksekusi: ", "");
-      renderOutputWorkspace(heading);
-    }
-
-    function compileFullReportText() {
-      if (storyEpisodes.length > 0) {
-        return storyEpisodes.map(ep => `========================================\n${ep.title.toUpperCase()}\n========================================\n${ep.content}\n`).join("\n");
-      }
-      const title = document.getElementById("outputHeading").textContent;
-      let full = `# ${title}\nDihasilkan oleh ${SERVER_CONFIG.brandName}\n\n`;
-      DIVISIONS.forEach(d => {
-        full += `========================================\nDIVISI ${String(d.id).padStart(2, "0")}: ${d.name.toUpperCase()}\n========================================\n${divisionOutputs[d.id] || "-"}\n\n`;
-      });
-      return full;
-    }
-
-    function copyTextFallback(text) {
-      if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).catch(() => {});
-      } else {
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        ta.style.position = "fixed";
-        ta.style.left = "-9999px";
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        document.body.removeChild(ta);
-      }
-    }
-
-    function copyDivisionText(divId) {
-      copyTextFallback(divisionOutputs[divId] || "");
-      showToast(`Hasil Divisi ${String(divId).padStart(2, "0")} disalin!`);
-    }
-
-    function copyAllResults() {
-      copyTextFallback(compileFullReportText());
-      showToast("Seluruh hasil disalin!");
-    }
-
-    function downloadMarkdown() {
-      const text = compileFullReportText();
-      const blob = new Blob([text], { type: "text/markdown;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `Sagitarius-Output-${Date.now()}.md`;
-      a.click();
-      URL.revokeObjectURL(url);
-      showToast("File .MD diunduh!");
-    }
-
-    function saveToHistory(product, audience, brief, outputs) {
-      try {
-        const list = JSON.parse(localStorage.getItem("sagitarius_history_v1") || "[]");
-        list.unshift({
-          id: Date.now(),
-          date: new Date().toLocaleString("id-ID"),
-          product,
-          audience,
-          brief,
-          outputs
-        });
-        localStorage.setItem("sagitarius_history_v1", JSON.stringify(list.slice(0, 15)));
-      } catch (e) {}
-    }
-
-    function toggleHistoryModal() {
-      const modal = document.getElementById("historyModal");
-      const isHidden = modal.classList.contains("hidden");
-      if (isHidden) {
-        const list = JSON.parse(localStorage.getItem("sagitarius_history_v1") || "[]");
-        const container = document.getElementById("historyList");
-        if (!list.length) {
-          container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">Belum ada riwayat tugas tersimpan.</p>`;
-        } else {
-          container.innerHTML = list.map((item, idx) => `
-            <div onclick="loadHistoryItem(${idx})" class="p-3.5 rounded-xl bg-panel2 hover:bg-slate-800 border border-slate-800 cursor-pointer transition">
-              <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1">
-                <span>${item.date}</span>
-                <span class="text-amber-400 font-semibold">Buka Laporan →</span>
-              </div>
-              <h4 class="text-sm font-bold text-white">${escapeHtml(item.product)}</h4>
-              <p class="text-xs text-slate-400 line-clamp-1 mt-0.5">${escapeHtml(item.brief)}</p>
-            </div>
-          `).join("");
-        }
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-      } else {
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
-      }
-    }
-
-    function loadHistoryItem(idx) {
-      const list = JSON.parse(localStorage.getItem("sagitarius_history_v1") || "[]");
-      const item = list[idx];
-      if (!item) return;
-      document.getElementById("productInput").value = item.product;
-      document.getElementById("audienceInput").value = item.audience;
-      document.getElementById("briefInput").value = item.brief;
-      divisionOutputs = item.outputs || {};
-      DIVISIONS.forEach(d => divisionStates[d.id] = divisionOutputs[d.id] ? "done" : "idle");
-      renderDivisions();
-      selectedOutputTab = "all";
-      renderOutputWorkspace(item.product);
-      toggleHistoryModal();
-    }
-
-    function openDivisionModal(divId) {
-      const div = DIVISIONS.find(d => d.id === divId);
-      if (!div) return;
-
-      document.getElementById("divModalBadge").textContent = `Divisi ${String(div.id).padStart(2, "0")} • ${div.agents.length} Agen Aktif`;
-      document.getElementById("divModalTitle").textContent = div.name;
-      document.getElementById("divModalAgents").innerHTML = div.agents.map(a => `
-        <div class="p-2.5 rounded-xl bg-panel2 border border-slate-800">
-          <p class="text-xs font-bold text-white">${a.name}</p>
-          <p class="text-[11px] text-slate-400">${a.role}</p>
-        </div>
-      `).join("");
-
-      const resWrap = document.getElementById("divModalResultWrapper");
-      if (divisionOutputs[div.id]) {
-        resWrap.classList.remove("hidden");
-        document.getElementById("divModalResult").textContent = divisionOutputs[div.id];
-        document.getElementById("divModalCopyBtn").onclick = () => copyDivisionText(div.id);
-      } else {
-        resWrap.classList.add("hidden");
-      }
-
-      document.getElementById("divModalRetryBtn").onclick = async () => {
-        closeDivisionModal();
-        const product = document.getElementById("productInput").value.trim() || "Produk";
-        const audience = document.getElementById("audienceInput").value.trim() || "Audiens umum";
-        const brief = document.getElementById("briefInput").value.trim() || "Buat konsep konten";
-        try {
-          await runSingleDivision(div.id, product, audience, brief);
-          renderOutputWorkspace(product);
-          showToast(`Divisi ${String(div.id).padStart(2, "0")} selesai!`);
-        } catch (e) {
-          showToast(`Gagal ulang Divisi ${String(div.id).padStart(2, "0")}: ${e.message}`);
-        }
-      };
-
-      const modal = document.getElementById("divisionModal");
-      modal.classList.remove("hidden");
-      modal.classList.add("flex");
-      lucide.createIcons();
-    }
-
-    function closeDivisionModal() {
-      const modal = document.getElementById("divisionModal");
-      modal.classList.add("hidden");
-      modal.classList.remove("flex");
-    }
-
-    function showToast(msg) {
-      const toast = document.getElementById("toast");
-      document.getElementById("toastText").textContent = msg;
-      toast.classList.remove("hidden");
-      toast.classList.add("flex");
-      clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => {
-        toast.classList.add("hidden");
-        toast.classList.remove("flex");
-      }, 3000);
-    }
-
-    function escapeHtml(str) {
-      return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-    }
-
-    renderSagitariusLogos();
-    renderTokenWalletUI();
-    renderDivisions();
-    lucide.createIcons();
-  </script>
-</body>
-</html>
+        <button onclick="selectOutputTab(${d.id})" class="px-3 py-1.5 rounded-xl text-
