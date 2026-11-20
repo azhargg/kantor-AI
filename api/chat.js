@@ -20,7 +20,7 @@ export default async function handler(req, res) {
 
   // Ambil key dari env Vercel sesuai provider, atau fallback ke key yang diisi
   const bykitsuneKey =
-    process.env.BYKITSUNE_API_KEY || "API_KEY_BYKITSUNE_BARU_KAMU";
+    process.env.BYKITSUNE_API_KEY || "Ask-kts-14e84739b88db996ceaa620cec9f3eb2";
   const bbtokenKey =
     process.env.BBTOKEN_API_KEY ||
     "sk-qwen-35d49aad7d69d30bcdbe5d05c9bbf205463ca54b9ddbc0f5";
