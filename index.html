@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>SAGITARIUS — Interactive AI Workspace &amp; Automation</title>
+  <title>SAGITARIUS — Interactive AI Workspace &amp; AI Search</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -43,7 +43,7 @@
     .nav-item-active {
       background: rgba(245, 158, 11, 0.12);
       color: #fbbf24;
-      border: 1px solid rgba(245, 158, 11, 0.35);
+      border: 1px solid rgba(251, 191, 36, 0.35);
     }
     .gold-glow {
       box-shadow: 0 0 40px rgba(245, 158, 11, 0.16);
@@ -79,8 +79,8 @@
           <span class="font-extrabold tracking-widest text-sm sm:text-base text-amber-400">SAGITARIUS</span>
         </div>
         <div class="flex items-center gap-2.5">
-          <button onclick="enterDashboard('workspace')" class="px-3.5 py-2 rounded-xl text-xs font-semibold text-amber-200 hover:bg-amber-500/10 border border-amber-500/25 transition cursor-pointer">
-            Mode Cepat
+          <button onclick="enterDashboard('search')" class="px-3.5 py-2 rounded-xl text-xs font-semibold text-amber-200 hover:bg-amber-500/10 border border-amber-500/25 transition cursor-pointer">
+            AI Search &amp; Foto
           </button>
           <button onclick="enterDashboard('workspace')" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black shadow-lg shadow-amber-500/20 transition cursor-pointer">
             Buka Dashboard AI →
@@ -94,15 +94,15 @@
         <div class="lg:col-span-7 space-y-5">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono">
             <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-            <span>MULTI-AGENT WORKSPACE • MOTIONCRAFT • FLOW AI</span>
+            <span>MULTI-AGENT WORKSPACE • DEEPSEEK-V4-FLASH SEARCH &amp; VISION</span>
           </div>
 
           <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
-            Eksekusi Konten &amp; Alur Otomatis Bersama <span class="text-amber-400">SAGITARIUS</span>
+            Eksekusi Konten &amp; Tanya Jawab Foto Bersama <span class="text-amber-400">SAGITARIUS</span>
           </h1>
 
           <p class="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
-            Kelola riset, naskah, <strong>Character Sheet</strong>, arahan gerak fisika <strong>MotionCraft</strong>, dan otomasi salin ke <strong>Google Flow</strong> dalam satu panel hitam-emas. Fitur penjadwalan otomatis sedang disiapkan (<strong>Coming Soon</strong>).
+            Jalankan 34 agen divisi, salin <strong>Character Sheet &amp; MotionCraft</strong> ke <strong>Google Flow</strong>, atau gunakan <strong>AI Search &amp; Kirim Foto</strong> berbasis <strong>deepseek-v4-flash (DeepSeek · DEEPSEEK)</strong> untuk tanya jawab apa saja.
           </p>
 
           <div class="flex flex-wrap items-center gap-3 pt-1">
@@ -110,9 +110,9 @@
               <i data-lucide="arrow-right-circle" class="w-4 h-4"></i>
               <span>Masuk ke Dashboard Sagitarius</span>
             </button>
-            <button onclick="enterDashboard('billing')" class="flex items-center gap-2 px-5 py-3.5 rounded-xl bg-panel2 hover:bg-slate-800 text-amber-200 font-semibold text-sm border border-amber-500/25 transition cursor-pointer">
-              <i data-lucide="coins" class="w-4 h-4 text-amber-400"></i>
-              <span>Atur Model &amp; Token</span>
+            <button onclick="enterDashboard('search')" class="flex items-center gap-2 px-5 py-3.5 rounded-xl bg-panel2 hover:bg-slate-800 text-amber-200 font-semibold text-sm border border-amber-500/25 transition cursor-pointer">
+              <i data-lucide="image-plus" class="w-4 h-4 text-amber-400"></i>
+              <span>AI Search &amp; Kirim Foto</span>
             </button>
           </div>
 
@@ -126,8 +126,8 @@
               <p class="text-[11px] text-slate-400">Agen Aktif</p>
             </div>
             <div class="dash-card rounded-xl p-3">
-              <p class="text-lg sm:text-xl font-extrabold font-mono text-amber-300">Soon</p>
-              <p class="text-[11px] text-slate-400">Auto-Jadwal Post</p>
+              <p class="text-sm sm:text-base font-extrabold font-mono text-sky-400 truncate">deepseek-v4-flash</p>
+              <p class="text-[11px] text-slate-400">Search + Foto</p>
             </div>
           </div>
         </div>
@@ -257,7 +257,7 @@
                 10 Divisi • 34 Agen
               </span>
             </div>
-            <p class="text-[11px] text-slate-400 hidden sm:block">AI Command &amp; Workflow Console</p>
+            <p class="text-[11px] text-slate-400 hidden sm:block">AI Command, Search &amp; Vision Console</p>
           </div>
         </div>
 
@@ -299,6 +299,10 @@
               <button id="nav-workspace" onclick="switchSection('workspace')" class="nav-btn nav-item-active w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition cursor-pointer">
                 <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
                 <span>Command Center</span>
+              </button>
+              <button id="nav-search" onclick="switchSection('search')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 border border-transparent transition cursor-pointer">
+                <i data-lucide="search-code" class="w-4 h-4 text-sky-400"></i>
+                <span>AI Search &amp; Foto</span>
               </button>
               <button id="nav-divisions" onclick="switchSection('divisions')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 border border-transparent transition cursor-pointer">
                 <i data-lucide="users" class="w-4 h-4"></i>
@@ -347,8 +351,8 @@
             <span id="sidebarAiTokens" class="font-mono font-bold text-amber-300">100</span>
           </div>
           <div class="flex items-center justify-between text-xs">
-            <span class="text-slate-400">Auto-Jadwal</span>
-            <span class="font-mono font-semibold text-amber-300/90">Coming Soon</span>
+            <span class="text-slate-400">Search Engine</span>
+            <span class="font-mono font-bold text-sky-400 text-[11px]">deepseek-v4-flash</span>
           </div>
           <button type="button" onclick="topUpDemoTokens()" class="w-full py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 text-[11px] font-bold text-amber-300 transition cursor-pointer">
             + Top-Up Token AI
@@ -357,6 +361,80 @@
       </aside>
 
       <main class="flex-1 min-w-0 p-4 lg:p-6 space-y-6 max-w-6xl mx-auto w-full">
+
+        <!-- SECTION AI SEARCH ENGINE + KIRIM FOTO (LOCKED TO deepseek-v4-flash · DeepSeek · DEEPSEEK) -->
+        <section id="sec-ai-search" class="dash-card rounded-2xl p-4 sm:p-6 space-y-4 border-sky-500/25">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3.5">
+            <div>
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-[11px] font-mono font-bold uppercase tracking-wider text-sky-400">SAGITARIUS AI SEARCH &amp; VISION</span>
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-sky-500/15 text-sky-300 border border-sky-500/35">
+                  deepseek-v4-flash • DeepSeek · DEEPSEEK
+                </span>
+              </div>
+              <h2 class="text-lg sm:text-xl font-bold text-white mt-0.5">Tanya Jawab Apa Saja &amp; Kirim Foto</h2>
+            </div>
+
+            <button type="button" onclick="clearSearchChat()" class="self-start sm:self-auto flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-panel2 hover:bg-slate-800 text-xs font-semibold text-slate-300 border border-slate-700 transition cursor-pointer">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-400"></i>
+              <span>Bersihkan Chat</span>
+            </button>
+          </div>
+
+          <!-- Chat Thread -->
+          <div id="aiSearchMessages" class="rounded-xl bg-[#07090e] border border-slate-800/90 p-3.5 sm:p-4 max-h-96 overflow-y-auto custom-scroll space-y-3">
+            <div class="rounded-xl bg-panel2/80 border border-sky-500/20 p-3 text-xs sm:text-sm text-slate-200 leading-relaxed">
+              <div class="flex items-center justify-between text-[11px] font-mono text-sky-300 mb-1">
+                <span>SAGITARIUS AI SEARCH</span>
+                <span>deepseek-v4-flash (DeepSeek · DEEPSEEK)</span>
+              </div>
+              Halo! Ketik pertanyaan apa saja atau klik <strong>Kirim Foto</strong> untuk melampirkan gambar (foto produk, catatan, rangkaian, *screenshot*, dll.) lalu tanyakan langsung.
+            </div>
+          </div>
+
+          <!-- Photo Attachment Preview Bar -->
+          <div id="searchPhotoPreviewWrap" class="hidden rounded-xl bg-[#090d15] border border-sky-500/30 p-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <img id="searchPhotoPreviewImg" src="" alt="Preview Foto" class="w-14 h-14 rounded-lg object-cover border border-slate-700 shrink-0" />
+              <div class="min-w-0">
+                <p id="searchPhotoFileName" class="text-xs font-bold text-white truncate">foto.jpg</p>
+                <p id="searchPhotoFileMeta" class="text-[11px] font-mono text-sky-300">Siap dikirim ke deepseek-v4-flash</p>
+              </div>
+            </div>
+            <button type="button" onclick="removeSearchPhoto()" class="px-2.5 py-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 text-xs font-semibold border border-rose-500/30 shrink-0 cursor-pointer">
+              Hapus Foto
+            </button>
+          </div>
+
+          <!-- Input Query + Kirim Foto -->
+          <div class="space-y-2.5">
+            <input id="searchPhotoInput" type="file" accept="image/*" class="hidden" onchange="handleSearchPhotoSelect(event)" />
+            <div class="flex flex-col sm:flex-row gap-2.5">
+              <button type="button" onclick="document.getElementById('searchPhotoInput').click()"
+                class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-panel2 hover:bg-slate-800 text-sky-300 text-xs font-bold border border-sky-500/30 transition shrink-0 cursor-pointer">
+                <i data-lucide="camera" class="w-4 h-4"></i>
+                <span>Kirim Foto</span>
+              </button>
+
+              <input id="aiSearchInput" type="text"
+                onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendAiSearchQuery(); }"
+                placeholder="Tanya apa saja atau jelaskan foto yang kamu kirim..."
+                class="flex-1 px-3.5 py-3 rounded-xl bg-panel2 border border-slate-700/80 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-400 transition" />
+
+              <button id="aiSearchSendBtn" type="button" onclick="sendAiSearchQuery()"
+                class="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-sky-400 to-cyan-500 hover:from-sky-300 hover:to-cyan-400 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg shadow-sky-500/15 transition shrink-0 cursor-pointer">
+                <i data-lucide="search" class="w-4 h-4"></i>
+                <span>Cari / Tanya</span>
+              </button>
+            </div>
+            <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400 font-mono">
+              <span>Engine: <strong>deepseek-v4-flash</strong> • Provider: <strong>DeepSeek · DEEPSEEK</strong></span>
+              <span id="aiSearchStatusText">Standby</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION COMMAND CENTER + MODEL & TOKEN -->
         <section id="sec-command" class="dash-card rounded-2xl p-4 sm:p-6 space-y-5">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-500/15 pb-4">
             <div>
@@ -396,7 +474,7 @@
 
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
-                <label class="mb-1 block text-xs font-semibold text-slate-300">Pilih Model (ByKitsune &amp; BB Token)</label>
+                <label class="mb-1 block text-xs font-semibold text-slate-300">Pilih Model Kantor (ByKitsune &amp; BB Token)</label>
                 <select id="aiModelSelect" onchange="updateModelCostPreview()" class="w-full rounded-xl border border-slate-700 bg-panel2 px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
                   <option value="bykitsune|minimax-m3.1-flash|5" data-provider="ByKitsune" data-model="MiniMax M3.1 Flash" data-cost="5" selected>
                     [ByKitsune] MiniMax M3.1 Flash — 5 Token AI / run (Hemat)
@@ -428,8 +506,8 @@
                   <span id="aiCostPreview" class="font-mono font-semibold text-amber-300">5 Token AI (ByKitsune)</span>
                 </div>
                 <div class="mt-1 flex items-center justify-between">
-                  <span class="text-slate-400">Auto-Jadwal Posting:</span>
-                  <span class="font-mono font-semibold text-amber-400/90">Coming Soon</span>
+                  <span class="text-slate-400">AI Search + Foto:</span>
+                  <span class="font-mono font-semibold text-sky-300">deepseek-v4-flash (DeepSeek)</span>
                 </div>
               </div>
             </div>
@@ -528,7 +606,7 @@
     </div>
 
     <footer class="border-t border-amber-500/15 py-4 px-4 text-center text-xs text-slate-500 bg-[#07090e]">
-      SAGITARIUS AI Console • Multi-Agent &amp; Automation Hub
+      SAGITARIUS AI Console • Multi-Agent &amp; AI Search Hub
     </footer>
   </div>
 
@@ -563,7 +641,6 @@
         </p>
       </div>
 
-      <!-- FITUR JADWAL: COMING SOON -->
       <div class="rounded-xl border border-amber-500/20 bg-[#07090e]/90 p-4 opacity-85">
         <div class="flex items-center justify-between gap-2 mb-2">
           <div class="flex items-center gap-2">
@@ -575,7 +652,7 @@
           </span>
         </div>
         <p class="text-xs text-slate-400 leading-relaxed">
-          Fitur jadwal posting otomatis ke TikTok, Reels, dan Shorts sedang dalam tahap pengembangan (<strong>Coming Soon</strong>). Saat ini kamu bisa langsung menyalin hasil &amp; prompt ke Google Flow atau mengunduh laporan <strong>.MD</strong>.
+          Fitur jadwal posting otomatis sedang disiapkan (<strong>Coming Soon</strong>).
         </p>
       </div>
     </div>
@@ -645,7 +722,13 @@
       autoSendWebhookOnFinish: false
     };
 
-    const SCHEDULE_FEATURE_COMING_SOON = true;
+    // Dedicated AI Search & Photo Engine: strictly locked to deepseek-v4-flash (DeepSeek · DEEPSEEK)
+    const AI_SEARCH_ENGINE = {
+      model: "deepseek-v4-flash",
+      provider: "DeepSeek",
+      providerBadge: "DEEPSEEK",
+      endpoint: SERVER_CONFIG.endpoint
+    };
 
     const TOKEN_STORAGE_KEYS = {
       ai: "sagitarius_ai_token_balance_v1"
@@ -741,6 +824,8 @@
     let divisionOutputs = {};
     let selectedOutputTab = "all";
     let isRunning = false;
+    let attachedSearchPhoto = null; // { name, sizeKb, dataUrl }
+    let searchChatHistory = [];
 
     function renderSagitariusLogos() {
       document.querySelectorAll(".sagitarius-logo-slot").forEach((slot, idx) => {
@@ -778,6 +863,174 @@
     document.getElementById("landingDivCount").textContent = String(DIVISIONS.length);
     document.getElementById("landingAgentCount").textContent = String(totalAgentsCount);
 
+    // ==================== AI SEARCH & PHOTO FUNCTIONS (deepseek-v4-flash) ====================
+    function handleSearchPhotoSelect(event) {
+      const file = event.target?.files?.[0];
+      if (!file) return;
+      if (!file.type.startsWith("image/")) {
+        showToast("Pilih file gambar (JPG, PNG, WEBP, dll.)");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        attachedSearchPhoto = {
+          name: file.name,
+          sizeKb: Math.max(1, Math.round(file.size / 1024)),
+          dataUrl: String(reader.result || "")
+        };
+        document.getElementById("searchPhotoPreviewImg").src = attachedSearchPhoto.dataUrl;
+        document.getElementById("searchPhotoFileName").textContent = attachedSearchPhoto.name;
+        document.getElementById("searchPhotoFileMeta").textContent = `${attachedSearchPhoto.sizeKb} KB • deepseek-v4-flash (DEEPSEEK)`;
+        document.getElementById("searchPhotoPreviewWrap").classList.remove("hidden");
+        showToast(`Foto "${file.name}" siap dikirim!`);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeSearchPhoto() {
+      attachedSearchPhoto = null;
+      const input = document.getElementById("searchPhotoInput");
+      if (input) input.value = "";
+      document.getElementById("searchPhotoPreviewWrap").classList.add("hidden");
+      document.getElementById("searchPhotoPreviewImg").src = "";
+    }
+
+    function appendSearchMessageBubble(role, text, photoDataUrl = "", photoName = "") {
+      const box = document.getElementById("aiSearchMessages");
+      const msgId = `msg_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+      const isUser = role === "user";
+
+      const photoHtml = photoDataUrl
+        ? `<img src="${photoDataUrl}" alt="${escapeHtml(photoName || "Foto")}" class="max-h-48 rounded-lg border border-slate-700 mb-2 object-contain bg-black" />`
+        : "";
+
+      const copyBtnHtml = !isUser
+        ? `<button type="button" onclick="copySearchBubble('${msgId}')" class="text-[11px] text-sky-300 hover:text-sky-200 font-semibold cursor-pointer">Salin</button>`
+        : "";
+
+      const html = `
+        <div id="${msgId}" class="rounded-xl p-3.5 text-xs sm:text-sm leading-relaxed ${isUser ? "bg-amber-500/10 border border-amber-500/30 text-amber-50 ml-4 sm:ml-10" : "bg-panel2 border border-sky-500/20 text-slate-200 mr-4 sm:mr-10"}">
+          <div class="flex items-center justify-between gap-2 text-[11px] font-mono mb-1.5 ${isUser ? "text-amber-300" : "text-sky-300"}">
+            <span>${isUser ? "KAMU" : "DEEPSEEK · DEEPSEEK"}</span>
+            <div class="flex items-center gap-2">
+              <span>${AI_SEARCH_ENGINE.model}</span>
+              ${copyBtnHtml}
+            </div>
+          </div>
+          ${photoHtml}
+          <div class="search-bubble-text whitespace-pre-wrap">${escapeHtml(text)}</div>
+        </div>
+      `;
+      box.insertAdjacentHTML("beforeend", html);
+      box.scrollTop = box.scrollHeight;
+      return msgId;
+    }
+
+    function copySearchBubble(msgId) {
+      const el = document.querySelector(`#${msgId} .search-bubble-text`);
+      if (!el) return;
+      copyTextFallback(el.textContent || "");
+      showToast("Jawaban disalin!");
+    }
+
+    function clearSearchChat() {
+      searchChatHistory = [];
+      document.getElementById("aiSearchMessages").innerHTML = `
+        <div class="rounded-xl bg-panel2/80 border border-sky-500/20 p-3 text-xs sm:text-sm text-slate-200 leading-relaxed">
+          <div class="flex items-center justify-between text-[11px] font-mono text-sky-300 mb-1">
+            <span>SAGITARIUS AI SEARCH</span>
+            <span>deepseek-v4-flash (DeepSeek · DEEPSEEK)</span>
+          </div>
+          Chat direset. Silakan tanya apa saja atau kirim foto baru.
+        </div>
+      `;
+      showToast("Riwayat AI Search dibersihkan.");
+    }
+
+    async function sendAiSearchQuery() {
+      const inputEl = document.getElementById("aiSearchInput");
+      const btnEl = document.getElementById("aiSearchSendBtn");
+      const statusEl = document.getElementById("aiSearchStatusText");
+
+      const queryText = (inputEl?.value || "").trim();
+      const currentPhoto = attachedSearchPhoto ? { ...attachedSearchPhoto } : null;
+
+      if (!queryText && !currentPhoto) {
+        showToast("Ketik pertanyaan atau klik Kirim Foto dulu ya!");
+        return;
+      }
+
+      const displayPrompt = queryText || "Tolong analisis foto yang saya kirimkan ini secara jelas dan terstruktur.";
+      appendSearchMessageBubble("user", displayPrompt, currentPhoto?.dataUrl || "", currentPhoto?.name || "");
+
+      inputEl.value = "";
+      if (currentPhoto) removeSearchPhoto();
+
+      btnEl.disabled = true;
+      btnEl.classList.add("opacity-60", "cursor-not-allowed");
+      if (statusEl) statusEl.textContent = `Memproses via ${AI_SEARCH_ENGINE.model} (${AI_SEARCH_ENGINE.providerBadge})...`;
+
+      const loadingId = appendSearchMessageBubble("assistant", `Sedang mencari & menganalisis menggunakan ${AI_SEARCH_ENGINE.model}...`);
+
+      try {
+        const userContent = currentPhoto
+          ? [
+              { type: "text", text: `${displayPrompt}\n[Lampiran Foto: ${currentPhoto.name}, ${currentPhoto.sizeKb} KB]` },
+              { type: "image_url", image_url: { url: currentPhoto.dataUrl } }
+            ]
+          : displayPrompt;
+
+        const messagesPayload = [
+          {
+            role: "system",
+            content: "Kamu adalah asisten AI Search & Vision Sagitarius yang cerdas, akurat, dan ringkas. Jawab pertanyaan apa saja serta analisis foto yang dilampirkan pengguna dalam Bahasa Indonesia yang jelas dan terstruktur."
+          },
+          ...searchChatHistory.slice(-6),
+          {
+            role: "user",
+            content: userContent
+          }
+        ];
+
+        const response = await fetch(AI_SEARCH_ENGINE.endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: AI_SEARCH_ENGINE.model,
+            provider: AI_SEARCH_ENGINE.provider,
+            messages: messagesPayload,
+            temperature: 0.65
+          })
+        });
+
+        if (!response.ok) {
+          const errText = await response.text();
+          throw new Error(`HTTP ${response.status}: ${errText.slice(0, 140)}`);
+        }
+
+        const data = await response.json();
+        const answer = (data.choices?.[0]?.message?.content || "Tidak ada respons teks.").trim();
+
+        const bubbleEl = document.querySelector(`#${loadingId} .search-bubble-text`);
+        if (bubbleEl) bubbleEl.textContent = answer;
+
+        searchChatHistory.push({ role: "user", content: displayPrompt });
+        searchChatHistory.push({ role: "assistant", content: answer });
+        if (statusEl) statusEl.textContent = `Selesai • ${AI_SEARCH_ENGINE.model}`;
+      } catch (err) {
+        const bubbleEl = document.querySelector(`#${loadingId} .search-bubble-text`);
+        if (bubbleEl) bubbleEl.textContent = `Gagal memanggil ${AI_SEARCH_ENGINE.model} (${AI_SEARCH_ENGINE.providerBadge}): ${err.message}`;
+        if (statusEl) statusEl.textContent = "Error koneksi model";
+        showToast("Gagal memanggil deepseek-v4-flash");
+      } finally {
+        btnEl.disabled = false;
+        btnEl.classList.remove("opacity-60", "cursor-not-allowed");
+        const box = document.getElementById("aiSearchMessages");
+        if (box) box.scrollTop = box.scrollHeight;
+      }
+    }
+
+    // ==================== NAVIGATION & LANDING ====================
     function enterDashboard(sectionKey = "workspace") {
       document.getElementById("landingView").classList.add("hidden");
       const dash = document.getElementById("dashboardView");
@@ -860,6 +1113,7 @@
 
       const map = {
         workspace: "sec-command",
+        search: "sec-ai-search",
         divisions: "sec-divisions",
         billing: "sec-billing",
         output: "outputSection"
