@@ -1,0 +1,43 @@
+export default async function handler(req, res) {
+  if (req.method === "OPTIONS") {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    return res.status(200).end();
+  }
+
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  const targetUrl = "https://bandelbanget.xyz/v1/chat/completions";
+  const authHeader =
+    req.headers.authorization ||
+    "Bearer sk-qwen-35d49aad7d69d30bcdbe5d05c9bbf205463ca54b9ddbc0f5";
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 110000);
+
+  try {
+    const upstream = await fetch(targetUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authHeader,
+      },
+      body: JSON.stringify(req.body),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timer);
+    const text = await upstream.text();
+    res.status(upstream.status);
+    res.setHeader("Content-Type", "application/json");
+    return res.send(text);
+  } catch (err) {
+    clearTimeout(timer);
+    return res.status(502).json({
+      error: { message: `Server proxy timeout / gagal terhubung: ${err.message}` },
+    });
+  }
+}
