@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Kantor AI — 31 Agent AI Virtual Office</title>
+  <title>Kantor AI — Virtual AI Office & MotionCraft</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -67,18 +67,32 @@
         <div>
           <div class="flex items-center gap-2">
             <h1 id="brandTitleDisplay" class="font-bold text-base sm:text-lg tracking-tight text-white">Kantor AI</h1>
-            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
-              31 Agen • 9 Divisi
+            <span id="headerStatsBadge" class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+              34 Agen • 10 Divisi
             </span>
           </div>
           <p class="text-[11px] text-slate-400">Virtual AI Workforce • Siap Pakai 24/7</p>
         </div>
       </div>
 
-      <div class="flex items-center gap-2.5">
+      <div class="flex items-center gap-2">
+        <div class="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/25">
+          <span>AI:</span>
+          <strong id="headerAiTokens">100</strong>
+        </div>
+        <div class="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/25">
+          <span>Jadwal:</span>
+          <strong id="headerScheduleTokens">50</strong>
+        </div>
+
+        <button onclick="openPostActionModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-200 text-xs font-semibold border border-indigo-500/40 transition cursor-pointer" title="Panel Model, Token, Flow AI & Jadwal">
+          <i data-lucide="sliders" class="w-3.5 h-3.5 text-indigo-300"></i>
+          <span class="hidden sm:inline">Model & Jadwal</span>
+        </button>
+
         <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>Server Online</span>
+          <span class="hidden sm:inline">Server Online</span>
         </div>
 
         <button onclick="toggleHistoryModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800/85 hover:bg-slate-800 text-slate-200 text-xs font-semibold border border-slate-700/70 transition cursor-pointer" title="Riwayat Tugas">
@@ -110,6 +124,68 @@
         </div>
       </div>
 
+      <!-- PILIHAN MODEL (BYKITSUNE & BB TOKEN) + SALDO TOKEN TERPISAH -->
+      <div class="mb-4 rounded-xl border border-indigo-500/30 bg-slate-950/75 p-3.5 sm:p-4">
+        <div class="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">
+            Provider Model & Wallet Token Terpisah
+          </span>
+          <div class="flex flex-wrap items-center gap-2 text-xs">
+            <span class="rounded-lg border border-amber-500/40 bg-amber-500/10 px-2.5 py-1 font-semibold text-amber-300">
+              Token AI: <strong id="aiTokenDisplay">100</strong>
+            </span>
+            <span class="rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 font-semibold text-emerald-300">
+              Token Auto-Jadwal: <strong id="scheduleTokenDisplay">50</strong>
+            </span>
+            <button type="button" onclick="topUpDemoTokens()" class="rounded-lg border border-slate-700 bg-slate-800 px-2 py-1 text-[11px] text-slate-200 hover:bg-slate-700 cursor-pointer">
+              + Top-Up Token
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div>
+            <label class="mb-1 block text-xs font-semibold text-slate-300">Pilih Model (ByKitsune & BB Token)</label>
+            <select id="aiModelSelect" onchange="updateModelCostPreview()" class="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+              <!-- BYKITSUNE -->
+              <option value="bykitsune|minimax-m3.1-flash|5" data-provider="ByKitsune" data-model="MiniMax M3.1 Flash" data-cost="5" selected>
+                [ByKitsune] MiniMax M3.1 Flash — 5 Token AI / run (Hemat & Cepat)
+              </option>
+              <option value="bykitsune|deepseek-v4-flash|4" data-provider="ByKitsune" data-model="DeepSeek V4 Flash" data-cost="4">
+                [ByKitsune] DeepSeek V4 Flash — 4 Token AI / run (Margin Optimal)
+              </option>
+              <option value="bykitsune|minimax-m3|8" data-provider="ByKitsune" data-model="MiniMax M3" data-cost="8">
+                [ByKitsune] MiniMax M3 — 8 Token AI / run
+              </option>
+              <option value="bykitsune|gpt-4o-mini|6" data-provider="ByKitsune" data-model="GPT-4o Mini" data-cost="6">
+                [ByKitsune] GPT-4o Mini — 6 Token AI / run
+              </option>
+              <!-- BB TOKEN -->
+              <option value="bbtoken|minimax-m3.1-flash|5" data-provider="BB Token" data-model="MiniMax M3.1 Flash" data-cost="5">
+                [BB Token] MiniMax M3.1 Flash — 5 Token AI / run
+              </option>
+              <option value="bbtoken|gemini-2.5-flash|5" data-provider="BB Token" data-model="Gemini 2.5 Flash" data-cost="5">
+                [BB Token] Gemini 2.5 Flash — 5 Token AI / run
+              </option>
+              <option value="bbtoken|claude-3-5-sonnet|12" data-provider="BB Token" data-model="Claude 3.5 Sonnet" data-cost="12">
+                [BB Token] Claude 3.5 Sonnet — 12 Token AI / run (Detail Tinggi)
+              </option>
+            </select>
+          </div>
+
+          <div class="flex flex-col justify-center rounded-xl border border-slate-800 bg-slate-900/80 px-3.5 py-2 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="text-slate-400">Tarif AI / Eksekusi:</span>
+              <span id="aiCostPreview" class="font-semibold text-amber-300">5 Token AI (ByKitsune)</span>
+            </div>
+            <div class="mt-1 flex items-center justify-between">
+              <span class="text-slate-400">Tarif Auto-Jadwal Posting (Terpisah):</span>
+              <span id="scheduleCostPreview" class="font-semibold text-emerald-300">3 Token Jadwal</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1.5">Nama Brand / Produk *</label>
@@ -125,20 +201,20 @@
 
       <div class="mb-4">
         <label class="block text-xs font-semibold text-slate-300 mb-1.5">Instruksi / Brief Utama *</label>
-        <textarea id="briefInput" rows="3" placeholder="Tulis perintah singkat dari HP, misal: Riset masalah audiens, buatkan konsep iklan/konten lengkap dengan hook 3 detik, naskah, prompt video AI, caption SEO, sampai skrip closing WhatsApp."
+        <textarea id="briefInput" rows="3" placeholder="Tulis perintah singkat, misal: Riset masalah audiens, buatkan character sheet, hook 3 detik, naskah, prompt gerak fisika MotionCraft, caption SEO, sampai skrip closing WhatsApp."
           class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"></textarea>
       </div>
 
       <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
         <div class="flex items-center gap-2 text-xs text-slate-400">
           <i data-lucide="cpu" class="w-4 h-4 text-cyan-400 shrink-0"></i>
-          <span>Alur otomatis: <strong class="text-slate-200">Riset → Strategi → Naskah → Visual AI → Closing → QC</strong></span>
+          <span>Alur otomatis: <strong class="text-slate-200">Riset → Strategi → Naskah → Visual & Character Sheet → MotionCraft → QC</strong></span>
         </div>
 
         <button id="runOfficeBtn" onclick="startVirtualOffice()"
           class="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-sm shadow-lg shadow-indigo-600/25 active:scale-[0.99] transition cursor-pointer">
           <i data-lucide="play" class="w-4 h-4 fill-current"></i>
-          <span>Kerahkan 31 Agen AI</span>
+          <span id="runOfficeBtnText">Kerahkan 34 Agen AI</span>
         </button>
       </div>
 
@@ -159,11 +235,11 @@
     <section>
       <div class="flex items-center justify-between mb-3">
         <div>
-          <h3 class="text-sm sm:text-base font-bold text-white">Denah Operasional (9 Divisi • 31 Agen)</h3>
+          <h3 id="denahHeading" class="text-sm sm:text-base font-bold text-white">Denah Operasional (10 Divisi • 34 Agen)</h3>
           <p class="text-xs text-slate-400">Klik kartu divisi untuk melihat daftar agen, hasil kerja, atau mengulang divisi yang gagal</p>
         </div>
         <span id="activeDivisionCounter" class="text-xs font-mono px-2.5 py-1 rounded-lg bg-slate-800/90 text-slate-300 border border-slate-700/70">
-          0 / 9 Selesai
+          0 / 10 Selesai
         </span>
       </div>
 
@@ -174,9 +250,13 @@
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
         <div>
           <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400">Laporan Eksekutif Siap Pakai</span>
-          <h3 id="outputHeading" class="text-lg font-bold text-white">Hasil Kerja 31 Agen AI</h3>
+          <h3 id="outputHeading" class="text-lg font-bold text-white">Hasil Kerja Agen AI</h3>
         </div>
         <div class="flex flex-wrap items-center gap-2">
+          <button onclick="openPostActionModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition cursor-pointer">
+            <i data-lucide="film" class="w-3.5 h-3.5"></i>
+            <span>Flow AI & Jadwal</span>
+          </button>
           <button onclick="copyAllResults()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 transition cursor-pointer">
             <i data-lucide="copy" class="w-3.5 h-3.5 text-indigo-400"></i>
             <span>Salin Semua</span>
@@ -201,6 +281,81 @@
   <footer class="border-t border-slate-800/60 py-4 px-4 text-center text-xs text-slate-500">
     Kantor AI Workspace • Sistem Multi-Agent Otomatis 24/7
   </footer>
+
+  <!-- MODAL 2 OPSI (LANJUT FLOW AI / SIMPAN) + PENJADWALAN POSTING -->
+  <div id="postActionModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 p-4 backdrop-blur-sm">
+    <div class="w-full max-w-2xl rounded-2xl border border-slate-700 bg-slate-900 p-5 sm:p-6 text-slate-100 shadow-2xl max-h-[90vh] overflow-y-auto custom-scroll space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-wider text-amber-400">Character Sheet • MotionCraft • Auto-Jadwal</span>
+          <h3 class="text-lg font-bold text-white">Kelanjutan Video & Penjadwalan Posting</h3>
+        </div>
+        <button onclick="closePostActionModal()" class="rounded-lg px-2.5 py-1 text-slate-400 hover:bg-slate-800 hover:text-white cursor-pointer">✕</button>
+      </div>
+
+      <div>
+        <label class="mb-1.5 block text-xs font-medium text-slate-400">Paket Character Sheet & MotionCraft Prompt (Siap Copas ke Flow AI)</label>
+        <textarea id="flowCombinedPrompt" rows="6" class="w-full rounded-xl border border-slate-700 bg-slate-950 p-3 text-xs leading-relaxed text-slate-200 focus:border-indigo-500 focus:outline-none"></textarea>
+      </div>
+
+      <div class="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+        <p class="mb-3 text-sm font-semibold text-white">Lanjut generate video ke Google Flow sekarang?</p>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <button type="button" onclick="proceedToGoogleFlow()" class="flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-500 cursor-pointer">
+            <span>Iya, Copas & Buka Google Flow</span>
+          </button>
+          <button type="button" onclick="skipVideoGeneration()" class="flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-700 cursor-pointer">
+            <span>Tidak, Simpan Saja</span>
+          </button>
+        </div>
+        <p id="flowCopyStatus" class="mt-2 hidden text-xs font-medium text-emerald-400">
+          ✓ Paket Character Sheet & MotionCraft tersalin ke clipboard! Tinggal Ctrl + V di Google Flow.
+        </p>
+      </div>
+
+      <div class="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+        <div class="mb-3 flex items-center justify-between">
+          <h4 class="text-sm font-semibold text-amber-400">Penjadwalan Posting (Pakai Token Auto-Jadwal Terpisah)</h4>
+          <span id="modalScheduleCostBadge" class="text-[11px] font-semibold text-emerald-300">Biaya: 3 Token Jadwal</span>
+        </div>
+
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div>
+            <label class="mb-1 block text-xs text-slate-400">Platform</label>
+            <select id="schedulePlatform" class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-white">
+              <option value="tiktok">TikTok</option>
+              <option value="youtube_shorts">YouTube Shorts</option>
+              <option value="facebook_reels">Facebook Reels</option>
+              <option value="instagram_reels">Instagram Reels</option>
+            </select>
+          </div>
+          <div>
+            <label class="mb-1 block text-xs text-slate-400">Tanggal & Jam Tayang</label>
+            <input id="scheduleDateTime" type="datetime-local" class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-white" />
+          </div>
+          <div>
+            <label class="mb-1 block text-xs text-slate-400">Status</label>
+            <select id="scheduleStatus" class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-white">
+              <option value="scheduled">Jadwalkan Otomatis</option>
+              <option value="draft">Simpan Draft</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mt-3">
+          <label class="mb-1 block text-xs text-slate-400">Caption & Hashtag Posting</label>
+          <textarea id="scheduleCaption" rows="2" placeholder="Tulis atau edit caption siap posting..." class="w-full rounded-lg border border-slate-700 bg-slate-900 p-2.5 text-xs text-slate-200"></textarea>
+        </div>
+
+        <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+          <span id="scheduleFeedback" class="text-xs text-slate-400"></span>
+          <button type="button" onclick="submitPostSchedule()" class="rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-emerald-500 cursor-pointer">
+            Simpan & Kirim Jadwal ke n8n
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div id="divisionModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-sm p-4">
     <div class="glass-card rounded-2xl max-w-xl w-full p-5 sm:p-6 border border-slate-700 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto custom-scroll">
@@ -256,12 +411,19 @@
       endpoint: (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.protocol === "file:")
         ? "http://localhost:3001/v1/chat/completions"
         : "/api/chat",
-      model: "deepseek-v4-flash",
+      model: "minimax-m3.1-flash",
       apiKey: "sk-qwen-35d49aad7d69d30bcdbe5d05c9bbf205463ca54b9ddbc0f5",
       webhookUrl: (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.protocol === "file:")
         ? "http://localhost:3001/autopost"
         : "https://ajarkontenn.app.n8n.cloud/webhook/kontenflow-autopost",
       autoSendWebhookOnFinish: false
+    };
+
+    const SCHEDULE_TOKEN_COST = 3;
+
+    const TOKEN_STORAGE_KEYS = {
+      ai: "kantor_ai_token_balance_v1",
+      schedule: "kantor_ai_schedule_token_balance_v1"
     };
 
     const DIVISIONS = [
@@ -288,10 +450,10 @@
         { name: "Persuasive Copywriter", role: "Penulis narasi manfaat & bukti" },
         { name: "CTA Closer", role: "Perumus ajakan bertindak berkonversi" }
       ]},
-      { id: 5, name: "Sutradara Visual & AI", icon: "clapperboard", color: "text-pink-400", agents: [
+      { id: 5, name: "Sutradara Visual & Character Sheet", icon: "clapperboard", color: "text-pink-400", agents: [
+        { name: "Character Sheet Architect", role: "Penyusun spesifikasi karakter konsisten (wajah, outfit, rasio & pencahayaan)" },
         { name: "Scene Director", role: "Pengarah adegan & ekspresi visual" },
         { name: "AI Video Prompter", role: "Penulis prompt Google Flow / Kling AI" },
-        { name: "Shot & B-Roll Planner", role: "Daftar pengambilan gambar & transisi" },
         { name: "Thumbnail Artist", role: "Konsep teks & visual sampul klik tinggi" }
       ]},
       { id: 6, name: "Penawaran & Konversi", icon: "badge-percent", color: "text-emerald-400", agents: [
@@ -314,25 +476,102 @@
         { name: "Natural Tone Checker", role: "Penyelaras bahasa agar luwes & manusiawi" },
         { name: "Executive Compiler", role: "Penyusun ringkasan siap eksekusi" }
       ]},
-    {
-    id: 10,
-    name: "MotionCraft Physics Lab",
-    icon: "sparkles",
-    color: "text-amber-400",
-    agents: [
-      { name: "MotionCraft Physics Director", role: "Merancang arahan gerakan berbasis fisika (physics-based motion), gravitasi, momentum, pantulan, dan aliran ala MotionCraft" },
-      { name: "Zero-Shot Motion Prompt Engineer", role: "Menyusun prompt gerak zero-shot siap pakai untuk video AI & referensi MotionCraft" },
-      { name: "Camera & Transition Calibrator", role: "Menentukan durasi adegan, pergerakan kamera, dan batas konsistensi gerak" }
-    ]
-  }
-];
+      {
+        id: 10,
+        name: "MotionCraft Physics Lab",
+        icon: "sparkles",
+        color: "text-amber-400",
+        agents: [
+          { name: "MotionCraft Physics Director", role: "Merancang arahan gerakan berbasis fisika (physics-based motion), gravitasi, momentum, pantulan, dan aliran ala MotionCraft" },
+          { name: "Zero-Shot Motion Prompt Engineer", role: "Menyusun prompt gerak zero-shot siap pakai untuk video AI & referensi MotionCraft" },
+          { name: "Camera & Transition Calibrator", role: "Menentukan durasi adegan, pergerakan kamera, dan batas konsistensi gerak" }
+        ]
+      }
+    ];
 
     let divisionStates = {};
     let divisionOutputs = {};
     let selectedOutputTab = "all";
     let isRunning = false;
 
+    const totalAgentsCount = DIVISIONS.reduce((acc, d) => acc + d.agents.length, 0);
     document.getElementById("brandTitleDisplay").textContent = SERVER_CONFIG.brandName;
+    document.getElementById("headerStatsBadge").textContent = `${totalAgentsCount} Agen • ${DIVISIONS.length} Divisi`;
+    document.getElementById("runOfficeBtnText").textContent = `Kerahkan ${totalAgentsCount} Agen AI`;
+    document.getElementById("denahHeading").textContent = `Denah Operasional (${DIVISIONS.length} Divisi • ${totalAgentsCount} Agen)`;
+
+    function getTokenBalances() {
+      const rawAi = localStorage.getItem(TOKEN_STORAGE_KEYS.ai);
+      const rawSched = localStorage.getItem(TOKEN_STORAGE_KEYS.schedule);
+      const ai = Number(rawAi);
+      const schedule = Number(rawSched);
+      return {
+        ai: Number.isFinite(ai) && rawAi !== null ? ai : 100,
+        schedule: Number.isFinite(schedule) && rawSched !== null ? schedule : 50
+      };
+    }
+
+    function saveTokenBalances(aiVal, scheduleVal) {
+      localStorage.setItem(TOKEN_STORAGE_KEYS.ai, String(Math.max(0, aiVal)));
+      localStorage.setItem(TOKEN_STORAGE_KEYS.schedule, String(Math.max(0, scheduleVal)));
+      renderTokenWalletUI();
+    }
+
+    function getSelectedModelConfig() {
+      const select = document.getElementById("aiModelSelect");
+      const opt = select?.selectedOptions?.[0];
+      const parts = (select?.value || "bykitsune|minimax-m3.1-flash|5").split("|");
+      return {
+        providerKey: opt?.dataset?.provider || parts[0] || "ByKitsune",
+        modelId: parts[1] || "minimax-m3.1-flash",
+        modelLabel: opt?.dataset?.model || parts[1] || "MiniMax M3.1 Flash",
+        aiTokenCost: Number(opt?.dataset?.cost || parts[2] || 5)
+      };
+    }
+
+    function updateModelCostPreview() {
+      const cfg = getSelectedModelConfig();
+      SERVER_CONFIG.model = cfg.modelId;
+      const costEl = document.getElementById("aiCostPreview");
+      if (costEl) {
+        costEl.textContent = `${cfg.aiTokenCost} Token AI (${cfg.providerKey})`;
+      }
+    }
+
+    function renderTokenWalletUI() {
+      const { ai, schedule } = getTokenBalances();
+      const aiEl = document.getElementById("aiTokenDisplay");
+      const schedEl = document.getElementById("scheduleTokenDisplay");
+      const headAi = document.getElementById("headerAiTokens");
+      const headSched = document.getElementById("headerScheduleTokens");
+      const schedCostEl = document.getElementById("scheduleCostPreview");
+      const modalCostEl = document.getElementById("modalScheduleCostBadge");
+
+      if (aiEl) aiEl.textContent = ai;
+      if (schedEl) schedEl.textContent = schedule;
+      if (headAi) headAi.textContent = ai;
+      if (headSched) headSched.textContent = schedule;
+      if (schedCostEl) schedCostEl.textContent = `${SCHEDULE_TOKEN_COST} Token Jadwal`;
+      if (modalCostEl) modalCostEl.textContent = `Biaya: ${SCHEDULE_TOKEN_COST} Token Jadwal`;
+      updateModelCostPreview();
+    }
+
+    function topUpDemoTokens(addAi = 100, addSchedule = 50) {
+      const current = getTokenBalances();
+      saveTokenBalances(current.ai + addAi, current.schedule + addSchedule);
+      showToast(`+${addAi} Token AI & +${addSchedule} Token Auto-Jadwal ditambahkan!`);
+    }
+
+    function consumeAiTokensForRun() {
+      const cfg = getSelectedModelConfig();
+      const current = getTokenBalances();
+      if (current.ai < cfg.aiTokenCost) {
+        showToast(`Token AI kurang (sisa ${current.ai}, butuh ${cfg.aiTokenCost}). Klik + Top-Up Token!`);
+        return false;
+      }
+      saveTokenBalances(current.ai - cfg.aiTokenCost, current.schedule);
+      return true;
+    }
 
     function renderDivisions() {
       const grid = document.getElementById("divisionsGrid");
@@ -366,7 +605,7 @@
                   <i data-lucide="${div.icon}" class="w-4 h-4 ${div.color}"></i>
                 </div>
                 <div>
-                  <span class="text-[10px] font-mono text-slate-500 uppercase">Divisi 0${div.id}</span>
+                  <span class="text-[10px] font-mono text-slate-500 uppercase">Divisi ${String(div.id).padStart(2, "0")}</span>
                   <h4 class="text-sm font-bold text-white leading-snug">${div.name}</h4>
                 </div>
               </div>
@@ -377,7 +616,7 @@
         `;
       }).join("");
 
-      document.getElementById("activeDivisionCounter").textContent = `${doneCount} / 9 Selesai`;
+      document.getElementById("activeDivisionCounter").textContent = `${doneCount} / ${DIVISIONS.length} Selesai`;
       lucide.createIcons();
     }
 
@@ -389,20 +628,21 @@
       if (type === "affiliate") {
         prod.value = "Sandal Clog Nyaman & Ringan + Charms";
         aud.value = "Mahasiswa & anak muda aktif di TikTok & Shopee Video";
-        brief.value = "Buatkan paket konten affiliate lengkap: riset alasan beli, 3 angle konten viral, naskah video 30 detik dengan hook kuat, prompt visual AI realistis, caption SEO, dan balasan DM untuk yang tanya link.";
+        brief.value = "Buatkan paket konten affiliate lengkap: riset alasan beli, character sheet, 3 angle konten viral, naskah video 30 detik dengan hook kuat, prompt gerak MotionCraft, caption SEO, dan balasan DM.";
       } else if (type === "umkm") {
         prod.value = "Kopi Susu Gula Aren & Paket Jualan";
         aud.value = "Mahasiswa & pekerja muda di TikTok & Instagram";
-        brief.value = "Rancang kampanye promosi 7 hari: analisis masalah pelanggan, susun penawaran promo sulit ditolak, buatkan naskah video promosi, konsep thumbnail, dan skrip follow-up WhatsApp sampai closing.";
+        brief.value = "Rancang kampanye promosi 7 hari: analisis masalah pelanggan, susun penawaran promo, character sheet & visual prompt, prompt gerak fisika MotionCraft, dan skrip follow-up WhatsApp.";
       } else if (type === "drama") {
         prod.value = "Mini Series Konten Edukasi & Storytelling";
         aud.value = "Penonton TikTok, Reels, dan YouTube Shorts";
-        brief.value = "Buatkan konsep cerita pendek yang bikin penasaran: riset topik relate, hook 3 detik pertama, naskah dialog natural, prompt adegan sinematik AI Video, serta judul & hashtag viral.";
+        brief.value = "Buatkan konsep cerita pendek yang bikin penasaran: character sheet konsisten, hook 3 detik pertama, naskah dialog natural, prompt gerak MotionCraft, serta judul & hashtag viral.";
       }
       showToast("Template tugas siap dijalankan!");
     }
 
     async function callLLM(systemPrompt, userPrompt) {
+      const cfg = getSelectedModelConfig();
       const response = await fetch(SERVER_CONFIG.endpoint, {
         method: "POST",
         headers: {
@@ -410,7 +650,8 @@
           "Authorization": `Bearer ${SERVER_CONFIG.apiKey}`
         },
         body: JSON.stringify({
-          model: SERVER_CONFIG.model,
+          model: cfg.modelId || SERVER_CONFIG.model,
+          provider: cfg.providerKey,
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt }
@@ -432,17 +673,19 @@
       const ctx = `Produk: ${product} | Audiens & Platform: ${audience} | Brief: ${brief}`;
       const prev1 = divisionOutputs[1] ? `\nRiset Divisi 1:\n${divisionOutputs[1].slice(0, 600)}` : "";
       const prev4 = divisionOutputs[4] ? `\nNaskah Divisi 4:\n${divisionOutputs[4].slice(0, 600)}` : "";
+      const prev5 = divisionOutputs[5] ? `\nCharacter Sheet & Visual Divisi 5:\n${divisionOutputs[5].slice(0, 600)}` : "";
 
       const tasks = {
         1: `${ctx}\nTugas Divisi Riset (Trend Hunter, Audience Profiler, Competitor Spy, Pain-Point Miner): Sebutkan 3 pain point utama audiens, 3 celah kompetitor, dan 3 tren format konten yang relevan secara ringkas dan tajam.`,
         2: `${ctx}${prev1}\nTugas Divisi Strategi & Funnel (Campaign Strategist, Offer Architect, Funnel Planner): Susun alur kampanye konten dari menarik perhatian sampai closing beserta struktur penawaran utamanya.`,
         3: `${ctx}${prev1}\nTugas Divisi Ideasi (Angle Generator, Contrarian Thinker, Story Miner, Hook Ideator): Berikan 3 sudut pandang (angle) berbeda dan 5 hook 3 detik pertama yang memancing klik.`,
         4: `${ctx}${prev1}\nTugas Divisi Copywriting & Naskah (3-Sec Hook Writer, Short-Form Scriptwriter, Persuasive Copywriter, CTA Closer): Tulis 2 naskah video pendek (30-45 detik) lengkap dengan hook, isi, dan CTA.`,
-        5: `${ctx}${prev4}\nTugas Sutradara Visual & AI (Scene Director, AI Video Prompter, Shot & B-Roll Planner, Thumbnail Artist): Berikan 3 prompt video AI (9:16, subjek, pencahayaan, gerakan kamera), ide B-roll, dan 2 konsep teks thumbnail.`,
+        5: `${ctx}${prev4}\nTugas Sutradara Visual & Character Sheet (Character Sheet Architect, Scene Director, AI Video Prompter, Thumbnail Artist): Susun CHARACTER SHEET terstruktur (identitas/gaya karakter, pakaian/detail fisik, pencahayaan, rasio aspek) + 2 prompt visual/gambar & adegan yang konsisten.`,
         6: `${ctx}\nTugas Penawaran & Konversi (Bonus Framer, Objection Handler, Guarantee Designer): Berikan ide bonus bernilai tinggi, jawaban atas 3 keraguan pembeli, dan kalimat jaminan kepercayaan.`,
         7: `${ctx}${prev4}\nTugas Distribusi & SEO (Social SEO Specialist, Caption Optimizer, Repurpose Strategist): Berikan 2 opsi caption siap posting, kata kunci SEO, dan hashtag relevan.`,
         8: `${ctx}\nTugas CRM & Skrip Closing (WA/DM Closer, Follow-Up Sequencer, Broadcast Writer): Tulis template balasan cepat chat/DM calon pembeli dan 1 pesan follow-up ramah.`,
-        9: `${ctx}\nTugas Quality Control (Anti-Boring Editor, Natural Tone Checker, Executive Compiler): Berikan 5 langkah eksekusi prioritas hari ini agar hasil seluruh divisi langsung bisa dijalankan.`
+        9: `${ctx}\nTugas Quality Control (Anti-Boring Editor, Natural Tone Checker, Executive Compiler): Berikan 5 langkah eksekusi prioritas hari ini agar hasil seluruh divisi langsung bisa dijalankan.`,
+        10: `${ctx}${prev5}\nTugas MotionCraft Physics Lab (MotionCraft Physics Director, Zero-Shot Motion Prompt Engineer, Camera & Transition Calibrator): Berikan (1) Arahan Gerak Berbasis Fisika (gravitasi, momentum, pantulan, aliran), (2) Zero-Shot Motion Prompt siap pakai untuk Google Flow / AI Video, dan (3) Durasi adegan, pergerakan kamera, serta batas konsistensi gerak.`
       };
       return tasks[divId];
     }
@@ -478,6 +721,11 @@
         return;
       }
 
+      if (!consumeAiTokensForRun()) {
+        return;
+      }
+
+      const cfg = getSelectedModelConfig();
       isRunning = true;
       divisionOutputs = {};
       DIVISIONS.forEach(d => divisionStates[d.id] = "idle");
@@ -503,14 +751,15 @@
         for (let i = 0; i < DIVISIONS.length; i++) {
           const div = DIVISIONS[i];
           const pct = Math.round(((i + 0.5) / DIVISIONS.length) * 100);
-          updateProgress(pct, `Divisi 0${div.id} (${div.name}) sedang bekerja...`);
+          updateProgress(pct, `Divisi ${String(div.id).padStart(2, "0")} (${div.name}) via ${cfg.modelLabel}...`);
           await runSingleDivision(div.id, product, audience, brief);
         }
 
-        updateProgress(100, "Seluruh 31 Agen di 9 Divisi selesai bekerja!");
+        updateProgress(100, `Seluruh ${totalAgentsCount} Agen di ${DIVISIONS.length} Divisi selesai bekerja!`);
         saveToHistory(product, audience, brief, divisionOutputs);
         renderOutputWorkspace(product);
-        showToast("Tugas selesai dikerjakan 31 Agen AI!");
+        showToast(`Selesai! Terpakai ${cfg.aiTokenCost} Token AI (${cfg.providerKey}).`);
+        openPostActionModal();
 
         if (SERVER_CONFIG.autoSendWebhookOnFinish && SERVER_CONFIG.webhookUrl) {
           sendToN8nWebhook(true);
@@ -525,16 +774,159 @@
       }
     }
 
+    function buildCharacterAndMotionPackage() {
+      const brand = document.getElementById("productInput")?.value?.trim() || "Brand";
+      const audience = document.getElementById("audienceInput")?.value?.trim() || "";
+      const brief = document.getElementById("briefInput")?.value?.trim() || "";
+      const visualOutput = divisionOutputs[5] || "";
+      const motionOutput = divisionOutputs[10] || "";
+
+      return [
+        `[CHARACTER SHEET & VISUAL SPEC - ${brand.toUpperCase()}]`,
+        audience ? `Audience & Platform: ${audience}` : "",
+        brief ? `Core Brief: ${brief}` : "",
+        visualOutput ? `\n--- CHARACTER SHEET & SCENE ---\n${visualOutput}` : "",
+        motionOutput ? `\n--- MOTIONCRAFT PHYSICS & ZERO-SHOT PROMPT ---\n${motionOutput}` : ""
+      ]
+        .filter(Boolean)
+        .join("\n")
+        .trim();
+    }
+
+    function openPostActionModal() {
+      const packaged = buildCharacterAndMotionPackage();
+      const promptBox = document.getElementById("flowCombinedPrompt");
+      const captionBox = document.getElementById("scheduleCaption");
+      const statusEl = document.getElementById("flowCopyStatus");
+
+      if (promptBox && (packaged || !promptBox.value)) {
+        promptBox.value = packaged || "Jalankan tugas terlebih dahulu atau tempel Character Sheet & MotionCraft prompt di sini.";
+      }
+      if (captionBox && !captionBox.value && divisionOutputs[7]) {
+        captionBox.value = divisionOutputs[7].slice(0, 350);
+      }
+      if (statusEl) statusEl.classList.add("hidden");
+
+      const dtInput = document.getElementById("scheduleDateTime");
+      if (dtInput && !dtInput.value) {
+        const nextHour = new Date(Date.now() + 60 * 60 * 1000);
+        nextHour.setMinutes(nextHour.getMinutes() - nextHour.getTimezoneOffset());
+        dtInput.value = nextHour.toISOString().slice(0, 16);
+      }
+
+      renderTokenWalletUI();
+      const modal = document.getElementById("postActionModal");
+      if (modal) {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+      }
+    }
+
+    function closePostActionModal() {
+      const modal = document.getElementById("postActionModal");
+      if (modal) {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }
+    }
+
+    async function proceedToGoogleFlow() {
+      const text = document.getElementById("flowCombinedPrompt")?.value || "";
+      const statusEl = document.getElementById("flowCopyStatus");
+      copyTextFallback(text);
+      if (statusEl) statusEl.classList.remove("hidden");
+      showToast("Tersalin ke clipboard! Membuka Google Flow...");
+      window.open("https://labs.google/fx/tools/flow", "_blank", "noopener,noreferrer");
+    }
+
+    function skipVideoGeneration() {
+      const feedback = document.getElementById("scheduleFeedback");
+      if (feedback) {
+        feedback.className = "text-xs text-slate-300";
+        feedback.textContent = "Opsi lanjut video dilewati. Hasil tersimpan di workspace.";
+      }
+      showToast("Disimpan tanpa membuka Google Flow.");
+    }
+
+    async function submitPostSchedule() {
+      const feedback = document.getElementById("scheduleFeedback");
+      const cfg = getSelectedModelConfig();
+      const balances = getTokenBalances();
+      const scheduledAt = document.getElementById("scheduleDateTime")?.value || "";
+
+      if (!scheduledAt) {
+        if (feedback) {
+          feedback.className = "text-xs font-medium text-amber-300";
+          feedback.textContent = "Pilih tanggal & jam tayang dulu.";
+        }
+        return;
+      }
+
+      if (balances.schedule < SCHEDULE_TOKEN_COST) {
+        if (feedback) {
+          feedback.className = "text-xs font-medium text-rose-400";
+          feedback.textContent = `Token Auto-Jadwal kurang (sisa ${balances.schedule}, butuh ${SCHEDULE_TOKEN_COST} Token Jadwal).`;
+        }
+        return;
+      }
+
+      const payload = {
+        action: "schedule_post",
+        provider: cfg.providerKey,
+        model: cfg.modelId,
+        token_billing: {
+          ai_token_cost: cfg.aiTokenCost,
+          schedule_token_cost: SCHEDULE_TOKEN_COST,
+          remaining_ai_tokens: balances.ai,
+          remaining_schedule_tokens: balances.schedule - SCHEDULE_TOKEN_COST
+        },
+        brand: SERVER_CONFIG.brandName,
+        product: document.getElementById("productInput")?.value?.trim() || "Brand",
+        platform: document.getElementById("schedulePlatform")?.value || "tiktok",
+        scheduled_at: scheduledAt,
+        status: document.getElementById("scheduleStatus")?.value || "scheduled",
+        caption: document.getElementById("scheduleCaption")?.value?.trim() || "",
+        character_and_motion_prompt: document.getElementById("flowCombinedPrompt")?.value?.trim() || "",
+        created_at: new Date().toISOString()
+      };
+
+      if (feedback) {
+        feedback.className = "text-xs text-slate-300";
+        feedback.textContent = "Mengirim jadwal ke server n8n...";
+      }
+
+      try {
+        const res = await fetch(SERVER_CONFIG.webhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        saveTokenBalances(balances.ai, balances.schedule - SCHEDULE_TOKEN_COST);
+        if (feedback) {
+          feedback.className = "text-xs font-medium text-emerald-400";
+          feedback.textContent = `✓ Terjadwal (${payload.platform.toUpperCase()}) • Terpotong ${SCHEDULE_TOKEN_COST} Token Jadwal.`;
+        }
+        showToast(`Jadwal terkirim! (-${SCHEDULE_TOKEN_COST} Token Jadwal)`);
+      } catch (err) {
+        if (feedback) {
+          feedback.className = "text-xs font-medium text-rose-400";
+          feedback.textContent = `Gagal kirim ke n8n (${err.message}). Saldo Token Jadwal aman tidak terpotong.`;
+        }
+      }
+    }
+
     function renderOutputWorkspace(productTitle) {
       const section = document.getElementById("outputSection");
       section.classList.remove("hidden");
       document.getElementById("outputHeading").textContent = `Paket Eksekusi: ${productTitle}`;
 
       const tabsEl = document.getElementById("outputTabs");
-      const allTab = `<button onclick="selectOutputTab('all')" class="px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition cursor-pointer ${selectedOutputTab === 'all' ? 'bg-indigo-600 text-white' : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700'}">Semua Divisi (9)</button>`;
+      const allTab = `<button onclick="selectOutputTab('all')" class="px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition cursor-pointer ${selectedOutputTab === 'all' ? 'bg-indigo-600 text-white' : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700'}">Semua Divisi (${DIVISIONS.length})</button>`;
       const divTabs = DIVISIONS.map(d => `
         <button onclick="selectOutputTab(${d.id})" class="px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition cursor-pointer ${selectedOutputTab === d.id ? 'bg-indigo-600 text-white' : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700'}">
-          0${d.id}. ${d.name}
+          ${String(d.id).padStart(2, "0")}. ${d.name}
         </button>
       `).join("");
       tabsEl.innerHTML = allTab + divTabs;
@@ -551,7 +943,7 @@
             <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-800/90">
               <div class="flex items-center gap-2">
                 <i data-lucide="${d.icon}" class="w-4 h-4 ${d.color}"></i>
-                <h4 class="font-bold text-sm text-white">Divisi 0${d.id}: ${d.name}</h4>
+                <h4 class="font-bold text-sm text-white">Divisi ${String(d.id).padStart(2, "0")}: ${d.name}</h4>
                 <span class="text-[11px] text-slate-500">(${d.agents.length} Agen)</span>
               </div>
               <button onclick="copyDivisionText(${d.id})" class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold text-indigo-300 transition cursor-pointer">
@@ -575,10 +967,10 @@
 
     function compileFullReportText() {
       const title = document.getElementById("outputHeading").textContent;
-      let full = `# ${title}\nDihasilkan oleh ${SERVER_CONFIG.brandName} (31 Agen AI • 9 Divisi)\n\n`;
+      let full = `# ${title}\nDihasilkan oleh ${SERVER_CONFIG.brandName} (${totalAgentsCount} Agen AI • ${DIVISIONS.length} Divisi)\n\n`;
       DIVISIONS.forEach(d => {
         full += `========================================\n`;
-        full += `DIVISI 0${d.id}: ${d.name.toUpperCase()} (${d.agents.length} Agen)\n`;
+        full += `DIVISI ${String(d.id).padStart(2, "0")}: ${d.name.toUpperCase()} (${d.agents.length} Agen)\n`;
         full += `========================================\n`;
         full += `${divisionOutputs[d.id] || "-"}\n\n`;
       });
@@ -587,7 +979,7 @@
 
     function copyTextFallback(text) {
       if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text);
+        navigator.clipboard.writeText(text).catch(() => {});
       } else {
         const ta = document.createElement("textarea");
         ta.value = text;
@@ -602,12 +994,12 @@
 
     function copyDivisionText(divId) {
       copyTextFallback(divisionOutputs[divId] || "");
-      showToast(`Hasil Divisi 0${divId} disalin!`);
+      showToast(`Hasil Divisi ${String(divId).padStart(2, "0")} disalin!`);
     }
 
     function copyAllResults() {
       copyTextFallback(compileFullReportText());
-      showToast("Seluruh laporan 9 divisi disalin!");
+      showToast(`Seluruh laporan ${DIVISIONS.length} divisi disalin!`);
     }
 
     function downloadMarkdown() {
@@ -624,6 +1016,7 @@
 
     async function sendToN8nWebhook(silent = false) {
       if (!SERVER_CONFIG.webhookUrl) return;
+      const cfg = getSelectedModelConfig();
       try {
         if (!silent) showToast("Mengirim laporan ke server...");
         const res = await fetch(SERVER_CONFIG.webhookUrl, {
@@ -631,9 +1024,12 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             brand: SERVER_CONFIG.brandName,
+            provider: cfg.providerKey,
+            model: cfg.modelId,
             product: document.getElementById("productInput").value,
             audience: document.getElementById("audienceInput").value,
             brief: document.getElementById("briefInput").value,
+            character_and_motion_prompt: buildCharacterAndMotionPackage(),
             report_markdown: compileFullReportText(),
             divisions: divisionOutputs,
             timestamp: new Date().toISOString()
@@ -708,7 +1104,7 @@
       const div = DIVISIONS.find(d => d.id === divId);
       if (!div) return;
 
-      document.getElementById("divModalBadge").textContent = `Divisi 0${div.id} • ${div.agents.length} Agen Aktif`;
+      document.getElementById("divModalBadge").textContent = `Divisi ${String(div.id).padStart(2, "0")} • ${div.agents.length} Agen Aktif`;
       document.getElementById("divModalTitle").textContent = div.name;
       document.getElementById("divModalAgents").innerHTML = div.agents.map(a => `
         <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800">
@@ -734,9 +1130,9 @@
         try {
           await runSingleDivision(div.id, product, audience, brief);
           renderOutputWorkspace(product);
-          showToast(`Divisi 0${div.id} selesai!`);
+          showToast(`Divisi ${String(div.id).padStart(2, "0")} selesai!`);
         } catch (e) {
-          showToast(`Gagal ulang Divisi 0${div.id}: ${e.message}`);
+          showToast(`Gagal ulang Divisi ${String(div.id).padStart(2, "0")}: ${e.message}`);
         }
       };
 
@@ -771,6 +1167,7 @@
         .replace(/>/g, "&gt;");
     }
 
+    renderTokenWalletUI();
     renderDivisions();
     lucide.createIcons();
   </script>
