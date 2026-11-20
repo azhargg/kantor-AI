@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Kantor AI — Virtual AI Office & MotionCraft</title>
+  <title>Sagitarius — AI Workspace & Automation Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -15,6 +15,17 @@
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'sans-serif'],
             mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            obsidian: '#07090e',
+            panel: '#0d111a',
+            panel2: '#131926',
+            gold: {
+              300: '#fde68a',
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+            }
           }
         }
       }
@@ -22,307 +33,382 @@
   </script>
   <style>
     body {
-      background-color: #090d16;
-      color: #f1f5f9;
+      background-color: #07090e;
+      color: #f8fafc;
       -webkit-tap-highlight-color: transparent;
     }
-    .glass-card {
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(148, 163, 184, 0.12);
+    .dash-card {
+      background: #0d111a;
+      border: 1px solid rgba(251, 191, 36, 0.14);
     }
-    .glass-card-active {
-      background: rgba(30, 41, 59, 0.88);
-      border: 1px solid rgba(99, 102, 241, 0.5);
-      box-shadow: 0 0 24px rgba(99, 102, 241, 0.15);
+    .dash-card-active {
+      background: #131926;
+      border: 1px solid rgba(251, 191, 36, 0.55);
+      box-shadow: 0 0 24px rgba(245, 158, 11, 0.12);
+    }
+    .nav-item-active {
+      background: rgba(245, 158, 11, 0.12);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.35);
     }
     .custom-scroll::-webkit-scrollbar {
       width: 6px;
       height: 6px;
     }
     .custom-scroll::-webkit-scrollbar-track {
-      background: rgba(15, 23, 42, 0.4);
+      background: #07090e;
     }
     .custom-scroll::-webkit-scrollbar-thumb {
-      background: rgba(100, 116, 139, 0.4);
+      background: rgba(251, 191, 36, 0.25);
       border-radius: 999px;
     }
-    @keyframes pulseBorder {
-      0%, 100% { border-color: rgba(99, 102, 241, 0.35); }
-      50% { border-color: rgba(56, 189, 248, 0.9); }
+    @keyframes goldPulse {
+      0%, 100% { border-color: rgba(245, 158, 11, 0.35); }
+      50% { border-color: rgba(253, 230, 138, 0.9); }
     }
     .working-card {
-      animation: pulseBorder 1.5s infinite ease-in-out;
+      animation: goldPulse 1.4s infinite ease-in-out;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+<body class="min-h-screen flex flex-col selection:bg-amber-500 selection:text-black">
 
-  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-[#090d16]/90 backdrop-blur-md">
-    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
+  <!-- TOP NAVBAR -->
+  <header class="sticky top-0 z-40 h-16 border-b border-amber-500/15 bg-[#07090e]/95 backdrop-blur-md">
+    <div class="h-full px-4 lg:px-6 flex items-center justify-between gap-3">
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-          <i data-lucide="building-2" class="w-5 h-5 text-white"></i>
+        <button onclick="toggleSidebarMobile()" class="lg:hidden p-2 rounded-xl bg-panel2 border border-amber-500/20 text-amber-300 cursor-pointer">
+          <i data-lucide="menu" class="w-4 h-4"></i>
+        </button>
+
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 via-amber-500 to-yellow-700 flex items-center justify-center shadow-lg shadow-amber-500/20 text-black font-extrabold">
+          <i data-lucide="crosshair" class="w-5 h-5"></i>
         </div>
+
         <div>
           <div class="flex items-center gap-2">
-            <h1 id="brandTitleDisplay" class="font-bold text-base sm:text-lg tracking-tight text-white">Kantor AI</h1>
-            <span id="headerStatsBadge" class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
-              34 Agen • 10 Divisi
+            <span id="brandTitleDisplay" class="font-extrabold text-base tracking-wide text-amber-400">SAGITARIUS</span>
+            <span id="headerStatsBadge" class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-mono font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/25">
+              10 Divisi • 34 Agen
             </span>
           </div>
-          <p class="text-[11px] text-slate-400">Virtual AI Workforce • Siap Pakai 24/7</p>
+          <p class="text-[11px] text-slate-400 hidden sm:block">AI Command &amp; Workflow Console</p>
         </div>
       </div>
 
       <div class="flex items-center gap-2">
-        <div class="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/25">
+        <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono bg-panel2 border border-amber-500/25 text-amber-300">
           <span>AI:</span>
           <strong id="headerAiTokens">100</strong>
         </div>
-        <div class="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/25">
+        <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono bg-panel2 border border-emerald-500/25 text-emerald-300">
           <span>Jadwal:</span>
           <strong id="headerScheduleTokens">50</strong>
         </div>
 
-        <button onclick="openPostActionModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-200 text-xs font-semibold border border-indigo-500/40 transition cursor-pointer" title="Panel Model, Token, Flow AI & Jadwal">
-          <i data-lucide="sliders" class="w-3.5 h-3.5 text-indigo-300"></i>
-          <span class="hidden sm:inline">Model & Jadwal</span>
-        </button>
-
-        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span class="hidden sm:inline">Server Online</span>
+          <span class="hidden md:inline">Online</span>
         </div>
 
-        <button onclick="toggleHistoryModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800/85 hover:bg-slate-800 text-slate-200 text-xs font-semibold border border-slate-700/70 transition cursor-pointer" title="Riwayat Tugas">
-          <i data-lucide="history" class="w-4 h-4 text-indigo-400"></i>
-          <span>Riwayat</span>
+        <button onclick="openPostActionModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold transition cursor-pointer">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span>Flow &amp; Jadwal</span>
         </button>
       </div>
     </div>
   </header>
 
-  <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-6 space-y-6">
+  <!-- MAIN SHELL (LEFT SIDEBAR + CONTENT) -->
+  <div class="flex-1 flex min-h-0 relative">
 
-    <section class="glass-card rounded-2xl p-4 sm:p-6 shadow-2xl">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+    <!-- MOBILE BACKDROP -->
+    <div id="sidebarBackdrop" onclick="toggleSidebarMobile(false)" class="fixed inset-0 z-30 bg-black/70 hidden lg:hidden"></div>
+
+    <!-- LEFT SIDEBAR -->
+    <aside id="leftSidebar" class="fixed lg:static inset-y-0 left-0 top-16 z-30 w-64 shrink-0 border-r border-amber-500/15 bg-[#0a0e17] -translate-x-full lg:translate-x-0 transition-transform duration-200 flex flex-col justify-between p-4 custom-scroll overflow-y-auto">
+      <div class="space-y-5">
         <div>
-          <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-400">Command Center</span>
-          <h2 class="text-lg sm:text-xl font-bold text-white">Kasih Tugas ke Seluruh Kantor</h2>
+          <p class="px-2.5 mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-500">Workspace</p>
+          <nav class="space-y-1">
+            <button id="nav-workspace" onclick="switchSection('workspace')" class="nav-btn nav-item-active w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition cursor-pointer">
+              <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+              <span>Command Center</span>
+            </button>
+            <button id="nav-divisions" onclick="switchSection('divisions')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 border border-transparent transition cursor-pointer">
+              <i data-lucide="users" class="w-4 h-4"></i>
+              <span>Denah Divisi &amp; Agen</span>
+            </button>
+            <button id="nav-billing" onclick="switchSection('billing')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 border border-transparent transition cursor-pointer">
+              <i data-lucide="coins" class="w-4 h-4"></i>
+              <span>Model &amp; Wallet Token</span>
+            </button>
+            <button id="nav-output" onclick="switchSection('output')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 border border-transparent transition cursor-pointer">
+              <i data-lucide="file-check-2" class="w-4 h-4"></i>
+              <span>Hasil Laporan</span>
+            </button>
+          </nav>
         </div>
-        <div class="flex flex-wrap gap-1.5">
-          <button type="button" onclick="applyPreset('affiliate')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-indigo-600/30 hover:text-indigo-200 text-slate-300 border border-slate-700 transition cursor-pointer">
-            + Konten Affiliate
-          </button>
-          <button type="button" onclick="applyPreset('umkm')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-indigo-600/30 hover:text-indigo-200 text-slate-300 border border-slate-700 transition cursor-pointer">
-            + Promo Bisnis
-          </button>
-          <button type="button" onclick="applyPreset('drama')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-indigo-600/30 hover:text-indigo-200 text-slate-300 border border-slate-700 transition cursor-pointer">
-            + Short Video Viral
-          </button>
+
+        <div>
+          <p class="px-2.5 mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-500">Tools &amp; Log</p>
+          <nav class="space-y-1">
+            <button onclick="openPostActionModal(); toggleSidebarMobile(false);" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 transition cursor-pointer">
+              <i data-lucide="film" class="w-4 h-4 text-amber-400"></i>
+              <span>Copas Flow AI &amp; Jadwal</span>
+            </button>
+            <button onclick="toggleHistoryModal(); toggleSidebarMobile(false);" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 transition cursor-pointer">
+              <i data-lucide="history" class="w-4 h-4 text-amber-400"></i>
+              <span>Riwayat Tugas</span>
+            </button>
+          </nav>
         </div>
       </div>
 
-      <!-- PILIHAN MODEL (BYKITSUNE & BB TOKEN) + SALDO TOKEN TERPISAH -->
-      <div class="mb-4 rounded-xl border border-indigo-500/30 bg-slate-950/75 p-3.5 sm:p-4">
-        <div class="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
-          <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">
-            Provider Model & Wallet Token Terpisah
-          </span>
-          <div class="flex flex-wrap items-center gap-2 text-xs">
-            <span class="rounded-lg border border-amber-500/40 bg-amber-500/10 px-2.5 py-1 font-semibold text-amber-300">
-              Token AI: <strong id="aiTokenDisplay">100</strong>
-            </span>
-            <span class="rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 font-semibold text-emerald-300">
-              Token Auto-Jadwal: <strong id="scheduleTokenDisplay">50</strong>
-            </span>
-            <button type="button" onclick="topUpDemoTokens()" class="rounded-lg border border-slate-700 bg-slate-800 px-2 py-1 text-[11px] text-slate-200 hover:bg-slate-700 cursor-pointer">
-              + Top-Up Token
+      <!-- SIDEBAR TOKEN SUMMARY -->
+      <div class="mt-6 rounded-xl bg-panel2 border border-amber-500/20 p-3.5 space-y-2.5">
+        <div class="flex items-center justify-between text-[11px]">
+          <span class="text-slate-400">Provider Aktif</span>
+          <span id="sidebarProviderBadge" class="font-mono font-bold text-amber-400">ByKitsune</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-300">Token AI</span>
+          <span id="sidebarAiTokens" class="font-mono font-bold text-amber-300">100</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-300">Token Auto-Jadwal</span>
+          <span id="sidebarScheduleTokens" class="font-mono font-bold text-emerald-300">50</span>
+        </div>
+        <button type="button" onclick="topUpDemoTokens()" class="w-full py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 text-[11px] font-bold text-amber-300 transition cursor-pointer">
+          + Top-Up Saldo Token
+        </button>
+      </div>
+    </aside>
+
+    <!-- CONTENT AREA -->
+    <main class="flex-1 min-w-0 p-4 lg:p-6 space-y-6 max-w-6xl mx-auto w-full">
+
+      <!-- SECTION 1: COMMAND CENTER + MODEL & TOKEN -->
+      <section id="sec-command" class="dash-card rounded-2xl p-4 sm:p-6 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-500/15 pb-4">
+          <div>
+            <span class="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-400">Sagitarius Command</span>
+            <h2 class="text-lg sm:text-xl font-bold text-white">Kasih Tugas ke Seluruh Kantor</h2>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" onclick="applyPreset('affiliate')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-panel2 hover:bg-amber-500/20 hover:text-amber-200 text-slate-300 border border-amber-500/20 transition cursor-pointer">
+              + Konten Affiliate
+            </button>
+            <button type="button" onclick="applyPreset('umkm')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-panel2 hover:bg-amber-500/20 hover:text-amber-200 text-slate-300 border border-amber-500/20 transition cursor-pointer">
+              + Promo Bisnis
+            </button>
+            <button type="button" onclick="applyPreset('drama')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-panel2 hover:bg-amber-500/20 hover:text-amber-200 text-slate-300 border border-amber-500/20 transition cursor-pointer">
+              + Short Video Viral
             </button>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <!-- MODEL & WALLET TOKEN PANEL -->
+        <div id="sec-billing" class="rounded-xl border border-amber-500/25 bg-[#090d15] p-4 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
+            <span class="text-xs font-mono font-bold uppercase tracking-wider text-amber-400">
+              Provider Model &amp; Dompet Token Terpisah
+            </span>
+            <div class="flex flex-wrap items-center gap-2 text-xs font-mono">
+              <span class="rounded-lg border border-amber-500/35 bg-amber-500/10 px-2.5 py-1 text-amber-300">
+                Token AI: <strong id="aiTokenDisplay">100</strong>
+              </span>
+              <span class="rounded-lg border border-emerald-500/35 bg-emerald-500/10 px-2.5 py-1 text-emerald-300">
+                Token Jadwal: <strong id="scheduleTokenDisplay">50</strong>
+              </span>
+              <button type="button" onclick="topUpDemoTokens()" class="rounded-lg border border-amber-500/30 bg-panel2 px-2.5 py-1 text-[11px] font-sans font-semibold text-amber-200 hover:bg-amber-500/20 cursor-pointer">
+                + Top-Up
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <label class="mb-1 block text-xs font-semibold text-slate-300">Pilih Model (ByKitsune &amp; BB Token)</label>
+              <select id="aiModelSelect" onchange="updateModelCostPreview()" class="w-full rounded-xl border border-slate-700 bg-panel2 px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+                <option value="bykitsune|minimax-m3.1-flash|5" data-provider="ByKitsune" data-model="MiniMax M3.1 Flash" data-cost="5" selected>
+                  [ByKitsune] MiniMax M3.1 Flash — 5 Token AI / run (Hemat)
+                </option>
+                <option value="bykitsune|deepseek-v4-flash|4" data-provider="ByKitsune" data-model="DeepSeek V4 Flash" data-cost="4">
+                  [ByKitsune] DeepSeek V4 Flash — 4 Token AI / run (Margin Optimal)
+                </option>
+                <option value="bykitsune|minimax-m3|8" data-provider="ByKitsune" data-model="MiniMax M3" data-cost="8">
+                  [ByKitsune] MiniMax M3 — 8 Token AI / run
+                </option>
+                <option value="bykitsune|gpt-4o-mini|6" data-provider="ByKitsune" data-model="GPT-4o Mini" data-cost="6">
+                  [ByKitsune] GPT-4o Mini — 6 Token AI / run
+                </option>
+                <option value="bbtoken|minimax-m3.1-flash|5" data-provider="BB Token" data-model="MiniMax M3.1 Flash" data-cost="5">
+                  [BB Token] MiniMax M3.1 Flash — 5 Token AI / run
+                </option>
+                <option value="bbtoken|gemini-2.5-flash|5" data-provider="BB Token" data-model="Gemini 2.5 Flash" data-cost="5">
+                  [BB Token] Gemini 2.5 Flash — 5 Token AI / run
+                </option>
+                <option value="bbtoken|claude-3-5-sonnet|12" data-provider="BB Token" data-model="Claude 3.5 Sonnet" data-cost="12">
+                  [BB Token] Claude 3.5 Sonnet — 12 Token AI / run (Detail Tinggi)
+                </option>
+              </select>
+            </div>
+
+            <div class="flex flex-col justify-center rounded-xl border border-slate-800 bg-panel2/80 px-3.5 py-2 text-xs">
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400">Tarif Eksekusi AI:</span>
+                <span id="aiCostPreview" class="font-mono font-semibold text-amber-300">5 Token AI (ByKitsune)</span>
+              </div>
+              <div class="mt-1 flex items-center justify-between">
+                <span class="text-slate-400">Tarif Auto-Jadwal Posting:</span>
+                <span id="scheduleCostPreview" class="font-mono font-semibold text-emerald-300">3 Token Jadwal</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INPUT FORM -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="mb-1 block text-xs font-semibold text-slate-300">Pilih Model (ByKitsune & BB Token)</label>
-            <select id="aiModelSelect" onchange="updateModelCostPreview()" class="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
-              <!-- BYKITSUNE -->
-              <option value="bykitsune|minimax-m3.1-flash|5" data-provider="ByKitsune" data-model="MiniMax M3.1 Flash" data-cost="5" selected>
-                [ByKitsune] MiniMax M3.1 Flash — 5 Token AI / run (Hemat & Cepat)
-              </option>
-              <option value="bykitsune|deepseek-v4-flash|4" data-provider="ByKitsune" data-model="DeepSeek V4 Flash" data-cost="4">
-                [ByKitsune] DeepSeek V4 Flash — 4 Token AI / run (Margin Optimal)
-              </option>
-              <option value="bykitsune|minimax-m3|8" data-provider="ByKitsune" data-model="MiniMax M3" data-cost="8">
-                [ByKitsune] MiniMax M3 — 8 Token AI / run
-              </option>
-              <option value="bykitsune|gpt-4o-mini|6" data-provider="ByKitsune" data-model="GPT-4o Mini" data-cost="6">
-                [ByKitsune] GPT-4o Mini — 6 Token AI / run
-              </option>
-              <!-- BB TOKEN -->
-              <option value="bbtoken|minimax-m3.1-flash|5" data-provider="BB Token" data-model="MiniMax M3.1 Flash" data-cost="5">
-                [BB Token] MiniMax M3.1 Flash — 5 Token AI / run
-              </option>
-              <option value="bbtoken|gemini-2.5-flash|5" data-provider="BB Token" data-model="Gemini 2.5 Flash" data-cost="5">
-                [BB Token] Gemini 2.5 Flash — 5 Token AI / run
-              </option>
-              <option value="bbtoken|claude-3-5-sonnet|12" data-provider="BB Token" data-model="Claude 3.5 Sonnet" data-cost="12">
-                [BB Token] Claude 3.5 Sonnet — 12 Token AI / run (Detail Tinggi)
-              </option>
-            </select>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Nama Brand / Produk *</label>
+            <input id="productInput" type="text" placeholder="Contoh: Crocs Classic / Kopi Susu Gula Aren"
+              class="w-full px-3.5 py-2.5 rounded-xl bg-panel2 border border-slate-700/80 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition" />
           </div>
-
-          <div class="flex flex-col justify-center rounded-xl border border-slate-800 bg-slate-900/80 px-3.5 py-2 text-xs">
-            <div class="flex items-center justify-between">
-              <span class="text-slate-400">Tarif AI / Eksekusi:</span>
-              <span id="aiCostPreview" class="font-semibold text-amber-300">5 Token AI (ByKitsune)</span>
-            </div>
-            <div class="mt-1 flex items-center justify-between">
-              <span class="text-slate-400">Tarif Auto-Jadwal Posting (Terpisah):</span>
-              <span id="scheduleCostPreview" class="font-semibold text-emerald-300">3 Token Jadwal</span>
-            </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Target Audiens &amp; Platform</label>
+            <input id="audienceInput" type="text" placeholder="Contoh: Mahasiswa di TikTok &amp; Reels"
+              class="w-full px-3.5 py-2.5 rounded-xl bg-panel2 border border-slate-700/80 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition" />
           </div>
         </div>
-      </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Nama Brand / Produk *</label>
-          <input id="productInput" type="text" placeholder="Contoh: Kopi Susu Gula Aren / Crocs Classic"
-            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition" />
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Target Audiens & Platform</label>
-          <input id="audienceInput" type="text" placeholder="Contoh: Mahasiswa di TikTok & Reels"
-            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition" />
-        </div>
-      </div>
-
-      <div class="mb-4">
-        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Instruksi / Brief Utama *</label>
-        <textarea id="briefInput" rows="3" placeholder="Tulis perintah singkat, misal: Riset masalah audiens, buatkan character sheet, hook 3 detik, naskah, prompt gerak fisika MotionCraft, caption SEO, sampai skrip closing WhatsApp."
-          class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"></textarea>
-      </div>
-
-      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
-        <div class="flex items-center gap-2 text-xs text-slate-400">
-          <i data-lucide="cpu" class="w-4 h-4 text-cyan-400 shrink-0"></i>
-          <span>Alur otomatis: <strong class="text-slate-200">Riset → Strategi → Naskah → Visual & Character Sheet → MotionCraft → QC</strong></span>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Instruksi / Brief Utama *</label>
+          <textarea id="briefInput" rows="3" placeholder="Tulis perintah singkat, misal: Riset masalah audiens, buatkan character sheet, hook 3 detik, naskah, prompt gerak fisika MotionCraft, caption SEO, sampai skrip closing WhatsApp."
+            class="w-full px-3.5 py-2.5 rounded-xl bg-panel2 border border-slate-700/80 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition"></textarea>
         </div>
 
-        <button id="runOfficeBtn" onclick="startVirtualOffice()"
-          class="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-sm shadow-lg shadow-indigo-600/25 active:scale-[0.99] transition cursor-pointer">
-          <i data-lucide="play" class="w-4 h-4 fill-current"></i>
-          <span id="runOfficeBtnText">Kerahkan 34 Agen AI</span>
-        </button>
-      </div>
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
+          <div class="flex items-center gap-2 text-xs text-slate-400">
+            <i data-lucide="cpu" class="w-4 h-4 text-amber-400 shrink-0"></i>
+            <span>Alur: <strong class="text-slate-200">Riset → Strategi → Naskah → Character Sheet → MotionCraft → QC</strong></span>
+          </div>
 
-      <div id="progressContainer" class="hidden mt-5 pt-4 border-t border-slate-800">
-        <div class="flex items-center justify-between gap-2 text-xs mb-2">
-          <span id="progressLabel" class="font-semibold text-indigo-300 flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-            Mengaktifkan divisi...
+          <button id="runOfficeBtn" onclick="startVirtualOffice()"
+            class="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold text-sm shadow-lg shadow-amber-500/20 active:scale-[0.99] transition cursor-pointer">
+            <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+            <span id="runOfficeBtnText">Kerahkan 34 Agen AI</span>
+          </button>
+        </div>
+
+        <div id="progressContainer" class="hidden mt-4 pt-4 border-t border-slate-800">
+          <div class="flex items-center justify-between gap-2 text-xs mb-2">
+            <span id="progressLabel" class="font-semibold text-amber-300 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+              Mengaktifkan divisi...
+            </span>
+            <span id="progressPercent" class="font-mono text-slate-400 shrink-0">0%</span>
+          </div>
+          <div class="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+            <div id="progressBar" class="h-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-300 transition-all duration-500" style="width: 0%"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: DIVISIONS GRID -->
+      <section id="sec-divisions" class="space-y-3">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 id="denahHeading" class="text-sm sm:text-base font-bold text-white">Denah Operasional (10 Divisi • 34 Agen)</h3>
+            <p class="text-xs text-slate-400">Klik kartu divisi untuk melihat daftar agen, hasil kerja, atau mengulang divisi yang gagal</p>
+          </div>
+          <span id="activeDivisionCounter" class="text-xs font-mono px-2.5 py-1 rounded-lg bg-panel2 text-amber-300 border border-amber-500/25">
+            0 / 10 Selesai
           </span>
-          <span id="progressPercent" class="font-mono text-slate-400 shrink-0">0%</span>
         </div>
-        <div class="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
-          <div id="progressBar" class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400 transition-all duration-500" style="width: 0%"></div>
+
+        <div id="divisionsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+      </section>
+
+      <!-- SECTION 3: OUTPUT WORKSPACE -->
+      <section id="outputSection" class="hidden dash-card rounded-2xl p-4 sm:p-6 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+          <div>
+            <span class="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-400">Laporan Eksekutif</span>
+            <h3 id="outputHeading" class="text-lg font-bold text-white">Hasil Kerja Agen AI</h3>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="openPostActionModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold transition cursor-pointer">
+              <i data-lucide="film" class="w-3.5 h-3.5"></i>
+              <span>Flow AI &amp; Jadwal</span>
+            </button>
+            <button onclick="copyAllResults()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-panel2 hover:bg-slate-800 text-xs font-semibold text-slate-200 border border-slate-700 transition cursor-pointer">
+              <i data-lucide="copy" class="w-3.5 h-3.5 text-amber-400"></i>
+              <span>Salin Semua</span>
+            </button>
+            <button onclick="downloadMarkdown()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-panel2 hover:bg-slate-800 text-xs font-semibold text-slate-200 border border-slate-700 transition cursor-pointer">
+              <i data-lucide="download" class="w-3.5 h-3.5 text-amber-400"></i>
+              <span>Unduh .MD</span>
+            </button>
+            <button id="sendWebhookBtn" onclick="sendToN8nWebhook(false)" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-xs font-semibold text-emerald-300 border border-emerald-500/40 transition cursor-pointer">
+              <i data-lucide="send" class="w-3.5 h-3.5"></i>
+              <span>Kirim ke Server</span>
+            </button>
+          </div>
         </div>
-      </div>
-    </section>
 
-    <section>
-      <div class="flex items-center justify-between mb-3">
-        <div>
-          <h3 id="denahHeading" class="text-sm sm:text-base font-bold text-white">Denah Operasional (10 Divisi • 34 Agen)</h3>
-          <p class="text-xs text-slate-400">Klik kartu divisi untuk melihat daftar agen, hasil kerja, atau mengulang divisi yang gagal</p>
-        </div>
-        <span id="activeDivisionCounter" class="text-xs font-mono px-2.5 py-1 rounded-lg bg-slate-800/90 text-slate-300 border border-slate-700/70">
-          0 / 10 Selesai
-        </span>
-      </div>
+        <div id="outputTabs" class="flex items-center gap-1.5 overflow-x-auto pb-2 custom-scroll"></div>
+        <div id="outputBody" class="space-y-4"></div>
+      </section>
 
-      <div id="divisionsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
-    </section>
+    </main>
+  </div>
 
-    <section id="outputSection" class="hidden glass-card rounded-2xl p-4 sm:p-6 space-y-4">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
-        <div>
-          <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400">Laporan Eksekutif Siap Pakai</span>
-          <h3 id="outputHeading" class="text-lg font-bold text-white">Hasil Kerja Agen AI</h3>
-        </div>
-        <div class="flex flex-wrap items-center gap-2">
-          <button onclick="openPostActionModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition cursor-pointer">
-            <i data-lucide="film" class="w-3.5 h-3.5"></i>
-            <span>Flow AI & Jadwal</span>
-          </button>
-          <button onclick="copyAllResults()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 transition cursor-pointer">
-            <i data-lucide="copy" class="w-3.5 h-3.5 text-indigo-400"></i>
-            <span>Salin Semua</span>
-          </button>
-          <button onclick="downloadMarkdown()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 transition cursor-pointer">
-            <i data-lucide="download" class="w-3.5 h-3.5 text-cyan-400"></i>
-            <span>Unduh .MD</span>
-          </button>
-          <button id="sendWebhookBtn" onclick="sendToN8nWebhook(false)" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-xs font-semibold text-emerald-300 border border-emerald-500/40 transition cursor-pointer">
-            <i data-lucide="send" class="w-3.5 h-3.5"></i>
-            <span>Kirim ke Server</span>
-          </button>
-        </div>
-      </div>
-
-      <div id="outputTabs" class="flex items-center gap-1.5 overflow-x-auto pb-2 custom-scroll"></div>
-      <div id="outputBody" class="space-y-4"></div>
-    </section>
-
-  </main>
-
-  <footer class="border-t border-slate-800/60 py-4 px-4 text-center text-xs text-slate-500">
-    Kantor AI Workspace • Sistem Multi-Agent Otomatis 24/7
+  <footer class="border-t border-amber-500/15 py-4 px-4 text-center text-xs text-slate-500 bg-[#07090e]">
+    SAGITARIUS AI Console • Multi-Agent &amp; Automation Hub
   </footer>
 
   <!-- MODAL 2 OPSI (LANJUT FLOW AI / SIMPAN) + PENJADWALAN POSTING -->
-  <div id="postActionModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 p-4 backdrop-blur-sm">
-    <div class="w-full max-w-2xl rounded-2xl border border-slate-700 bg-slate-900 p-5 sm:p-6 text-slate-100 shadow-2xl max-h-[90vh] overflow-y-auto custom-scroll space-y-4">
+  <div id="postActionModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+    <div class="w-full max-w-2xl rounded-2xl border border-amber-500/30 bg-panel p-5 sm:p-6 text-slate-100 shadow-2xl max-h-[90vh] overflow-y-auto custom-scroll space-y-4">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <div>
-          <span class="text-xs font-semibold uppercase tracking-wider text-amber-400">Character Sheet • MotionCraft • Auto-Jadwal</span>
-          <h3 class="text-lg font-bold text-white">Kelanjutan Video & Penjadwalan Posting</h3>
+          <span class="text-xs font-mono font-semibold uppercase tracking-wider text-amber-400">Character Sheet • MotionCraft • Auto-Jadwal</span>
+          <h3 class="text-lg font-bold text-white">Kelanjutan Video &amp; Penjadwalan Posting</h3>
         </div>
-        <button onclick="closePostActionModal()" class="rounded-lg px-2.5 py-1 text-slate-400 hover:bg-slate-800 hover:text-white cursor-pointer">✕</button>
+        <button onclick="closePostActionModal()" class="rounded-lg px-2.5 py-1 text-slate-400 hover:bg-panel2 hover:text-white cursor-pointer">✕</button>
       </div>
 
       <div>
-        <label class="mb-1.5 block text-xs font-medium text-slate-400">Paket Character Sheet & MotionCraft Prompt (Siap Copas ke Flow AI)</label>
-        <textarea id="flowCombinedPrompt" rows="6" class="w-full rounded-xl border border-slate-700 bg-slate-950 p-3 text-xs leading-relaxed text-slate-200 focus:border-indigo-500 focus:outline-none"></textarea>
+        <label class="mb-1.5 block text-xs font-medium text-slate-400">Paket Character Sheet &amp; MotionCraft Prompt (Siap Copas ke Flow AI)</label>
+        <textarea id="flowCombinedPrompt" rows="6" class="w-full rounded-xl border border-slate-700 bg-[#07090e] p-3 text-xs leading-relaxed text-slate-200 focus:border-amber-400 focus:outline-none"></textarea>
       </div>
 
-      <div class="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+      <div class="rounded-xl border border-slate-800 bg-[#07090e]/80 p-4">
         <p class="mb-3 text-sm font-semibold text-white">Lanjut generate video ke Google Flow sekarang?</p>
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <button type="button" onclick="proceedToGoogleFlow()" class="flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-500 cursor-pointer">
-            <span>Iya, Copas & Buka Google Flow</span>
+          <button type="button" onclick="proceedToGoogleFlow()" class="flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-bold text-black transition hover:bg-amber-400 cursor-pointer">
+            <span>Iya, Copas &amp; Buka Google Flow</span>
           </button>
-          <button type="button" onclick="skipVideoGeneration()" class="flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-700 cursor-pointer">
+          <button type="button" onclick="skipVideoGeneration()" class="flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-panel2 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 cursor-pointer">
             <span>Tidak, Simpan Saja</span>
           </button>
         </div>
         <p id="flowCopyStatus" class="mt-2 hidden text-xs font-medium text-emerald-400">
-          ✓ Paket Character Sheet & MotionCraft tersalin ke clipboard! Tinggal Ctrl + V di Google Flow.
+          ✓ Paket Character Sheet &amp; MotionCraft tersalin ke clipboard! Tinggal Ctrl + V di Google Flow.
         </p>
       </div>
 
-      <div class="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+      <div class="rounded-xl border border-slate-800 bg-[#07090e]/80 p-4">
         <div class="mb-3 flex items-center justify-between">
           <h4 class="text-sm font-semibold text-amber-400">Penjadwalan Posting (Pakai Token Auto-Jadwal Terpisah)</h4>
-          <span id="modalScheduleCostBadge" class="text-[11px] font-semibold text-emerald-300">Biaya: 3 Token Jadwal</span>
+          <span id="modalScheduleCostBadge" class="text-[11px] font-mono font-semibold text-emerald-300">Biaya: 3 Token Jadwal</span>
         </div>
 
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div>
             <label class="mb-1 block text-xs text-slate-400">Platform</label>
-            <select id="schedulePlatform" class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-white">
+            <select id="schedulePlatform" class="w-full rounded-lg border border-slate-700 bg-panel2 px-3 py-2 text-xs text-white">
               <option value="tiktok">TikTok</option>
               <option value="youtube_shorts">YouTube Shorts</option>
               <option value="facebook_reels">Facebook Reels</option>
@@ -330,12 +416,12 @@
             </select>
           </div>
           <div>
-            <label class="mb-1 block text-xs text-slate-400">Tanggal & Jam Tayang</label>
-            <input id="scheduleDateTime" type="datetime-local" class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-white" />
+            <label class="mb-1 block text-xs text-slate-400">Tanggal &amp; Jam Tayang</label>
+            <input id="scheduleDateTime" type="datetime-local" class="w-full rounded-lg border border-slate-700 bg-panel2 px-3 py-2 text-xs text-white" />
           </div>
           <div>
             <label class="mb-1 block text-xs text-slate-400">Status</label>
-            <select id="scheduleStatus" class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-white">
+            <select id="scheduleStatus" class="w-full rounded-lg border border-slate-700 bg-panel2 px-3 py-2 text-xs text-white">
               <option value="scheduled">Jadwalkan Otomatis</option>
               <option value="draft">Simpan Draft</option>
             </select>
@@ -343,28 +429,29 @@
         </div>
 
         <div class="mt-3">
-          <label class="mb-1 block text-xs text-slate-400">Caption & Hashtag Posting</label>
-          <textarea id="scheduleCaption" rows="2" placeholder="Tulis atau edit caption siap posting..." class="w-full rounded-lg border border-slate-700 bg-slate-900 p-2.5 text-xs text-slate-200"></textarea>
+          <label class="mb-1 block text-xs text-slate-400">Caption &amp; Hashtag Posting</label>
+          <textarea id="scheduleCaption" rows="2" placeholder="Tulis atau edit caption siap posting..." class="w-full rounded-lg border border-slate-700 bg-panel2 p-2.5 text-xs text-slate-200"></textarea>
         </div>
 
         <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
           <span id="scheduleFeedback" class="text-xs text-slate-400"></span>
           <button type="button" onclick="submitPostSchedule()" class="rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-emerald-500 cursor-pointer">
-            Simpan & Kirim Jadwal ke n8n
+            Simpan &amp; Kirim Jadwal ke n8n
           </button>
         </div>
       </div>
     </div>
   </div>
 
-  <div id="divisionModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-    <div class="glass-card rounded-2xl max-w-xl w-full p-5 sm:p-6 border border-slate-700 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto custom-scroll">
+  <!-- DIVISION MODAL -->
+  <div id="divisionModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div class="dash-card rounded-2xl max-w-xl w-full p-5 sm:p-6 border border-amber-500/30 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto custom-scroll">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800">
         <div>
-          <span id="divModalBadge" class="text-[11px] font-bold uppercase tracking-wider text-indigo-400">Divisi</span>
+          <span id="divModalBadge" class="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-400">Divisi</span>
           <h3 id="divModalTitle" class="font-bold text-base text-white">Nama Divisi</h3>
         </div>
-        <button onclick="closeDivisionModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer">
+        <button onclick="closeDivisionModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-panel2 cursor-pointer">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
@@ -375,12 +462,12 @@
       <div id="divModalResultWrapper" class="hidden pt-3 border-t border-slate-800">
         <div class="flex items-center justify-between mb-2">
           <p class="text-xs font-semibold text-emerald-400">Output Divisi:</p>
-          <button id="divModalCopyBtn" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold cursor-pointer">Salin Output</button>
+          <button id="divModalCopyBtn" class="text-xs text-amber-400 hover:text-amber-300 font-semibold cursor-pointer">Salin Output</button>
         </div>
-        <div id="divModalResult" class="p-3.5 rounded-xl bg-slate-950/90 border border-slate-800 text-xs sm:text-sm text-slate-200 whitespace-pre-wrap leading-relaxed"></div>
+        <div id="divModalResult" class="p-3.5 rounded-xl bg-[#07090e] border border-slate-800 text-xs sm:text-sm text-slate-200 whitespace-pre-wrap leading-relaxed"></div>
       </div>
       <div class="flex justify-end pt-2 border-t border-slate-800">
-        <button id="divModalRetryBtn" class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white cursor-pointer">
+        <button id="divModalRetryBtn" class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-xs font-bold text-black cursor-pointer">
           <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
           <span>Jalankan Ulang Divisi Ini</span>
         </button>
@@ -388,11 +475,12 @@
     </div>
   </div>
 
-  <div id="historyModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-    <div class="glass-card rounded-2xl max-w-lg w-full p-5 sm:p-6 border border-slate-700 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto custom-scroll">
+  <!-- HISTORY MODAL -->
+  <div id="historyModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div class="dash-card rounded-2xl max-w-lg w-full p-5 sm:p-6 border border-amber-500/30 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto custom-scroll">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-        <h3 class="font-bold text-base text-white">Riwayat Tugas Kantor AI</h3>
-        <button onclick="toggleHistoryModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer">
+        <h3 class="font-bold text-base text-white">Riwayat Tugas Sagitarius</h3>
+        <button onclick="toggleHistoryModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-panel2 cursor-pointer">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
@@ -400,19 +488,19 @@
     </div>
   </div>
 
-  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden items-center gap-2.5 px-4 py-3 rounded-xl bg-slate-900 border border-indigo-500/40 text-xs sm:text-sm font-medium text-white shadow-2xl">
-    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+  <!-- TOAST -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden items-center gap-2.5 px-4 py-3 rounded-xl bg-panel border border-amber-500/40 text-xs sm:text-sm font-medium text-white shadow-2xl">
+    <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-400 shrink-0"></i>
     <span id="toastText">Berhasil!</span>
   </div>
 
   <script>
     const SERVER_CONFIG = {
-      brandName: "Kantor AI",
+      brandName: "SAGITARIUS",
       endpoint: (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.protocol === "file:")
         ? "http://localhost:3001/v1/chat/completions"
         : "/api/chat",
       model: "minimax-m3.1-flash",
-      apiKey: "sk-qwen-35d49aad7d69d30bcdbe5d05c9bbf205463ca54b9ddbc0f5",
       webhookUrl: (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.protocol === "file:")
         ? "http://localhost:3001/autopost"
         : "https://ajarkontenn.app.n8n.cloud/webhook/kontenflow-autopost",
@@ -422,18 +510,18 @@
     const SCHEDULE_TOKEN_COST = 3;
 
     const TOKEN_STORAGE_KEYS = {
-      ai: "kantor_ai_token_balance_v1",
-      schedule: "kantor_ai_schedule_token_balance_v1"
+      ai: "sagitarius_ai_token_balance_v1",
+      schedule: "sagitarius_schedule_token_balance_v1"
     };
 
     const DIVISIONS = [
-      { id: 1, name: "Riset Pasar & Tren", icon: "search", color: "text-cyan-400", agents: [
+      { id: 1, name: "Riset Pasar & Tren", icon: "search", color: "text-amber-400", agents: [
         { name: "Trend Hunter", role: "Pelacak topik & format viral" },
         { name: "Audience Profiler", role: "Pemetaan psikologi & kebutuhan pembeli" },
         { name: "Competitor Spy", role: "Analisis celah penawaran kompetitor" },
         { name: "Pain-Point Miner", role: "Penggali masalah utama audiens" }
       ]},
-      { id: 2, name: "Strategi & Funnel", icon: "compass", color: "text-indigo-400", agents: [
+      { id: 2, name: "Strategi & Funnel", icon: "compass", color: "text-amber-400", agents: [
         { name: "Campaign Strategist", role: "Perancang alur kampanye konten" },
         { name: "Offer Architect", role: "Penyusun struktur penawaran menarik" },
         { name: "Funnel Planner", role: "Pemetaan tahapan sadar hingga beli" }
@@ -444,34 +532,34 @@
         { name: "Story Miner", role: "Perangkai cerita relatable sehari-hari" },
         { name: "Hook Ideator", role: "Perumus pemicu rasa penasaran" }
       ]},
-      { id: 4, name: "Copywriting & Naskah", icon: "file-text", color: "text-purple-400", agents: [
+      { id: 4, name: "Copywriting & Naskah", icon: "file-text", color: "text-amber-400", agents: [
         { name: "3-Sec Hook Writer", role: "Penulis kalimat pembuka penahan scroll" },
         { name: "Short-Form Scriptwriter", role: "Penulis naskah TikTok/Reels/Shorts" },
         { name: "Persuasive Copywriter", role: "Penulis narasi manfaat & bukti" },
         { name: "CTA Closer", role: "Perumus ajakan bertindak berkonversi" }
       ]},
-      { id: 5, name: "Sutradara Visual & Character Sheet", icon: "clapperboard", color: "text-pink-400", agents: [
+      { id: 5, name: "Sutradara Visual & Character Sheet", icon: "clapperboard", color: "text-amber-400", agents: [
         { name: "Character Sheet Architect", role: "Penyusun spesifikasi karakter konsisten (wajah, outfit, rasio & pencahayaan)" },
         { name: "Scene Director", role: "Pengarah adegan & ekspresi visual" },
         { name: "AI Video Prompter", role: "Penulis prompt Google Flow / Kling AI" },
         { name: "Thumbnail Artist", role: "Konsep teks & visual sampul klik tinggi" }
       ]},
-      { id: 6, name: "Penawaran & Konversi", icon: "badge-percent", color: "text-emerald-400", agents: [
+      { id: 6, name: "Penawaran & Konversi", icon: "badge-percent", color: "text-amber-400", agents: [
         { name: "Bonus Framer", role: "Perancang paket bonus & urgensi" },
         { name: "Objection Handler", role: "Penjawab keraguan calon pembeli" },
         { name: "Guarantee Designer", role: "Penyusun jaminan peningkat kepercayaan" }
       ]},
-      { id: 7, name: "Distribusi & SEO", icon: "share-2", color: "text-sky-400", agents: [
+      { id: 7, name: "Distribusi & SEO", icon: "share-2", color: "text-amber-400", agents: [
         { name: "Social SEO Specialist", role: "Riset kata kunci pencarian TikTok/IG" },
         { name: "Caption Optimizer", role: "Penulis caption memancing komentar" },
         { name: "Repurpose Strategist", role: "Adaptasi konten ke multi-platform" }
       ]},
-      { id: 8, name: "CRM & Skrip Closing", icon: "message-square", color: "text-teal-400", agents: [
+      { id: 8, name: "CRM & Skrip Closing", icon: "message-square", color: "text-amber-400", agents: [
         { name: "WA/DM Closer", role: "Skrip balas chat calon pembeli masuk" },
         { name: "Follow-Up Sequencer", role: "Pesan follow-up halus anti-ghosting" },
         { name: "Broadcast Writer", role: "Teks siaran promo database pelanggan" }
       ]},
-      { id: 9, name: "Quality Control (QC)", icon: "shield-check", color: "text-rose-400", agents: [
+      { id: 9, name: "Quality Control (QC)", icon: "shield-check", color: "text-amber-400", agents: [
         { name: "Anti-Boring Editor", role: "Pemangkas kalimat bertele-tele" },
         { name: "Natural Tone Checker", role: "Penyelaras bahasa agar luwes & manusiawi" },
         { name: "Executive Compiler", role: "Penyusun ringkasan siap eksekusi" }
@@ -496,9 +584,50 @@
 
     const totalAgentsCount = DIVISIONS.reduce((acc, d) => acc + d.agents.length, 0);
     document.getElementById("brandTitleDisplay").textContent = SERVER_CONFIG.brandName;
-    document.getElementById("headerStatsBadge").textContent = `${totalAgentsCount} Agen • ${DIVISIONS.length} Divisi`;
+    document.getElementById("headerStatsBadge").textContent = `${DIVISIONS.length} Divisi • ${totalAgentsCount} Agen`;
     document.getElementById("runOfficeBtnText").textContent = `Kerahkan ${totalAgentsCount} Agen AI`;
     document.getElementById("denahHeading").textContent = `Denah Operasional (${DIVISIONS.length} Divisi • ${totalAgentsCount} Agen)`;
+
+    function toggleSidebarMobile(forceOpen) {
+      const sb = document.getElementById("leftSidebar");
+      const bd = document.getElementById("sidebarBackdrop");
+      const willOpen = typeof forceOpen === "boolean" ? forceOpen : sb.classList.contains("-translate-x-full");
+      if (willOpen) {
+        sb.classList.remove("-translate-x-full");
+        bd.classList.remove("hidden");
+      } else {
+        sb.classList.add("-translate-x-full");
+        bd.classList.add("hidden");
+      }
+    }
+
+    function switchSection(target) {
+      document.querySelectorAll(".nav-btn").forEach(btn => {
+        btn.classList.remove("nav-item-active");
+        btn.classList.add("text-slate-300", "border-transparent");
+      });
+      const activeBtn = document.getElementById(`nav-${target}`);
+      if (activeBtn) {
+        activeBtn.classList.add("nav-item-active");
+        activeBtn.classList.remove("text-slate-300", "border-transparent");
+      }
+
+      const map = {
+        workspace: "sec-command",
+        divisions: "sec-divisions",
+        billing: "sec-billing",
+        output: "outputSection"
+      };
+      const elId = map[target];
+      if (elId) {
+        const el = document.getElementById(elId);
+        if (el) {
+          if (target === "output") el.classList.remove("hidden");
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+      toggleSidebarMobile(false);
+    }
 
     function getTokenBalances() {
       const rawAi = localStorage.getItem(TOKEN_STORAGE_KEYS.ai);
@@ -533,24 +662,28 @@
       const cfg = getSelectedModelConfig();
       SERVER_CONFIG.model = cfg.modelId;
       const costEl = document.getElementById("aiCostPreview");
-      if (costEl) {
-        costEl.textContent = `${cfg.aiTokenCost} Token AI (${cfg.providerKey})`;
-      }
+      const sideBadge = document.getElementById("sidebarProviderBadge");
+      if (costEl) costEl.textContent = `${cfg.aiTokenCost} Token AI (${cfg.providerKey})`;
+      if (sideBadge) sideBadge.textContent = cfg.providerKey;
     }
 
     function renderTokenWalletUI() {
       const { ai, schedule } = getTokenBalances();
-      const aiEl = document.getElementById("aiTokenDisplay");
-      const schedEl = document.getElementById("scheduleTokenDisplay");
-      const headAi = document.getElementById("headerAiTokens");
-      const headSched = document.getElementById("headerScheduleTokens");
+      const ids = {
+        ai: ["aiTokenDisplay", "headerAiTokens", "sidebarAiTokens"],
+        sched: ["scheduleTokenDisplay", "headerScheduleTokens", "sidebarScheduleTokens"]
+      };
+      ids.ai.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = ai;
+      });
+      ids.sched.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = schedule;
+      });
+
       const schedCostEl = document.getElementById("scheduleCostPreview");
       const modalCostEl = document.getElementById("modalScheduleCostBadge");
-
-      if (aiEl) aiEl.textContent = ai;
-      if (schedEl) schedEl.textContent = schedule;
-      if (headAi) headAi.textContent = ai;
-      if (headSched) headSched.textContent = schedule;
       if (schedCostEl) schedCostEl.textContent = `${SCHEDULE_TOKEN_COST} Token Jadwal`;
       if (modalCostEl) modalCostEl.textContent = `Biaya: ${SCHEDULE_TOKEN_COST} Token Jadwal`;
       updateModelCostPreview();
@@ -566,7 +699,7 @@
       const cfg = getSelectedModelConfig();
       const current = getTokenBalances();
       if (current.ai < cfg.aiTokenCost) {
-        showToast(`Token AI kurang (sisa ${current.ai}, butuh ${cfg.aiTokenCost}). Klik + Top-Up Token!`);
+        showToast(`Token AI kurang (sisa ${current.ai}, butuh ${cfg.aiTokenCost}). Klik + Top-Up!`);
         return false;
       }
       saveTokenBalances(current.ai - cfg.aiTokenCost, current.schedule);
@@ -581,18 +714,18 @@
         const state = divisionStates[div.id] || "idle";
         if (state === "done") doneCount++;
 
-        let badgeHtml = `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-800 text-slate-400 border border-slate-700">${div.agents.length} Agen • Standby</span>`;
-        let cardClass = "glass-card hover:border-slate-600/80";
+        let badgeHtml = `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-panel2 text-slate-400 border border-slate-700">${div.agents.length} Agen • Standby</span>`;
+        let cardClass = "dash-card hover:border-amber-500/40";
 
         if (state === "working") {
-          badgeHtml = `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>Bekerja...</span>`;
-          cardClass = "glass-card-active working-card";
+          badgeHtml = `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>Bekerja...</span>`;
+          cardClass = "dash-card-active working-card";
         } else if (state === "done") {
           badgeHtml = `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Selesai ✓</span>`;
-          cardClass = "glass-card border-emerald-500/30";
+          cardClass = "dash-card border-emerald-500/35";
         } else if (state === "error") {
           badgeHtml = `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/30">Gagal (Klik Ulang)</span>`;
-          cardClass = "glass-card border-rose-500/40";
+          cardClass = "dash-card border-rose-500/40";
         }
 
         const agentPreview = div.agents.map(a => a.name).join(" • ");
@@ -601,11 +734,11 @@
           <div onclick="openDivisionModal(${div.id})" class="${cardClass} rounded-2xl p-4 cursor-pointer transition-all duration-200 flex flex-col justify-between gap-3">
             <div class="flex items-start justify-between gap-2">
               <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-xl bg-slate-800/90 border border-slate-700/70 flex items-center justify-center shrink-0">
+                <div class="w-8 h-8 rounded-xl bg-panel2 border border-amber-500/20 flex items-center justify-center shrink-0">
                   <i data-lucide="${div.icon}" class="w-4 h-4 ${div.color}"></i>
                 </div>
                 <div>
-                  <span class="text-[10px] font-mono text-slate-500 uppercase">Divisi ${String(div.id).padStart(2, "0")}</span>
+                  <span class="text-[10px] font-mono text-amber-400/80 uppercase">Divisi ${String(div.id).padStart(2, "0")}</span>
                   <h4 class="text-sm font-bold text-white leading-snug">${div.name}</h4>
                 </div>
               </div>
@@ -646,8 +779,7 @@
       const response = await fetch(SERVER_CONFIG.endpoint, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${SERVER_CONFIG.apiKey}`
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           model: cfg.modelId || SERVER_CONFIG.model,
@@ -696,7 +828,7 @@
       renderDivisions();
 
       try {
-        const systemPrompt = `Kamu adalah tim ${div.name} di Kantor AI (terdiri dari agen: ${div.agents.map(a => a.name).join(", ")}). Jawab ringkas, terstruktur, langsung ke inti, dalam Bahasa Indonesia natural.`;
+        const systemPrompt = `Kamu adalah tim ${div.name} di Sagitarius AI (terdiri dari agen: ${div.agents.map(a => a.name).join(", ")}). Jawab ringkas, terstruktur, langsung ke inti, dalam Bahasa Indonesia natural.`;
         const result = await callLLM(systemPrompt, buildDivisionTaskPrompt(divId, product, audience, brief));
         divisionOutputs[divId] = result.trim();
         divisionStates[divId] = "done";
@@ -744,7 +876,7 @@
       const updateProgress = (pct, text) => {
         progressBar.style.width = `${pct}%`;
         progressPercent.textContent = `${pct}%`;
-        progressLabel.innerHTML = `<span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>${text}`;
+        progressLabel.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>${text}`;
       };
 
       try {
@@ -923,9 +1055,9 @@
       document.getElementById("outputHeading").textContent = `Paket Eksekusi: ${productTitle}`;
 
       const tabsEl = document.getElementById("outputTabs");
-      const allTab = `<button onclick="selectOutputTab('all')" class="px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition cursor-pointer ${selectedOutputTab === 'all' ? 'bg-indigo-600 text-white' : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700'}">Semua Divisi (${DIVISIONS.length})</button>`;
+      const allTab = `<button onclick="selectOutputTab('all')" class="px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition cursor-pointer ${selectedOutputTab === 'all' ? 'bg-amber-500 text-black font-bold' : 'bg-panel2 text-slate-300 hover:bg-slate-800'}">Semua Divisi (${DIVISIONS.length})</button>`;
       const divTabs = DIVISIONS.map(d => `
-        <button onclick="selectOutputTab(${d.id})" class="px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition cursor-pointer ${selectedOutputTab === d.id ? 'bg-indigo-600 text-white' : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700'}">
+        <button onclick="selectOutputTab(${d.id})" class="px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition cursor-pointer ${selectedOutputTab === d.id ? 'bg-amber-500 text-black font-bold' : 'bg-panel2 text-slate-300 hover:bg-slate-800'}">
           ${String(d.id).padStart(2, "0")}. ${d.name}
         </button>
       `).join("");
@@ -939,14 +1071,14 @@
       bodyEl.innerHTML = targetDivs.map(d => {
         const content = divisionOutputs[d.id] || "Belum ada output.";
         return `
-          <div class="rounded-2xl bg-slate-900/85 border border-slate-800 p-4 sm:p-5 space-y-3">
+          <div class="rounded-2xl bg-panel2/80 border border-slate-800 p-4 sm:p-5 space-y-3">
             <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-800/90">
               <div class="flex items-center gap-2">
                 <i data-lucide="${d.icon}" class="w-4 h-4 ${d.color}"></i>
                 <h4 class="font-bold text-sm text-white">Divisi ${String(d.id).padStart(2, "0")}: ${d.name}</h4>
                 <span class="text-[11px] text-slate-500">(${d.agents.length} Agen)</span>
               </div>
-              <button onclick="copyDivisionText(${d.id})" class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold text-indigo-300 transition cursor-pointer">
+              <button onclick="copyDivisionText(${d.id})" class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-panel hover:bg-slate-800 text-[11px] font-semibold text-amber-300 border border-amber-500/20 transition cursor-pointer">
                 <i data-lucide="copy" class="w-3 h-3"></i>
                 <span>Salin</span>
               </button>
@@ -1008,7 +1140,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `Laporan-KantorAI-${Date.now()}.md`;
+      a.download = `Laporan-Sagitarius-${Date.now()}.md`;
       a.click();
       URL.revokeObjectURL(url);
       showToast("File laporan .MD diunduh!");
@@ -1044,7 +1176,7 @@
 
     function saveToHistory(product, audience, brief, outputs) {
       try {
-        const list = JSON.parse(localStorage.getItem("kantor_ai_history_v1") || "[]");
+        const list = JSON.parse(localStorage.getItem("sagitarius_history_v1") || "[]");
         list.unshift({
           id: Date.now(),
           date: new Date().toLocaleString("id-ID"),
@@ -1053,7 +1185,7 @@
           brief,
           outputs
         });
-        localStorage.setItem("kantor_ai_history_v1", JSON.stringify(list.slice(0, 15)));
+        localStorage.setItem("sagitarius_history_v1", JSON.stringify(list.slice(0, 15)));
       } catch (e) {}
     }
 
@@ -1061,16 +1193,16 @@
       const modal = document.getElementById("historyModal");
       const isHidden = modal.classList.contains("hidden");
       if (isHidden) {
-        const list = JSON.parse(localStorage.getItem("kantor_ai_history_v1") || "[]");
+        const list = JSON.parse(localStorage.getItem("sagitarius_history_v1") || "[]");
         const container = document.getElementById("historyList");
         if (!list.length) {
           container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">Belum ada riwayat tugas tersimpan.</p>`;
         } else {
           container.innerHTML = list.map((item, idx) => `
-            <div onclick="loadHistoryItem(${idx})" class="p-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 cursor-pointer transition">
+            <div onclick="loadHistoryItem(${idx})" class="p-3.5 rounded-xl bg-panel2 hover:bg-slate-800 border border-slate-800 cursor-pointer transition">
               <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1">
                 <span>${item.date}</span>
-                <span class="text-indigo-400 font-semibold">Buka Laporan →</span>
+                <span class="text-amber-400 font-semibold">Buka Laporan →</span>
               </div>
               <h4 class="text-sm font-bold text-white">${escapeHtml(item.product)}</h4>
               <p class="text-xs text-slate-400 line-clamp-1 mt-0.5">${escapeHtml(item.brief)}</p>
@@ -1086,7 +1218,7 @@
     }
 
     function loadHistoryItem(idx) {
-      const list = JSON.parse(localStorage.getItem("kantor_ai_history_v1") || "[]");
+      const list = JSON.parse(localStorage.getItem("sagitarius_history_v1") || "[]");
       const item = list[idx];
       if (!item) return;
       document.getElementById("productInput").value = item.product;
@@ -1107,7 +1239,7 @@
       document.getElementById("divModalBadge").textContent = `Divisi ${String(div.id).padStart(2, "0")} • ${div.agents.length} Agen Aktif`;
       document.getElementById("divModalTitle").textContent = div.name;
       document.getElementById("divModalAgents").innerHTML = div.agents.map(a => `
-        <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800">
+        <div class="p-2.5 rounded-xl bg-panel2 border border-slate-800">
           <p class="text-xs font-bold text-white">${a.name}</p>
           <p class="text-[11px] text-slate-400">${a.role}</p>
         </div>
