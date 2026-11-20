@@ -1,15 +1,1686 @@
-// =====================================================================
-// SAGITARIUS - LANJUTAN KODE (tempel di dalam <script> yang sama)
-// CARA PAKAI:
-//  1. Di file aslimu, hapus dari baris "function renderDivisions() {" sampai akhir file.
-//  2. Tempel seluruh isi file ini di situ, lalu tutup dengan </script></body></html>.
-// Fungsi yang sudah ada di kodemu (updateLandingSimulator, submitAuthForm,
-// processPgPayment, renderPgHistory) DIGANTI versi perbaikan di bawah ini
-// karena deklarasi terakhir yang dipakai browser.
-// =====================================================================
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>SAGITARIUS — AI Workspace, Multi-Episode Story, Search &amp; Payment Gateway</title>
+  <link rel="icon" href="data:," />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            obsidian: '#07090e',
+            panel: '#0d111a',
+            panel2: '#131926',
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      background-color: #07090e;
+      color: #f8fafc;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .dash-card {
+      background: #0d111a;
+      border: 1px solid rgba(251, 191, 36, 0.16);
+    }
+    .dash-card-active {
+      background: #131926;
+      border: 1px solid rgba(251, 191, 36, 0.55);
+      box-shadow: 0 0 24px rgba(245, 158, 11, 0.12);
+    }
+    .nav-item-active {
+      background: rgba(245, 158, 11, 0.12);
+      color: #fbbf24;
+      border: 1px solid rgba(251, 191, 36, 0.35);
+    }
+    .gold-glow {
+      box-shadow: 0 0 42px rgba(245, 158, 11, 0.18);
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #07090e;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: rgba(251, 191, 36, 0.25);
+      border-radius: 999px;
+    }
+    @keyframes goldPulse {
+      0%, 100% { border-color: rgba(245, 158, 11, 0.35); }
+      50% { border-color: rgba(253, 230, 138, 0.9); }
+    }
+    .working-card {
+      animation: goldPulse 1.4s infinite ease-in-out;
+    }
+    input[type="range"].gold-slider {
+      accent-color: #f59e0b;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-amber-500 selection:text-black">
 
-// ---------------- UTIL ----------------
-function escapeHtml(str) {
+  <!-- ==================== INTERACTIVE LANDING PAGE ==================== -->
+  <div id="landingView" class="min-h-screen flex flex-col justify-between bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.14),transparent_55%)]">
+    <nav class="border-b border-amber-500/15 bg-[#07090e]/85 backdrop-blur-md sticky top-0 z-30">
+      <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-3">
+          <div class="sagitarius-logo-slot w-9 h-9" data-variant="mini"></div>
+          <span class="font-extrabold tracking-widest text-sm sm:text-base text-amber-400">SAGITARIUS</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="openAuthModal('register')" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 transition cursor-pointer">
+            <span>Daftar +30 Token</span>
+          </button>
+          <button type="button" onclick="openAuthModal('login')" class="px-3 py-2 rounded-xl text-xs font-semibold text-amber-200 hover:bg-amber-500/10 border border-amber-500/25 transition cursor-pointer">
+            Login Akun
+          </button>
+          <button type="button" onclick="enterDashboard('workspace')" class="px-3.5 sm:px-4 py-2 rounded-xl text-xs font-extrabold bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black shadow-lg shadow-amber-500/20 transition cursor-pointer">
+            Dashboard AI →
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <main class="max-w-6xl w-full mx-auto px-4 py-9 sm:py-12 space-y-10">
+      <!-- Hero Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-7 space-y-5">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono">
+              <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+              <span>MULTI-AGENT • MULTI-EPISODE STORY • QRIS GOPAY</span>
+            </span>
+            <button type="button" onclick="openAuthModal('register')" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/35 text-emerald-300 text-xs font-bold transition cursor-pointer">
+              <span>🎁 Promo Login/Daftar: FREE 30 TOKEN</span>
+            </button>
+          </div>
+
+          <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+            Eksekusi Konten &amp; Cerita Bersambung di <span class="text-amber-400">SAGITARIUS</span>
+          </h1>
+
+          <p class="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
+            Buat <strong>Storytelling Multi-Episode</strong> yang alurnya nyambung antar-episode lengkap dengan <strong>Caption &amp; Hashtag Tren</strong>, perhitungan <strong>Token × Jumlah Episode</strong> otomatis, top-up paket atau <strong>Custom Token (Rp450/token)</strong> via <strong>QRIS GoPay Merchant</strong>, serta <strong>AI Search &amp; Kirim Foto</strong> berbasis <strong>deepseek-v4-flash</strong>.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-3 pt-1">
+            <button type="button" onclick="enterDashboard('workspace')" class="flex items-center gap-2 px-5 py-3.5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black font-extrabold text-sm shadow-xl shadow-amber-500/20 active:scale-[0.99] transition cursor-pointer">
+              <i data-lucide="arrow-right-circle" class="w-4 h-4"></i>
+              <span>Masuk ke Dashboard Sagitarius</span>
+            </button>
+            <button type="button" onclick="openAuthModal('register')" class="flex items-center gap-2 px-5 py-3.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 font-bold text-sm border border-emerald-500/35 transition cursor-pointer">
+              <i data-lucide="gift" class="w-4 h-4"></i>
+              <span>Daftar &amp; Klaim 30 Token Gratis</span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 pt-2 max-w-xl">
+            <div class="dash-card rounded-xl p-3">
+              <p class="text-lg sm:text-xl font-extrabold font-mono text-amber-400" id="landingDivCount">10</p>
+              <p class="text-[11px] text-slate-400">Divisi Spesialis</p>
+            </div>
+            <div class="dash-card rounded-xl p-3">
+              <p class="text-lg sm:text-xl font-extrabold font-mono text-amber-400" id="landingAgentCount">34</p>
+              <p class="text-[11px] text-slate-400">Agen Aktif</p>
+            </div>
+            <div onclick="openPaymentGatewayModal()" class="dash-card hover:border-amber-400/50 rounded-xl p-3 cursor-pointer transition">
+              <p class="text-sm sm:text-base font-extrabold font-mono text-amber-300">Rp450 / Token</p>
+              <p class="text-[11px] text-slate-400">Custom &amp; QRIS GoPay</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Emblem 3D Card -->
+        <div class="lg:col-span-5 flex justify-center">
+          <div id="logoTiltCard" onmousemove="handleLogoTilt(event)" onmouseleave="resetLogoTilt()"
+            class="dash-card gold-glow rounded-3xl p-5 sm:p-6 max-w-sm w-full transition-transform duration-150 ease-out cursor-pointer"
+            onclick="enterDashboard('workspace')">
+            <div class="sagitarius-logo-slot w-full aspect-square mb-4" data-variant="hero"></div>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs font-mono uppercase tracking-wider text-amber-400">Emblem Resmi</p>
+                <p class="text-sm font-bold text-white">SAGITARIUS AI CORE</p>
+              </div>
+              <span class="px-3 py-1 rounded-lg bg-amber-500/15 border border-amber-500/35 text-xs font-bold text-amber-300">
+                Launch →
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Live Simulator + Quick Scenario Launch -->
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <div class="lg:col-span-7 dash-card rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <span class="text-[11px] font-mono uppercase tracking-wider text-amber-400">Interactive Token &amp; Story Simulator</span>
+              <h2 class="text-base sm:text-lg font-bold text-white">Hitung Kebutuhan Episode &amp; Custom Token</h2>
+            </div>
+            <span class="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/25 text-xs font-mono text-amber-300">
+              Rp450 / Token
+            </span>
+          </div>
+
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-slate-300 font-semibold">Jumlah Episode Cerita Bersambung</span>
+              <span id="simEpValue" class="font-mono font-extrabold text-amber-400 text-sm">4 Episode</span>
+            </div>
+            <input id="simEpSlider" type="range" min="1" max="12" value="4" oninput="updateLandingSimulator()" class="w-full gold-slider cursor-pointer" />
+            <div class="flex justify-between text-[10px] font-mono text-slate-500">
+              <span>1 Eps</span>
+              <span>4 Eps</span>
+              <span>8 Eps</span>
+              <span>12 Eps</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2.5 pt-1">
+            <div class="rounded-xl bg-[#07090e] border border-slate-800 p-3">
+              <p class="text-[10px] font-mono text-slate-400">ESTIMASI TOKEN</p>
+              <p id="simTotalTokens" class="text-base font-extrabold font-mono text-amber-300 mt-0.5">20 Token</p>
+            </div>
+            <div class="rounded-xl bg-[#07090e] border border-slate-800 p-3">
+              <p class="text-[10px] font-mono text-slate-400">NILAI CUSTOM (@Rp450)</p>
+              <p id="simCustomRupiah" class="text-base font-extrabold font-mono text-emerald-400 mt-0.5">Rp9.000</p>
+            </div>
+            <div class="rounded-xl bg-[#07090e] border border-slate-800 p-3">
+              <p class="text-[10px] font-mono text-slate-400">BONUS OUTPUT</p>
+              <p class="text-xs font-bold text-sky-300 mt-1">Caption + Tagar Tren</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+            <button type="button" onclick="applySimulatorToDashboard()" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-extrabold transition cursor-pointer">
+              Kirim ke Command Center &amp; Buka →
+            </button>
+            <button type="button" onclick="openPaymentGatewayModal()" class="px-3.5 py-2.5 rounded-xl bg-panel2 hover:bg-slate-800 text-emerald-300 text-xs font-bold border border-emerald-500/30 transition cursor-pointer">
+              Top-Up Custom / QRIS GoPay
+            </button>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 dash-card rounded-2xl p-5 space-y-3.5 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div>
+              <span class="text-[11px] font-mono uppercase tracking-wider text-sky-400">Instant Scenario Launchpad</span>
+              <h2 class="text-base sm:text-lg font-bold text-white">Mulai dari Ide Siap Pakai</h2>
+            </div>
+
+            <button type="button" onclick="launchScenario('story')" class="w-full text-left rounded-xl bg-[#07090e] hover:bg-panel2 border border-amber-500/25 hover:border-amber-400/60 p-3 transition cursor-pointer group">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-amber-300">🎬 Seri Drama Multi-Episode Nyambung</span>
+                <span class="text-[11px] font-mono text-slate-400 group-hover:text-amber-300">Launch →</span>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-0.5">Alur bersambung + hook + cliffhanger + caption &amp; hashtag tren.</p>
+            </button>
+
+            <button type="button" onclick="launchScenario('affiliate')" class="w-full text-left rounded-xl bg-[#07090e] hover:bg-panel2 border border-slate-800 hover:border-amber-400/50 p-3 transition cursor-pointer group">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-white">🛍️ Paket Affiliate &amp; Character Sheet</span>
+                <span class="text-[11px] font-mono text-slate-400 group-hover:text-amber-300">Launch →</span>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-0.5">Naskah video pendek, character sheet, MotionCraft &amp; balasan DM.</p>
+            </button>
+
+            <button type="button" onclick="launchScenario('search')" class="w-full text-left rounded-xl bg-[#07090e] hover:bg-panel2 border border-sky-500/25 hover:border-sky-400/60 p-3 transition cursor-pointer group">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-sky-300">📸 AI Search &amp; Kirim Foto (Vision)</span>
+                <span class="text-[11px] font-mono text-slate-400 group-hover:text-sky-300">Buka →</span>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-0.5">Tanya jawab bebas atau upload foto untuk dianalisis deepseek-v4-flash.</p>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Interactive Pipeline Explorer -->
+      <section class="dash-card rounded-2xl p-5 sm:p-6 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+          <div>
+            <span class="text-[11px] font-mono uppercase tracking-wider text-amber-400">Interactive Workflow Preview</span>
+            <h2 class="text-lg sm:text-xl font-bold text-white">Klik Tahap untuk Mengintip Alur Kerja</h2>
+          </div>
+          <span class="text-xs text-slate-400">Interaktif sebelum masuk dashboard</span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <button type="button" onclick="selectPipelineStep(0)" id="step-btn-0" class="pipeline-tab nav-item-active p-3 rounded-xl text-left transition cursor-pointer">
+            <span class="block text-[10px] font-mono opacity-80">STEP 01</span>
+            <span class="text-xs font-bold">Riset &amp; Naskah</span>
+          </button>
+          <button type="button" onclick="selectPipelineStep(1)" id="step-btn-1" class="pipeline-tab dash-card p-3 rounded-xl text-left text-slate-300 hover:border-amber-500/40 transition cursor-pointer">
+            <span class="block text-[10px] font-mono text-amber-400">STEP 02</span>
+            <span class="text-xs font-bold">Story + Caption Tren</span>
+          </button>
+          <button type="button" onclick="selectPipelineStep(2)" id="step-btn-2" class="pipeline-tab dash-card p-3 rounded-xl text-left text-slate-300 hover:border-amber-500/40 transition cursor-pointer">
+            <span class="block text-[10px] font-mono text-amber-400">STEP 03</span>
+            <span class="text-xs font-bold">MotionCraft Physics</span>
+          </button>
+          <button type="button" onclick="selectPipelineStep(3)" id="step-btn-3" class="pipeline-tab dash-card p-3 rounded-xl text-left text-slate-300 hover:border-amber-500/40 transition cursor-pointer">
+            <span class="block text-[10px] font-mono text-amber-400">STEP 04</span>
+            <span class="text-xs font-bold">Flow AI &amp; Jadwal (Soon)</span>
+          </button>
+        </div>
+
+        <div id="pipelineDetailBox" class="rounded-xl bg-[#07090e] border border-amber-500/20 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="space-y-1.5">
+            <span id="pipelineTag" class="inline-block text-[11px] font-mono font-bold text-amber-400">STEP 01 • RISET, STRATEGI &amp; NASKAH</span>
+            <h3 id="pipelineTitle" class="text-base font-bold text-white">Memetakan Masalah Audiens &amp; Naskah Hook</h3>
+            <p id="pipelineDesc" class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Menggali pain point audiens, merancang sudut pandang konten, dan menyusun naskah video pendek berkonversi tinggi.
+            </p>
+          </div>
+          <button type="button" onclick="enterDashboard('workspace')" class="shrink-0 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-extrabold transition cursor-pointer">
+            Coba di Dashboard →
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-amber-500/15 py-4 px-4 text-center text-xs text-slate-500">
+      SAGITARIUS • Hitam &amp; Emas Multi-Agent Console
+    </footer>
+  </div>
+
+  <!-- ==================== DASHBOARD WORKSPACE ==================== -->
+  <div id="dashboardView" class="hidden min-h-screen flex-col">
+
+    <header class="sticky top-0 z-40 h-16 border-b border-amber-500/15 bg-[#07090e]/95 backdrop-blur-md">
+      <div class="h-full px-4 lg:px-6 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <button type="button" onclick="toggleSidebarMobile()" class="lg:hidden p-2 rounded-xl bg-panel2 border border-amber-500/20 text-amber-300 cursor-pointer">
+            <i data-lucide="menu" class="w-4 h-4"></i>
+          </button>
+
+          <div onclick="backToLanding()" class="sagitarius-logo-slot w-9 h-9 cursor-pointer" data-variant="mini" title="Kembali ke Landing Page"></div>
+
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="brandTitleDisplay" class="font-extrabold text-base tracking-wide text-amber-400">SAGITARIUS</span>
+              <span id="headerStatsBadge" class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-mono font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/25">
+                10 Divisi • 34 Agen
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-400 hidden sm:block">AI Command, Multi-Episode Story &amp; Payment Console</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="openAuthModal('login')" class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-panel2 hover:bg-slate-800 border border-slate-700 text-slate-200 transition cursor-pointer">
+            <i data-lucide="user" class="w-3.5 h-3.5 text-amber-400"></i>
+            <span id="headerAccountLabel">Akun Tamu</span>
+          </button>
+
+          <button type="button" onclick="openPaymentGatewayModal()" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono bg-panel2 hover:bg-slate-800 border border-amber-500/30 text-amber-300 transition cursor-pointer" title="Buka Payment Gateway">
+            <span>AI:</span>
+            <strong id="headerAiTokens">100</strong>
+            <span class="text-[10px] font-sans font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">+Bayar</span>
+          </button>
+
+          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="hidden md:inline">Online</span>
+          </div>
+
+          <button type="button" onclick="openPostActionModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold transition cursor-pointer">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            <span>Flow AI</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="flex-1 flex min-h-0 relative">
+      <div id="sidebarBackdrop" onclick="toggleSidebarMobile(false)" class="fixed inset-0 z-30 bg-black/70 hidden lg:hidden"></div>
+
+      <aside id="leftSidebar" class="fixed lg:static inset-y-0 left-0 top-16 z-30 w-64 shrink-0 border-r border-amber-500/15 bg-[#0a0e17] -translate-x-full lg:translate-x-0 transition-transform duration-200 flex flex-col justify-between p-4 custom-scroll overflow-y-auto">
+        <div class="space-y-5">
+          <div>
+            <p class="px-2.5 mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-500">Workspace</p>
+            <nav class="space-y-1">
+              <button type="button" onclick="backToLanding()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-amber-300 hover:bg-amber-500/10 border border-amber-500/20 transition cursor-pointer">
+                <i data-lucide="home" class="w-4 h-4"></i>
+                <span>Halaman Landing</span>
+              </button>
+              <button type="button" id="nav-workspace" onclick="switchSection('workspace')" class="nav-btn nav-item-active w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition cursor-pointer">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                <span>Command &amp; Story</span>
+              </button>
+              <button type="button" id="nav-search" onclick="switchSection('search')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 border border-transparent transition cursor-pointer">
+                <i data-lucide="search-code" class="w-4 h-4 text-sky-400"></i>
+                <span>AI Search &amp; Foto</span>
+              </button>
+              <button type="button" id="nav-divisions" onclick="switchSection('divisions')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 border border-transparent transition cursor-pointer">
+                <i data-lucide="users" class="w-4 h-4"></i>
+                <span>Denah Divisi &amp; Agen</span>
+              </button>
+              <button type="button" id="nav-billing" onclick="switchSection('billing')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 border border-transparent transition cursor-pointer">
+                <i data-lucide="coins" class="w-4 h-4"></i>
+                <span>Model &amp; Wallet Token</span>
+              </button>
+              <button type="button" id="nav-output" onclick="switchSection('output')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 border border-transparent transition cursor-pointer">
+                <i data-lucide="file-check-2" class="w-4 h-4"></i>
+                <span>Hasil Laporan</span>
+              </button>
+            </nav>
+          </div>
+
+          <div>
+            <p class="px-2.5 mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-500">Tools &amp; Billing</p>
+            <nav class="space-y-1">
+              <button type="button" onclick="openAuthModal('register'); toggleSidebarMobile(false);" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 transition cursor-pointer">
+                <i data-lucide="user-plus" class="w-4 h-4 text-amber-400"></i>
+                <span>Daftar / Login (+30 Token)</span>
+              </button>
+              <button type="button" onclick="openPaymentGatewayModal(); toggleSidebarMobile(false);" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 transition cursor-pointer">
+                <i data-lucide="credit-card" class="w-4 h-4 text-emerald-400"></i>
+                <span>QRIS GoPay / Custom Token</span>
+              </button>
+              <button type="button" onclick="openPostActionModal(); toggleSidebarMobile(false);" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 transition cursor-pointer">
+                <i data-lucide="film" class="w-4 h-4 text-amber-400"></i>
+                <span>Copas ke Flow AI</span>
+              </button>
+              <button type="button" onclick="showToast('Fitur Jadwal Posting masih Coming Soon!')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-500 bg-panel2/40 border border-slate-800/80 cursor-not-allowed">
+                <span class="flex items-center gap-2.5">
+                  <i data-lucide="calendar-clock" class="w-4 h-4 text-slate-500"></i>
+                  <span>Jadwal Posting</span>
+                </span>
+                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300">Soon</span>
+              </button>
+              <button type="button" onclick="toggleHistoryModal(); toggleSidebarMobile(false);" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 transition cursor-pointer">
+                <i data-lucide="history" class="w-4 h-4 text-amber-400"></i>
+                <span>Riwayat Tugas</span>
+              </button>
+            </nav>
+          </div>
+        </div>
+
+        <div class="mt-6 rounded-xl bg-panel2 border border-amber-500/20 p-3.5 space-y-2.5">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="text-slate-400">Provider Aktif</span>
+            <span id="sidebarProviderBadge" class="font-mono font-bold text-amber-400">ByKitsune</span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-slate-300">Token AI</span>
+            <span id="sidebarAiTokens" class="font-mono font-bold text-amber-300">100</span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-slate-400">Search Engine</span>
+            <span class="font-mono font-bold text-sky-400 text-[11px]">deepseek-v4-flash</span>
+          </div>
+          <button type="button" onclick="openPaymentGatewayModal()" class="w-full py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/35 text-[11px] font-bold text-emerald-300 transition cursor-pointer">
+            + Bayar / Custom Token
+          </button>
+        </div>
+      </aside>
+
+      <main class="flex-1 min-w-0 p-4 lg:p-6 space-y-6 max-w-6xl mx-auto w-full">
+
+        <!-- SECTION AI SEARCH ENGINE + KIRIM FOTO -->
+        <section id="sec-ai-search" class="dash-card rounded-2xl p-4 sm:p-6 space-y-4 border-sky-500/25">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3.5">
+            <div>
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-[11px] font-mono font-bold uppercase tracking-wider text-sky-400">SAGITARIUS AI SEARCH &amp; VISION</span>
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-sky-500/15 text-sky-300 border border-sky-500/35">
+                  deepseek-v4-flash • DeepSeek · DEEPSEEK
+                </span>
+              </div>
+              <h2 class="text-lg sm:text-xl font-bold text-white mt-0.5">Tanya Jawab Apa Saja &amp; Kirim Foto</h2>
+            </div>
+
+            <button type="button" onclick="clearSearchChat()" class="self-start sm:self-auto flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-panel2 hover:bg-slate-800 text-xs font-semibold text-slate-300 border border-slate-700 transition cursor-pointer">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-400"></i>
+              <span>Bersihkan Chat</span>
+            </button>
+          </div>
+
+          <div id="aiSearchMessages" class="rounded-xl bg-[#07090e] border border-slate-800/90 p-3.5 sm:p-4 max-h-80 overflow-y-auto custom-scroll space-y-3">
+            <div class="rounded-xl bg-panel2/80 border border-sky-500/20 p-3 text-xs sm:text-sm text-slate-200 leading-relaxed">
+              <div class="flex items-center justify-between text-[11px] font-mono text-sky-300 mb-1">
+                <span>SAGITARIUS AI SEARCH</span>
+                <span>deepseek-v4-flash (DeepSeek · DEEPSEEK)</span>
+              </div>
+              Halo! Ketik pertanyaan apa saja atau klik <strong>Kirim Foto</strong> untuk melampirkan gambar lalu tanyakan langsung.
+            </div>
+          </div>
+
+          <div id="searchPhotoPreviewWrap" class="hidden rounded-xl bg-[#090d15] border border-sky-500/30 p-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <img id="searchPhotoPreviewImg" src="" alt="Preview Foto" class="w-14 h-14 rounded-lg object-cover border border-slate-700 shrink-0" />
+              <div class="min-w-0">
+                <p id="searchPhotoFileName" class="text-xs font-bold text-white truncate">foto.jpg</p>
+                <p id="searchPhotoFileMeta" class="text-[11px] font-mono text-sky-300">Siap dikirim ke deepseek-v4-flash</p>
+              </div>
+            </div>
+            <button type="button" onclick="removeSearchPhoto()" class="px-2.5 py-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 text-xs font-semibold border border-rose-500/30 shrink-0 cursor-pointer">
+              Hapus Foto
+            </button>
+          </div>
+
+          <div class="space-y-2.5">
+            <input id="searchPhotoInput" type="file" accept="image/*" class="hidden" onchange="handleSearchPhotoSelect(event)" />
+            <div class="flex flex-col sm:flex-row gap-2.5">
+              <button type="button" onclick="document.getElementById('searchPhotoInput').click()"
+                class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-panel2 hover:bg-slate-800 text-sky-300 text-xs font-bold border border-sky-500/30 transition shrink-0 cursor-pointer">
+                <i data-lucide="camera" class="w-4 h-4"></i>
+                <span>Kirim Foto</span>
+              </button>
+
+              <input id="aiSearchInput" type="text"
+                onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendAiSearchQuery(); }"
+                placeholder="Tanya apa saja atau jelaskan foto yang kamu kirim..."
+                class="flex-1 px-3.5 py-3 rounded-xl bg-panel2 border border-slate-700/80 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-400 transition" />
+
+              <button id="aiSearchSendBtn" type="button" onclick="sendAiSearchQuery()"
+                class="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-sky-400 to-cyan-500 hover:from-sky-300 hover:to-cyan-400 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg shadow-sky-500/15 transition shrink-0 cursor-pointer">
+                <i data-lucide="search" class="w-4 h-4"></i>
+                <span>Cari / Tanya</span>
+              </button>
+            </div>
+            <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400 font-mono">
+              <span>Engine: <strong>deepseek-v4-flash</strong> • Provider: <strong>DeepSeek · DEEPSEEK</strong></span>
+              <span id="aiSearchStatusText">Standby</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION COMMAND CENTER + MULTI-EPISODE STORYTELLING -->
+        <section id="sec-command" class="dash-card rounded-2xl p-4 sm:p-6 space-y-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-500/15 pb-4">
+            <div>
+              <span class="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-400">Sagitarius Command &amp; Storytelling</span>
+              <h2 class="text-lg sm:text-xl font-bold text-white">Mode Divisi Penuh atau Storytelling Multi-Episode Nyambung</h2>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" onclick="applyPreset('affiliate')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-panel2 hover:bg-amber-500/20 hover:text-amber-200 text-slate-300 border border-amber-500/20 transition cursor-pointer">
+                + Konten Affiliate
+              </button>
+              <button type="button" onclick="applyPreset('story')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-amber-500/15 hover:bg-amber-500/25 text-amber-200 border border-amber-500/35 transition cursor-pointer">
+                + Seri Drama / Story Nyambung
+              </button>
+              <button type="button" onclick="applyPreset('umkm')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-panel2 hover:bg-amber-500/20 hover:text-amber-200 text-slate-300 border border-amber-500/20 transition cursor-pointer">
+                + Promo Bisnis
+              </button>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-amber-500/25 bg-[#090d15] p-4 space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+              <div class="md:col-span-5">
+                <label class="mb-1.5 block text-xs font-semibold text-slate-300">Mode Eksekusi</label>
+                <div class="grid grid-cols-2 gap-2">
+                  <button type="button" id="modeBtnMultiDiv" onclick="setExecutionMode('divisions')"
+                    class="px-3 py-2.5 rounded-xl text-xs font-bold bg-amber-500 text-black transition cursor-pointer">
+                    10 Divisi Sekali Jalan
+                  </button>
+                  <button type="button" id="modeBtnStorySeries" onclick="setExecutionMode('story_series')"
+                    class="px-3 py-2.5 rounded-xl text-xs font-bold bg-panel2 text-amber-200 border border-amber-500/30 hover:bg-slate-800 transition cursor-pointer">
+                    Storytelling Multi-Eps
+                  </button>
+                </div>
+              </div>
+
+              <div id="episodeMultiplierBox" class="md:col-span-3 opacity-50 pointer-events-none transition">
+                <label class="mb-1.5 block text-xs font-semibold text-amber-300">Jumlah Episode Nyambung</label>
+                <div class="flex items-center gap-2">
+                  <input id="episodeCountInput" type="number" min="1" max="12" value="4" oninput="syncEpisodeCount()"
+                    class="w-20 px-3 py-2 rounded-xl bg-panel2 border border-amber-500/35 text-sm font-mono font-bold text-amber-300 focus:outline-none" />
+                  <span class="text-xs font-mono text-slate-400">Episode (1–12)</span>
+                </div>
+              </div>
+
+              <div class="md:col-span-4 rounded-xl border border-amber-500/20 bg-panel2/80 p-3 text-xs space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-400">Output Dihasilkan:</span>
+                  <span id="calcOutputCountLabel" class="font-mono font-bold text-amber-300">10 Divisi (34 Agen)</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-400">Rumus Token:</span>
+                  <span id="calcTokenFormulaLabel" class="font-mono font-bold text-emerald-300">5 Token × 1 Run = 5 Token</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="sec-billing" class="rounded-xl border border-amber-500/25 bg-[#090d15] p-4 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
+              <span class="text-xs font-mono font-bold uppercase tracking-wider text-amber-400">
+                Provider Model Terdaftar, Dompet Token &amp; QRIS GoPay Merchant
+              </span>
+              <div class="flex flex-wrap items-center gap-2 text-xs font-mono">
+                <span class="rounded-lg border border-amber-500/35 bg-amber-500/10 px-2.5 py-1 text-amber-300">
+                  Token AI: <strong id="aiTokenDisplay">100</strong>
+                </span>
+                <button type="button" onclick="openPaymentGatewayModal()" class="rounded-lg border border-emerald-500/35 bg-emerald-500/15 px-2.5 py-1 text-[11px] font-sans font-bold text-emerald-300 hover:bg-emerald-500/25 cursor-pointer">
+                  + Custom / QRIS GoPay
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div>
+                <label class="mb-1 block text-xs font-semibold text-slate-300">Pilih Model Aktif (Sesuai ID Endpoint)</label>
+                <select id="aiModelSelect" onchange="updateTokenMultiplierCalculator()" class="w-full rounded-xl border border-slate-700 bg-panel2 px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+                  <option value="bykitsune|minimax-m3.1-flash|5" data-provider="ByKitsune" data-model="MiniMax M3.1 Flash" data-cost="5" selected>
+                    [ByKitsune] minimax-m3.1-flash — 5 Token / unit
+                  </option>
+                  <option value="deepseek|deepseek-v4-flash|4" data-provider="DeepSeek" data-model="DeepSeek V4 Flash" data-cost="4">
+                    [DeepSeek] deepseek-v4-flash — 4 Token / unit
+                  </option>
+                  <option value="bykitsune|minimax-m3|8" data-provider="ByKitsune" data-model="MiniMax M3" data-cost="8">
+                    [ByKitsune] minimax-m3 — 8 Token / unit
+                  </option>
+                </select>
+              </div>
+
+              <div class="flex flex-col justify-center rounded-xl border border-slate-800 bg-panel2/80 px-3.5 py-2 text-xs">
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-400">Tarif per Unit:</span>
+                  <span id="aiCostPreview" class="font-mono font-semibold text-amber-300">5 Token / unit (ByKitsune)</span>
+                </div>
+                <div class="mt-1 flex items-center justify-between">
+                  <span class="text-slate-400">Custom Token Rate:</span>
+                  <span class="font-mono font-semibold text-emerald-300">Rp450 / token</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Judul Seri / Nama Brand / Produk *</label>
+              <input id="productInput" type="text" placeholder="Contoh: Detak di Kecepatan Cahaya / Crocs Classic"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-panel2 border border-slate-700/80 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Target Audiens &amp; Platform</label>
+              <input id="audienceInput" type="text" placeholder="Contoh: Penonton TikTok Drama & Reels"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-panel2 border border-slate-700/80 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Premis / Instruksi / Brief Utama *</label>
+            <textarea id="briefInput" rows="3" placeholder="Tulis premis cerita bersambung (tokoh, konflik utama, akhir yang diinginkan) atau brief konten..."
+              class="w-full px-3.5 py-2.5 rounded-xl bg-panel2 border border-slate-700/80 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition"></textarea>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
+            <div class="flex items-center gap-2 text-xs text-slate-400">
+              <i data-lucide="layers" class="w-4 h-4 text-amber-400 shrink-0"></i>
+              <span id="modeHelperText">Mode 10 Divisi: Riset → Strategi → Naskah → Character Sheet → Caption &amp; Hashtag Tren → MotionCraft → QC</span>
+            </div>
+
+            <button type="button" id="runOfficeBtn" onclick="startVirtualOffice()"
+              class="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold text-sm shadow-lg shadow-amber-500/20 active:scale-[0.99] transition cursor-pointer">
+              <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+              <span id="runOfficeBtnText">Kerahkan 34 Agen AI</span>
+            </button>
+          </div>
+
+          <div id="progressContainer" class="hidden mt-4 pt-4 border-t border-slate-800">
+            <div class="flex items-center justify-between gap-2 text-xs mb-2">
+              <span id="progressLabel" class="font-semibold text-amber-300 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                Mengaktifkan...
+              </span>
+              <span id="progressPercent" class="font-mono text-slate-400 shrink-0">0%</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+              <div id="progressBar" class="h-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-300 transition-all duration-500" style="width: 0%"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="sec-divisions" class="space-y-3">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 id="denahHeading" class="text-sm sm:text-base font-bold text-white">Denah Operasional (10 Divisi • 34 Agen)</h3>
+              <p class="text-xs text-slate-400">Klik kartu divisi untuk melihat daftar agen, hasil kerja, atau mengulang divisi yang gagal</p>
+            </div>
+            <span id="activeDivisionCounter" class="text-xs font-mono px-2.5 py-1 rounded-lg bg-panel2 text-amber-300 border border-amber-500/25">
+              0 / 10 Selesai
+            </span>
+          </div>
+
+          <div id="divisionsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+        </section>
+
+        <section id="outputSection" class="hidden dash-card rounded-2xl p-4 sm:p-6 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+            <div>
+              <span class="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-400">Laporan &amp; Episode Output</span>
+              <h3 id="outputHeading" class="text-lg font-bold text-white">Hasil Kerja Agen AI</h3>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" onclick="openPostActionModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold transition cursor-pointer">
+                <i data-lucide="film" class="w-3.5 h-3.5"></i>
+                <span>Copas Flow AI</span>
+              </button>
+              <button type="button" onclick="copyAllResults()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-panel2 hover:bg-slate-800 text-xs font-semibold text-slate-200 border border-slate-700 transition cursor-pointer">
+                <i data-lucide="copy" class="w-3.5 h-3.5 text-amber-400"></i>
+                <span>Salin Semua</span>
+              </button>
+              <button type="button" onclick="downloadMarkdown()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-panel2 hover:bg-slate-800 text-xs font-semibold text-slate-200 border border-slate-700 transition cursor-pointer">
+                <i data-lucide="download" class="w-3.5 h-3.5 text-amber-400"></i>
+                <span>Unduh .MD</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="outputTabs" class="flex items-center gap-1.5 overflow-x-auto pb-2 custom-scroll"></div>
+          <div id="outputBody" class="space-y-4"></div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="border-t border-amber-500/15 py-4 px-4 text-center text-xs text-slate-500 bg-[#07090e]">
+      SAGITARIUS AI Console • Multi-Agent, Multi-Episode Story &amp; QRIS GoPay Merchant
+    </footer>
+  </div>
+
+  <!-- AUTH MODAL (LOGIN / DAFTAR +30 TOKEN) -->
+  <div id="authModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+    <div class="w-full max-w-md rounded-2xl border border-amber-500/35 bg-panel p-5 sm:p-6 text-slate-100 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div>
+          <span class="text-xs font-mono font-semibold uppercase tracking-wider text-emerald-400">PROMO +30 TOKEN GRATIS</span>
+          <h3 id="authModalTitle" class="text-lg font-bold text-white">Daftar Akun Sagitarius</h3>
+        </div>
+        <button type="button" onclick="closeAuthModal()" class="rounded-lg px-2.5 py-1 text-slate-400 hover:bg-panel2 hover:text-white cursor-pointer">✕</button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2">
+        <button type="button" id="authTabRegister" onclick="switchAuthTab('register')" class="py-2 rounded-xl text-xs font-bold bg-amber-500 text-black cursor-pointer">
+          Daftar (+30 Token)
+        </button>
+        <button type="button" id="authTabLogin" onclick="switchAuthTab('login')" class="py-2 rounded-xl text-xs font-semibold bg-panel2 text-slate-300 border border-slate-700 cursor-pointer">
+          Login Akun
+        </button>
+      </div>
+
+      <form onsubmit="submitAuthForm(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Nama / Username</label>
+          <input id="authNameInput" type="text" required placeholder="Contoh: Azhar / Kreator Sagitarius"
+            class="w-full px-3.5 py-2.5 rounded-xl bg-panel2 border border-slate-700 text-sm text-white focus:outline-none focus:border-amber-400" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Email / No. WhatsApp</label>
+          <input id="authContactInput" type="text" required placeholder="contoh@email.com atau 0812..."
+            class="w-full px-3.5 py-2.5 rounded-xl bg-panel2 border border-slate-700 text-sm text-white focus:outline-none focus:border-amber-400" />
+        </div>
+        <button type="submit" id="authSubmitBtn" class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-300 hover:to-teal-400 text-slate-950 font-extrabold text-sm cursor-pointer">
+          Daftar &amp; Klaim +30 Token Gratis
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- PAYMENT GATEWAY MODAL (PAKET + CUSTOM TOKEN @RP450 + QRIS GOPAY MERCHANT) -->
+  <div id="paymentGatewayModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+    <div class="w-full max-w-xl rounded-2xl border border-emerald-500/35 bg-panel p-5 sm:p-6 text-slate-100 shadow-2xl max-h-[90vh] overflow-y-auto custom-scroll space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div>
+          <span class="text-xs font-mono font-semibold uppercase tracking-wider text-emerald-400">QRIS GOPAY MERCHANT • RP450 / TOKEN</span>
+          <h3 class="text-lg font-bold text-white">Top-Up Paket atau Custom Token AI</h3>
+        </div>
+        <button type="button" onclick="closePaymentGatewayModal()" class="rounded-lg px-2.5 py-1 text-slate-400 hover:bg-panel2 hover:text-white cursor-pointer">✕</button>
+      </div>
+
+      <div class="space-y-2">
+        <label class="block text-xs font-semibold text-slate-300">1. Pilih Paket atau Custom Token (@Rp450 / Token)</label>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <button type="button" onclick="selectPgPreset(50, 22500, this)" class="pg-pkg-btn rounded-xl border border-emerald-400 bg-emerald-500/15 p-2.5 text-left transition cursor-pointer">
+            <p class="text-xs font-extrabold font-mono text-white">+50 Token</p>
+            <p class="text-[11px] font-mono text-emerald-300">Rp22.500</p>
+          </button>
+          <button type="button" onclick="selectPgPreset(100, 45000, this)" class="pg-pkg-btn rounded-xl border border-slate-700 bg-panel2 p-2.5 text-left hover:border-emerald-500/40 transition cursor-pointer">
+            <p class="text-xs font-extrabold font-mono text-white">+100 Token</p>
+            <p class="text-[11px] font-mono text-emerald-300">Rp45.000</p>
+          </button>
+          <button type="button" onclick="selectPgCustomMode(this)" class="pg-pkg-btn rounded-xl border border-slate-700 bg-panel2 p-2.5 text-left hover:border-amber-400/50 transition cursor-pointer">
+            <p class="text-xs font-extrabold font-mono text-amber-300">Custom Token</p>
+            <p class="text-[11px] font-mono text-slate-300">Rp450 / token</p>
+          </button>
+        </div>
+
+        <div id="pgCustomBox" class="hidden pt-2">
+          <label class="block text-xs font-semibold text-amber-300 mb-1">Masukkan Jumlah Custom Token (min. 10 token)</label>
+          <input id="pgCustomTokenInput" type="number" min="10" max="5000" value="80" oninput="recalcCustomPg()"
+            class="w-full px-3.5 py-2 rounded-xl bg-panel2 border border-amber-500/40 text-sm font-mono font-bold text-amber-300 focus:outline-none" />
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <label class="block text-xs font-semibold text-slate-300">2. Metode Pembayaran</label>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <button type="button" onclick="selectPgMethod('QRIS GoPay Merchant', this)" class="pg-method-btn rounded-xl border border-amber-400 bg-amber-500/15 px-3 py-2 text-xs font-bold text-amber-300 cursor-pointer">QRIS GoPay Merchant</button>
+          <button type="button" onclick="selectPgMethod('GoPay', this)" class="pg-method-btn rounded-xl border border-slate-700 bg-panel2 px-3 py-2 text-xs font-semibold text-slate-200 hover:border-amber-500/40 cursor-pointer">GoPay</button>
+          <button type="button" onclick="selectPgMethod('DANA / Mandiri', this)" class="pg-method-btn rounded-xl border border-slate-700 bg-panel2 px-3 py-2 text-xs font-semibold text-slate-200 hover:border-amber-500/40 cursor-pointer">DANA / Mandiri</button>
+        </div>
+      </div>
+
+      <div class="rounded-xl border border-slate-800 bg-[#07090e] p-3.5 text-xs space-y-1.5">
+        <div class="flex justify-between">
+          <span class="text-slate-400">Jumlah Token:</span>
+          <span id="pgSummaryPkg" class="font-mono font-bold text-amber-300">+50 Token AI</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Metode:</span>
+          <span id="pgSummaryMethod" class="font-mono font-bold text-sky-300">QRIS GoPay Merchant</span>
+        </div>
+        <div class="flex justify-between border-t border-slate-800 pt-1.5">
+          <span class="text-slate-300 font-semibold">Total Bayar:</span>
+          <span id="pgSummaryPrice" class="font-mono font-extrabold text-emerald-400 text-sm">Rp22.500</span>
+        </div>
+      </div>
+
+      <button type="button" onclick="processPgPayment()" class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-300 hover:to-teal-400 text-slate-950 font-extrabold text-sm shadow-lg transition cursor-pointer">
+        Konfirmasi &amp; Bayar Sekarang
+      </button>
+
+      <div class="space-y-1.5 pt-2 border-t border-slate-800">
+        <p class="text-[11px] font-mono uppercase tracking-wider text-slate-400">Riwayat Pembayaran Terakhir</p>
+        <div id="pgHistoryList" class="space-y-1.5 max-h-32 overflow-y-auto custom-scroll text-xs"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL FLOW AI -->
+  <div id="postActionModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+    <div class="w-full max-w-2xl rounded-2xl border border-amber-500/30 bg-panel p-5 sm:p-6 text-slate-100 shadow-2xl max-h-[90vh] overflow-y-auto custom-scroll space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div>
+          <span class="text-xs font-mono font-semibold uppercase tracking-wider text-amber-400">Character Sheet • MotionCraft • Flow AI</span>
+          <h3 class="text-lg font-bold text-white">Kelanjutan Video ke Google Flow</h3>
+        </div>
+        <button type="button" onclick="closePostActionModal()" class="rounded-lg px-2.5 py-1 text-slate-400 hover:bg-panel2 hover:text-white cursor-pointer">✕</button>
+      </div>
+
+      <div>
+        <label class="mb-1.5 block text-xs font-medium text-slate-400">Paket Character Sheet &amp; MotionCraft Prompt (Siap Copas ke Flow AI)</label>
+        <textarea id="flowCombinedPrompt" rows="6" class="w-full rounded-xl border border-slate-700 bg-[#07090e] p-3 text-xs leading-relaxed text-slate-200 focus:border-amber-400 focus:outline-none"></textarea>
+      </div>
+
+      <div class="rounded-xl border border-slate-800 bg-[#07090e]/80 p-4">
+        <p class="mb-3 text-sm font-semibold text-white">Lanjut generate video ke Google Flow sekarang?</p>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <button type="button" onclick="proceedToGoogleFlow()" class="flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-bold text-black transition hover:bg-amber-400 cursor-pointer">
+            <span>Iya, Copas &amp; Buka Google Flow</span>
+          </button>
+          <button type="button" onclick="skipVideoGeneration()" class="flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-panel2 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 cursor-pointer">
+            <span>Tidak, Simpan Saja</span>
+          </button>
+        </div>
+        <p id="flowCopyStatus" class="mt-2 hidden text-xs font-medium text-emerald-400">
+          ✓ Paket Character Sheet &amp; MotionCraft tersalin ke clipboard! Tinggal Ctrl + V di Google Flow.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIVISION MODAL -->
+  <div id="divisionModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div class="dash-card rounded-2xl max-w-xl w-full p-5 sm:p-6 border border-amber-500/30 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto custom-scroll">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div>
+          <span id="divModalBadge" class="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-400">Divisi</span>
+          <h3 id="divModalTitle" class="font-bold text-base text-white">Nama Divisi</h3>
+        </div>
+        <button type="button" onclick="closeDivisionModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-panel2 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div>
+        <p class="text-xs font-semibold text-slate-300 mb-2">Daftar Agen Aktif di Divisi Ini:</p>
+        <div id="divModalAgents" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+      </div>
+      <div id="divModalResultWrapper" class="hidden pt-3 border-t border-slate-800">
+        <div class="flex items-center justify-between mb-2">
+          <p class="text-xs font-semibold text-emerald-400">Output Divisi:</p>
+          <button type="button" id="divModalCopyBtn" class="text-xs text-amber-400 hover:text-amber-300 font-semibold cursor-pointer">Salin Output</button>
+        </div>
+        <div id="divModalResult" class="p-3.5 rounded-xl bg-[#07090e] border border-slate-800 text-xs sm:text-sm text-slate-200 whitespace-pre-wrap leading-relaxed"></div>
+      </div>
+      <div class="flex justify-end pt-2 border-t border-slate-800">
+        <button type="button" id="divModalRetryBtn" class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-xs font-bold text-black cursor-pointer">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+          <span>Jalankan Ulang Divisi Ini</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY MODAL -->
+  <div id="historyModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div class="dash-card rounded-2xl max-w-lg w-full p-5 sm:p-6 border border-amber-500/30 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto custom-scroll">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <h3 class="font-bold text-base text-white">Riwayat Tugas Sagitarius</h3>
+        <button type="button" onclick="toggleHistoryModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-panel2 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div id="historyList" class="space-y-2.5"></div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden items-center gap-2.5 px-4 py-3 rounded-xl bg-panel border border-amber-500/40 text-xs sm:text-sm font-medium text-white shadow-2xl">
+    <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-400 shrink-0"></i>
+    <span id="toastText">Berhasil!</span>
+  </div>
+
+  <script>
+    // ==================== BOOTSTRAP GLOBAL HANDLERS (NEVER STUCK) ====================
+    (function () {
+      function revealDashboard() {
+        var landing = document.getElementById("landingView");
+        var dash = document.getElementById("dashboardView");
+        if (landing) landing.classList.add("hidden");
+        if (dash) {
+          dash.classList.remove("hidden");
+          dash.classList.add("flex");
+        }
+      }
+
+      window.enterDashboard = function (sectionKey) {
+        revealDashboard();
+        if (typeof window.switchSection === "function") {
+          try { window.switchSection(sectionKey || "workspace"); } catch (e) {}
+        }
+        if (window.lucide && typeof window.lucide.createIcons === "function") {
+          try { window.lucide.createIcons(); } catch (e) {}
+        }
+      };
+
+      window.backToLanding = function () {
+        var dash = document.getElementById("dashboardView");
+        var landing = document.getElementById("landingView");
+        if (dash) {
+          dash.classList.add("hidden");
+          dash.classList.remove("flex");
+        }
+        if (landing) landing.classList.remove("hidden");
+        if (typeof window.toggleSidebarMobile === "function") {
+          try { window.toggleSidebarMobile(false); } catch (e) {}
+        }
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      };
+
+      window.handleLogoTilt = function (e) {
+        var card = document.getElementById("logoTiltCard");
+        if (!card || !e) return;
+        var rect = card.getBoundingClientRect();
+        var x = (e.clientX - rect.left) / rect.width - 0.5;
+        var y = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = "perspective(800px) rotateX(" + (-y * 10).toFixed(2) + "deg) rotateY(" + (x * 12).toFixed(2) + "deg)";
+      };
+
+      window.resetLogoTilt = function () {
+        var card = document.getElementById("logoTiltCard");
+        if (card) card.style.transform = "perspective(800px) rotateX(0deg) rotateY(0deg)";
+      };
+
+      window.openAuthModal = function (mode) {
+        var modal = document.getElementById("authModal");
+        if (modal) {
+          modal.classList.remove("hidden");
+          modal.classList.add("flex");
+          if (typeof window.switchAuthTab === "function") {
+            try { window.switchAuthTab(mode || "register"); } catch (e) {}
+          }
+        } else {
+          revealDashboard();
+        }
+      };
+
+      window.closeAuthModal = function () {
+        var modal = document.getElementById("authModal");
+        if (modal) {
+          modal.classList.add("hidden");
+          modal.classList.remove("flex");
+        }
+      };
+    })();
+
+    // ==================== CONFIG & STATE ====================
+    const SERVER_CONFIG = {
+      brandName: "SAGITARIUS",
+      endpoint: (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.protocol === "file:")
+        ? "http://localhost:3001/v1/chat/completions"
+        : "/api/chat",
+      model: "minimax-m3.1-flash"
+    };
+
+    const AI_SEARCH_ENGINE = {
+      model: "deepseek-v4-flash",
+      provider: "DeepSeek",
+      endpoint: SERVER_CONFIG.endpoint
+    };
+
+    const TOKEN_STORAGE_KEYS = {
+      ai: "sagitarius_ai_token_balance_v1",
+      pgHistory: "sagitarius_pg_history_v1",
+      user: "sagitarius_user_account_v1"
+    };
+
+    const CUSTOM_TOKEN_RATE = 450;
+
+    const PIPELINE_STEPS = [
+      {
+        tag: "STEP 01 • RISET, STRATEGI & NASKAH",
+        title: "Memetakan Masalah Audiens & Naskah Hook",
+        desc: "Menggali pain point audiens, merancang sudut pandang konten, dan menyusun naskah video pendek berkonversi tinggi."
+      },
+      {
+        tag: "STEP 02 • STORYTELLING NYAMBUNG + CAPTION & HASHTAG TREN",
+        title: "Alur Cerita Bersambung Lengkap dengan Caption & Hashtag Tren",
+        desc: "Setiap episode meneruskan plot sebelumnya dan otomatis menyertakan caption siap posting + hashtag tren per episode."
+      },
+      {
+        tag: "STEP 03 • MOTIONCRAFT PHYSICS LAB",
+        title: "Arahan Gerak Berbasis Fisika & Zero-Shot Prompt",
+        desc: "Merancang dinamika gravitasi, momentum, pantulan, pergerakan kamera, dan durasi adegan siap tempel."
+      },
+      {
+        tag: "STEP 04 • GOOGLE FLOW AI & AUTO-JADWAL (COMING SOON)",
+        title: "Salin Cepat ke Flow AI • Auto-Jadwal Segera Hadir",
+        desc: "Salin paket Character Sheet & MotionCraft langsung ke Google Flow. Fitur penjadwalan posting otomatis sedang disiapkan (Coming Soon)."
+      }
+    ];
+
+    const DIVISIONS = [
+      { id: 1, name: "Riset Pasar & Tren", icon: "search", color: "text-amber-400", agents: [
+        { name: "Trend Hunter", role: "Pelacak topik & format viral" },
+        { name: "Audience Profiler", role: "Pemetaan psikologi & kebutuhan pembeli" },
+        { name: "Competitor Spy", role: "Analisis celah penawaran kompetitor" },
+        { name: "Pain-Point Miner", role: "Penggali masalah utama audiens" }
+      ]},
+      { id: 2, name: "Strategi & Funnel", icon: "compass", color: "text-amber-400", agents: [
+        { name: "Campaign Strategist", role: "Perancang alur kampanye konten" },
+        { name: "Offer Architect", role: "Penyusun struktur penawaran menarik" },
+        { name: "Funnel Planner", role: "Pemetaan tahapan sadar hingga beli" }
+      ]},
+      { id: 3, name: "Ideasi Sudut Pandang", icon: "lightbulb", color: "text-amber-400", agents: [
+        { name: "Angle Generator", role: "Pencipta sudut pandang konten unik" },
+        { name: "Contrarian Thinker", role: "Pembuat opini anti-mainstream" },
+        { name: "Story Miner", role: "Perangkai cerita relatable sehari-hari" },
+        { name: "Hook Ideator", role: "Perumus pemicu rasa penasaran" }
+      ]},
+      { id: 4, name: "Copywriting & Naskah", icon: "file-text", color: "text-amber-400", agents: [
+        { name: "3-Sec Hook Writer", role: "Penulis kalimat pembuka penahan scroll" },
+        { name: "Short-Form Scriptwriter", role: "Penulis naskah TikTok/Reels/Shorts" },
+        { name: "Persuasive Copywriter", role: "Penulis narasi manfaat & bukti" },
+        { name: "CTA Closer", role: "Perumus ajakan bertindak berkonversi" }
+      ]},
+      { id: 5, name: "Sutradara Visual & Character Sheet", icon: "clapperboard", color: "text-amber-400", agents: [
+        { name: "Character Sheet Architect", role: "Penyusun spesifikasi karakter konsisten" },
+        { name: "Scene Director", role: "Pengarah adegan & ekspresi visual" },
+        { name: "AI Video Prompter", role: "Penulis prompt Google Flow / Kling AI" },
+        { name: "Thumbnail Artist", role: "Konsep teks & visual sampul klik tinggi" }
+      ]},
+      { id: 6, name: "Penawaran & Konversi", icon: "badge-percent", color: "text-amber-400", agents: [
+        { name: "Bonus Framer", role: "Perancang paket bonus & urgensi" },
+        { name: "Objection Handler", role: "Penjawab keraguan calon pembeli" },
+        { name: "Guarantee Designer", role: "Penyusun jaminan peningkat kepercayaan" }
+      ]},
+      {
+        id: 7,
+        name: "Distribusi, Caption & Hashtag Tren",
+        icon: "share-2",
+        color: "text-amber-400",
+        agents: [
+          { name: "Trending Hashtag & SEO Specialist", role: "Menyusun hashtag tren & kata kunci pencarian aktif" },
+          { name: "Viral Caption Writer", role: "Menulis opsi caption siap posting yang memancing interaksi" },
+          { name: "Repurpose Strategist", role: "Adaptasi caption & tagar untuk TikTok, Reels & Shorts" }
+        ]
+      },
+      { id: 8, name: "CRM & Skrip Closing", icon: "message-square", color: "text-amber-400", agents: [
+        { name: "WA/DM Closer", role: "Skrip balas chat calon pembeli masuk" },
+        { name: "Follow-Up Sequencer", role: "Pesan follow-up halus anti-ghosting" },
+        { name: "Broadcast Writer", role: "Teks siaran promo database pelanggan" }
+      ]},
+      { id: 9, name: "Quality Control (QC)", icon: "shield-check", color: "text-amber-400", agents: [
+        { name: "Anti-Boring Editor", role: "Pemangkas kalimat bertele-tele" },
+        { name: "Natural Tone Checker", role: "Penyelaras bahasa agar luwes & manusiawi" },
+        { name: "Executive Compiler", role: "Penyusun ringkasan siap eksekusi" }
+      ]},
+      {
+        id: 10,
+        name: "MotionCraft Physics Lab",
+        icon: "sparkles",
+        color: "text-amber-400",
+        agents: [
+          { name: "MotionCraft Physics Director", role: "Arahan gerakan berbasis fisika ala MotionCraft" },
+          { name: "Zero-Shot Motion Prompt Engineer", role: "Prompt gerak zero-shot siap pakai" },
+          { name: "Camera & Transition Calibrator", role: "Durasi adegan, kamera & batas konsistensi gerak" }
+        ]
+      }
+    ];
+
+    let executionMode = "divisions";
+    let episodeCount = 4;
+    let divisionStates = {};
+    let divisionOutputs = {};
+    let storyEpisodes = [];
+    let selectedOutputTab = "all";
+    let isRunning = false;
+    let attachedSearchPhoto = null;
+    let searchChatHistory = [];
+    let authMode = "register";
+    let pgIsCustom = false;
+    let selectedPgPkg = { tokens: 50, price: 22500 };
+    let selectedPgMethod = "QRIS GoPay Merchant";
+
+    // ==================== LANDING SIMULATOR & LAUNCHPAD ====================
+    function updateLandingSimulator() {
+      var slider = document.getElementById("simEpSlider");
+      var eps = parseInt((slider && slider.value) || "4", 10);
+      var tokens = eps * 5;
+      var rupiah = tokens * CUSTOM_TOKEN_RATE;
+      var epEl = document.getElementById("simEpValue");
+      var tokEl = document.getElementById("simTotalTokens");
+      var rpEl = document.getElementById("simCustomRupiah");
+      if (epEl) epEl.textContent = eps + " Episode";
+      if (tokEl) tokEl.textContent = tokens + " Token";
+      if (rpEl) rpEl.textContent = formatRupiah(rupiah);
+    }
+
+    function applySimulatorToDashboard() {
+      var slider = document.getElementById("simEpSlider");
+      var eps = parseInt((slider && slider.value) || "4", 10);
+      setExecutionMode("story_series");
+      var epInput = document.getElementById("episodeCountInput");
+      if (epInput) {
+        epInput.value = String(eps);
+        syncEpisodeCount();
+      }
+      if (!document.getElementById("productInput").value.trim()) {
+        document.getElementById("productInput").value = "Seri Drama " + eps + " Episode Bersambung";
+      }
+      if (!document.getElementById("briefInput").value.trim()) {
+        document.getElementById("briefInput").value = "Bangun cerita bersambung " + eps + " episode yang nyambung antar-episode dengan konflik seru, cliffhanger akhir episode, serta caption & hashtag tren.";
+      }
+      enterDashboard("workspace");
+      showToast("Simulasi " + eps + " Episode dimasukkan ke Command Center!");
+    }
+
+    function launchScenario(kind) {
+      if (kind === "story") {
+        applyPreset("story");
+        enterDashboard("workspace");
+      } else if (kind === "affiliate") {
+        applyPreset("affiliate");
+        enterDashboard("workspace");
+      } else if (kind === "search") {
+        enterDashboard("search");
+      }
+    }
+
+    // ==================== AUTH (+30 TOKEN) ====================
+    window.switchAuthTab = function (mode) {
+      authMode = mode === "login" ? "login" : "register";
+      var titleEl = document.getElementById("authModalTitle");
+      var btnEl = document.getElementById("authSubmitBtn");
+      var regTab = document.getElementById("authTabRegister");
+      var logTab = document.getElementById("authTabLogin");
+
+      if (authMode === "register") {
+        titleEl.textContent = "Daftar Akun Sagitarius (+30 Token)";
+        btnEl.textContent = "Daftar & Klaim +30 Token Gratis";
+        regTab.className = "py-2 rounded-xl text-xs font-bold bg-amber-500 text-black cursor-pointer";
+        logTab.className = "py-2 rounded-xl text-xs font-semibold bg-panel2 text-slate-300 border border-slate-700 cursor-pointer";
+      } else {
+        titleEl.textContent = "Login Akun Sagitarius";
+        btnEl.textContent = "Login & Klaim Bonus +30 Token";
+        logTab.className = "py-2 rounded-xl text-xs font-bold bg-amber-500 text-black cursor-pointer";
+        regTab.className = "py-2 rounded-xl text-xs font-semibold bg-panel2 text-slate-300 border border-slate-700 cursor-pointer";
+      }
+    };
+
+    function submitAuthForm(ev) {
+      ev.preventDefault();
+      var name = (document.getElementById("authNameInput").value || "Kreator").trim();
+      var contact = (document.getElementById("authContactInput").value || "").trim();
+      try {
+        localStorage.setItem(TOKEN_STORAGE_KEYS.user, JSON.stringify({ name: name, contact: contact, updatedAt: Date.now() }));
+      } catch (e) {}
+      var newBalance = getAiTokenBalance() + 30;
+      saveAiTokenBalance(newBalance);
+      renderAccountBadge();
+      closeAuthModal();
+      enterDashboard("workspace");
+      showToast("Selamat datang, " + name + "! Bonus +30 Token AI masuk ke saldo.");
+    }
+
+    function renderAccountBadge() {
+      var labelEl = document.getElementById("headerAccountLabel");
+      if (!labelEl) return;
+      try {
+        var u = JSON.parse(localStorage.getItem(TOKEN_STORAGE_KEYS.user) || "null");
+        if (u && u.name) labelEl.textContent = u.name;
+      } catch (e) {}
+    }
+
+    // ==================== PAYMENT GATEWAY ====================
+    function openPaymentGatewayModal() {
+      renderPgSummary();
+      renderPgHistory();
+      var modal = document.getElementById("paymentGatewayModal");
+      if (modal) {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+      }
+    }
+
+    function closePaymentGatewayModal() {
+      var modal = document.getElementById("paymentGatewayModal");
+      if (modal) {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }
+    }
+
+    function highlightPgBtn(btnEl) {
+      document.querySelectorAll(".pg-pkg-btn").forEach(function (b) {
+        b.classList.remove("border-emerald-400", "bg-emerald-500/15", "border-amber-400");
+        b.classList.add("border-slate-700", "bg-panel2");
+      });
+      if (btnEl) {
+        btnEl.classList.remove("border-slate-700", "bg-panel2");
+        btnEl.classList.add("border-emerald-400", "bg-emerald-500/15");
+      }
+    }
+
+    function selectPgPreset(tokens, price, btnEl) {
+      pgIsCustom = false;
+      document.getElementById("pgCustomBox").classList.add("hidden");
+      selectedPgPkg = { tokens: tokens, price: price };
+      highlightPgBtn(btnEl);
+      renderPgSummary();
+    }
+
+    function selectPgCustomMode(btnEl) {
+      pgIsCustom = true;
+      document.getElementById("pgCustomBox").classList.remove("hidden");
+      highlightPgBtn(btnEl);
+      recalcCustomPg();
+    }
+
+    function recalcCustomPg() {
+      var inp = document.getElementById("pgCustomTokenInput");
+      var toks = parseInt((inp && inp.value) || "10", 10);
+      if (!Number.isFinite(toks) || toks < 10) toks = 10;
+      if (toks > 5000) toks = 5000;
+      selectedPgPkg = { tokens: toks, price: toks * CUSTOM_TOKEN_RATE };
+      renderPgSummary();
+    }
+
+    function selectPgMethod(method, btnEl) {
+      selectedPgMethod = method;
+      document.querySelectorAll(".pg-method-btn").forEach(function (b) {
+        b.classList.remove("border-amber-400", "bg-amber-500/15", "text-amber-300", "font-bold");
+        b.classList.add("border-slate-700", "bg-panel2", "text-slate-200", "font-semibold");
+      });
+      if (btnEl) {
+        btnEl.classList.remove("border-slate-700", "bg-panel2", "text-slate-200", "font-semibold");
+        btnEl.classList.add("border-amber-400", "bg-amber-500/15", "text-amber-300", "font-bold");
+      }
+      renderPgSummary();
+    }
+
+    function formatRupiah(num) {
+      return "Rp" + Number(num || 0).toLocaleString("id-ID");
+    }
+
+    function renderPgSummary() {
+      var pkgEl = document.getElementById("pgSummaryPkg");
+      var mthEl = document.getElementById("pgSummaryMethod");
+      var prcEl = document.getElementById("pgSummaryPrice");
+      if (pkgEl) pkgEl.textContent = "+" + selectedPgPkg.tokens + " Token AI" + (pgIsCustom ? " (Custom @Rp450)" : "");
+      if (mthEl) mthEl.textContent = selectedPgMethod;
+      if (prcEl) prcEl.textContent = formatRupiah(selectedPgPkg.price);
+    }
+
+    function processPgPayment() {
+      var newBalance = getAiTokenBalance() + selectedPgPkg.tokens;
+      saveAiTokenBalance(newBalance);
+      var trxId = "SGT-GOPAY-" + Date.now().toString().slice(-6);
+      try {
+        var list = JSON.parse(localStorage.getItem(TOKEN_STORAGE_KEYS.pgHistory) || "[]");
+        list.unshift({
+          trxId: trxId,
+          date: new Date().toLocaleString("id-ID"),
+          tokens: selectedPgPkg.tokens,
+          price: selectedPgPkg.price,
+          method: selectedPgMethod
+        });
+        localStorage.setItem(TOKEN_STORAGE_KEYS.pgHistory, JSON.stringify(list.slice(0, 10)));
+      } catch (e) {}
+      renderPgHistory();
+      showToast("Pembayaran " + selectedPgMethod + " (" + trxId + ") sukses! +" + selectedPgPkg.tokens + " Token AI.");
+    }
+
+    function renderPgHistory() {
+      var container = document.getElementById("pgHistoryList");
+      if (!container) return;
+      var list = [];
+      try {
+        list = JSON.parse(localStorage.getItem(TOKEN_STORAGE_KEYS.pgHistory) || "[]");
+      } catch (e) {}
+      if (!list.length) {
+        container.innerHTML = '<p class="text-slate-500">Belum ada riwayat transaksi top-up.</p>';
+        return;
+      }
+      container.innerHTML = list.map(function (item) {
+        return '<div class="flex items-center justify-between rounded-lg bg-panel2/80 border border-slate-800 px-3 py-2">' +
+          '<div><span class="font-mono font-bold text-emerald-300">+' + item.tokens + ' Token</span> <span class="text-slate-400">via ' + escapeHtml(item.method) + '</span><div class="text-[10px] font-mono text-slate-500">' + item.trxId + ' • ' + item.date + '</div></div>' +
+          '<span class="font-mono font-bold text-amber-300">' + formatRupiah(item.price) + '</span>' +
+        '</div>';
+      }).join("");
+    }
+
+    // ==================== ANTI-LOOP & SANITIZER ====================
+    function sanitizeModelOutput(rawText) {
+      var text = String(rawText || "");
+      text = text.replace(/([A-Za-z0-9]{1,8}-){5,}/g, function (match) {
+        var parts = match.split("-").filter(Boolean);
+        return parts.slice(0, 4).join("-") + " [loop dipotong] ";
+      });
+      text = text.replace(/(\b[\w-]{1,10}\b(?:\s+|[-—]+)){10,}/g, function (match) {
+        var words = match.trim().split(/\s+/);
+        return words.slice(0, 6).join(" ") + " [pengulangan dipotong] ";
+      });
+      if (text.length > 6500) {
+        text = text.slice(0, 6500) + "\n\n[Output dipotong agar ringkas dan bebas loop.]";
+      }
+      return text.trim();
+    }
+
+    function renderSagitariusLogos() {
+      var slots = document.querySelectorAll(".sagitarius-logo-slot");
+      slots.forEach(function (slot, idx) {
+        var variant = slot.getAttribute("data-variant") || "mini";
+        var gradId = "sagGold_" + variant + "_" + idx;
+        var isHero = variant === "hero";
+
+        var svgMarkup =
+          '<svg viewBox="0 0 120 120" class="' + (isHero ? "w-40 h-40" : "w-full h-full") + '" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+            "<defs>" +
+              '<linearGradient id="' + gradId + '" x1="16" y1="16" x2="104" y2="104" gradientUnits="userSpaceOnUse">' +
+                '<stop offset="0%" stop-color="#fef3c7"/>' +
+                '<stop offset="48%" stop-color="#f59e0b"/>' +
+                '<stop offset="100%" stop-color="#b45309"/>' +
+              "</linearGradient>" +
+            "</defs>" +
+            '<path d="M28 32L76 24L68 42L88 64L80 94L42 86L52 74L74 78L78 60L60 40L44 48L28 32Z" stroke="url(#' + gradId + ')" stroke-width="5" stroke-linejoin="round"/>' +
+            '<path d="M24 94L92 26" stroke="url(#' + gradId + ')" stroke-width="5.5" stroke-linecap="round"/>' +
+            '<path d="M74 26H92V44" stroke="url(#' + gradId + ')" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '<path d="M24 94L18 76L32 76L24 94Z" fill="url(#' + gradId + ')"/>' +
+            '<path d="M24 94L42 100L42 86L24 94Z" fill="url(#' + gradId + ')"/>' +
+            '<path d="M60 44L63 55L74 58L63 61L60 72L57 61L46 58L57 55L60 44Z" fill="#fef9c3"/>' +
+          "</svg>";
+
+        if (isHero) {
+          slot.innerHTML =
+            '<div class="w-full h-full rounded-2xl bg-gradient-to-b from-[#131722] via-[#090c12] to-[#05070b] border border-amber-400/35 p-6 flex flex-col items-center justify-center gap-3">' +
+              svgMarkup +
+              '<span class="font-extrabold tracking-[0.26em] text-lg text-amber-400">SAGITARIUS</span>' +
+            "</div>";
+        } else {
+          slot.innerHTML =
+            '<div class="w-full h-full rounded-xl bg-[#07090e] border border-amber-400/45 p-1.5 flex items-center justify-center shadow-md shadow-amber-500/15">' +
+              svgMarkup +
+            "</div>";
+        }
+      });
+    }
+
+    var totalAgentsCount = DIVISIONS.reduce(function (acc, d) { return acc + d.agents.length; }, 0);
+    document.getElementById("brandTitleDisplay").textContent = SERVER_CONFIG.brandName;
+    document.getElementById("headerStatsBadge").textContent = DIVISIONS.length + " Divisi • " + totalAgentsCount + " Agen";
+    document.getElementById("denahHeading").textContent = "Denah Operasional (" + DIVISIONS.length + " Divisi • " + totalAgentsCount + " Agen)";
+    document.getElementById("landingDivCount").textContent = String(DIVISIONS.length);
+    document.getElementById("landingAgentCount").textContent = String(totalAgentsCount);
+
+    function setExecutionMode(mode) {
+      executionMode = mode;
+      var btnDiv = document.getElementById("modeBtnMultiDiv");
+      var btnStory = document.getElementById("modeBtnStorySeries");
+      var epBox = document.getElementById("episodeMultiplierBox");
+      var helper = document.getElementById("modeHelperText");
+
+      if (mode === "story_series") {
+        btnStory.className = "px-3 py-2.5 rounded-xl text-xs font-bold bg-amber-500 text-black transition cursor-pointer";
+        btnDiv.className = "px-3 py-2.5 rounded-xl text-xs font-bold bg-panel2 text-amber-200 border border-amber-500/30 hover:bg-slate-800 transition cursor-pointer";
+        epBox.classList.remove("opacity-50", "pointer-events-none");
+        helper.textContent = "Mode Storytelling Nyambung: Tiap episode nyambung + otomatis menyertakan Caption & Hashtag Tren.";
+      } else {
+        btnDiv.className = "px-3 py-2.5 rounded-xl text-xs font-bold bg-amber-500 text-black transition cursor-pointer";
+        btnStory.className = "px-3 py-2.5 rounded-xl text-xs font-bold bg-panel2 text-amber-200 border border-amber-500/30 hover:bg-slate-800 transition cursor-pointer";
+        epBox.classList.add("opacity-50", "pointer-events-none");
+        helper.textContent = "Mode 10 Divisi: Riset → Strategi → Naskah → Character Sheet → Caption & Hashtag Tren → MotionCraft → QC";
+      }
+      updateTokenMultiplierCalculator();
+    }
+
+    function syncEpisodeCount() {
+      var input = document.getElementById("episodeCountInput");
+      var val = parseInt(input.value, 10);
+      if (!Number.isFinite(val) || val < 1) val = 1;
+      if (val > 12) val = 12;
+      episodeCount = val;
+      input.value = String(val);
+      updateTokenMultiplierCalculator();
+    }
+
+    function updateTokenMultiplierCalculator() {
+      var cfg = getSelectedModelConfig();
+      SERVER_CONFIG.model = cfg.modelId;
+      document.getElementById("aiCostPreview").textContent = cfg.aiTokenCost + " Token / unit (" + cfg.providerKey + ")";
+      document.getElementById("sidebarProviderBadge").textContent = cfg.providerKey;
+
+      var units = executionMode === "story_series" ? episodeCount : 1;
+      var totalTokens = cfg.aiTokenCost * units;
+
+      document.getElementById("calcOutputCountLabel").textContent = executionMode === "story_series"
+        ? units + " Episode + Caption & Tagar"
+        : DIVISIONS.length + " Divisi (" + totalAgentsCount + " Agen)";
+
+      document.getElementById("calcTokenFormulaLabel").textContent = executionMode === "story_series"
+        ? cfg.aiTokenCost + " Token × " + units + " Eps = " + totalTokens + " Token"
+        : cfg.aiTokenCost + " Token × 1 Run = " + totalTokens + " Token";
+
+      document.getElementById("runOfficeBtnText").textContent = executionMode === "story_series"
+        ? "Buat " + units + " Episode Nyambung (" + totalTokens + " Token)"
+        : "Kerahkan " + totalAgentsCount + " Agen AI (" + totalTokens + " Token)";
+    }
+
+    // ==================== AI SEARCH & PHOTO ====================
+    function handleSearchPhotoSelect(event) {
+      var file = event.target && event.target.files && event.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith("image/")) {
+        showToast("Pilih file gambar (JPG, PNG, WEBP, dll.)");
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function () {
+        attachedSearchPhoto = {
+          name: file.name,
+          sizeKb: Math.max(1, Math.round(file.size / 1024)),
+          dataUrl: String(reader.result || "")
+        };
+        document.getElementById("searchPhotoPreviewImg").src = attachedSearchPhoto.dataUrl;
+        document.getElementById("searchPhotoFileName").textContent = attachedSearchPhoto.name;
+        document.getElementById("searchPhotoFileMeta").textContent = attachedSearchPhoto.sizeKb + " KB • deepseek-v4-flash (DEEPSEEK)";
+        document.getElementById("searchPhotoPreviewWrap").classList.remove("hidden");
+        showToast('Foto "' + file.name + '" siap dikirim!');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeSearchPhoto() {
+      attachedSearchPhoto = null;
+      var input = document.getElementById("searchPhotoInput");
+      if (input) input.value = "";
+      document.getElementById("searchPhotoPreviewWrap").classList.add("hidden");
+      document.getElementById("searchPhotoPreviewImg").src = "";
+    }
+
+    function appendSearchMessageBubble(role, text, photoDataUrl, photoName) {
+      var box = document.getElementById("aiSearchMessages");
+      var msgId = "msg_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
+      var isUser = role === "user";
+
+      var photoHtml = photoDataUrl
+        ? '<img src="' + photoDataUrl + '" alt="' + escapeHtml(photoName || "Foto") + '" class="max-h-48 rounded-lg border border-slate-700 mb-2 object-contain bg-black" />'
+        : "";
+
+      var copyBtnHtml = !isUser
+        ? '<button type="button" onclick="copySearchBubble(\'' + msgId + '\')" class="text-[11px] text-sky-300 hover:text-sky-200 font-semibold cursor-pointer">Salin</button>'
+        : "";
+
+      var html =
+        '<div id="' + msgId + '" class="rounded-xl p-3.5 text-xs sm:text-sm leading-relaxed ' + (isUser ? "bg-amber-500/10 border border-amber-500/30 text-amber-50 ml-4 sm:ml-10" : "bg-panel2 border border-sky-500/20 text-slate-200 mr-4 sm:mr-10") + '">' +
+          '<div class="flex items-center justify-between gap-2 text-[11px] font-mono mb-1.5 ' + (isUser ? "text-amber-300" : "text-sky-300") + '">' +
+            '<span>' + (isUser ? "KAMU" : "DEEPSEEK · DEEPSEEK") + '</span>' +
+            '<div class="flex items-center gap-2">' +
+              '<span>' + AI_SEARCH_ENGINE.model + '</span>' +
+              copyBtnHtml +
+            '</div>' +
+          '</div>' +
+          photoHtml +
+          '<div class="search-bubble-text whitespace-pre-wrap">' + escapeHtml(text) + '</div>' +
+        '</div>';
+      box.insertAdjacentHTML("beforeend", html);
+      box.scrollTop = box.scrollHeight;
+      return msgId;
+    }
+
+    function copySearchBubble(msgId) {
+      var el = document.querySelector("#" + msgId + " .search-bubble-text");
+      if (!el) return;
+      copyTextFallback(el.textContent || "");
+      showToast("Jawaban disalin!");
+    }
+
+    function clearSearchChat() {
+      searchChatHistory = [];
+      document.getElementById("aiSearchMessages").innerHTML =
+        '<div class="rounded-xl bg-panel2/80 border border-sky-500/20 p-3 text-xs sm:text-sm text-slate-200 leading-relaxed">' +
+          '<div class="flex items-center justify-between text-[11px] font-mono text-sky-300 mb-1">' +
+            '<span>SAGITARIUS AI SEARCH</span>' +
+            '<span>deepseek-v4-flash (DeepSeek · DEEPSEEK)</span>' +
+          '</div>' +
+          'Chat direset. Silakan tanya apa saja atau kirim foto baru.' +
+        '</div>';
+      showToast("Riwayat AI Search dibersihkan.");
+    }
+
+    async function sendAiSearchQuery() {
+      var inputEl = document.getElementById("aiSearchInput");
+      var btnEl = document.getElementById("aiSearchSendBtn");
+      var statusEl = document.getElementById("aiSearchStatusText");
+
+      var queryText = (inputEl && inputEl.value ? inputEl.value : "").trim();
+      var currentPhoto = attachedSearchPhoto ? Object.assign({}, attachedSearchPhoto) : null;
+
+      if (!queryText && !currentPhoto) {
+        showToast("Ketik pertanyaan atau klik Kirim Foto dulu ya!");
+        return;
+      }
+
+      var displayPrompt = queryText || "Tolong analisis foto yang saya kirimkan ini secara jelas dan terstruktur.";
+      appendSearchMessageBubble("user", displayPrompt, currentPhoto ? currentPhoto.dataUrl : "", currentPhoto ? currentPhoto.name : "");
+
+      inputEl.value = "";
+      if (currentPhoto) removeSearchPhoto();
+
+      btnEl.disabled = true;
+      btnEl.classList.add("opacity-60", "cursor-not-allowed");
+      if (statusEl) statusEl.textContent = "Memproses via " + AI_SEARCH_ENGINE.model + "...";
+
+      var loadingId = appendSearchMessageBubble("assistant", "Sedang mencari & menganalisis menggunakan " + AI_SEARCH_ENGINE.model + "...");
+
+      try {
+        var userContent = currentPhoto
+          ? [
+              { type: "text", text: displayPrompt + "\n[Lampiran Foto: " + currentPhoto.name + ", " + currentPhoto.sizeKb + " KB]" },
+              { type: "image_url", image_url: { url: currentPhoto.dataUrl } }
+            ]
+          : displayPrompt;
+
+        var messagesPayload = [
+          {
+            role: "system",
+            content: "Kamu adalah asisten AI Search & Vision Sagitarius. Jawab pertanyaan apa saja serta analisis foto yang dilampirkan pengguna dalam Bahasa Indonesia yang jelas, ringkas, dan bebas pengulangan kata/karakter aneh."
+          }
+        ].concat(searchChatHistory.slice(-4), [{ role: "user", content: userContent }]);
+
+        var response = await fetch(AI_SEARCH_ENGINE.endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: AI_SEARCH_ENGINE.model,
+            provider: AI_SEARCH_ENGINE.provider,
+            messages: messagesPayload,
+            temperature: 0.55,
+            max_tokens: 1200
+          })
+        });
+
+        if (!response.ok) {
+          var errText = await response.text();
+          throw new Error("HTTP " + response.status + ": " + errText.slice(0, 160));
+        }
+
+        var data = await response.json();
+        var rawAnswer = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || "Tidak ada respons teks.";
+        var answer = sanitizeModelOutput(rawAnswer);
+
+        var bubbleEl = document.querySelector("#" + loadingId + " .search-bubble-text");
+        if (bubbleEl) bubbleEl.textContent = answer;
+
+        searchChatHistory.push({ role: "user", content: displayPrompt });
+        searchChatHistory.push({ role: "assistant", content: answer.slice(0, 600) });
+        if (statusEl) statusEl.textContent = "Selesai • " + AI_SEARCH_ENGINE.model;
+      } catch (err) {
+        var bubbleErrEl = document.querySelector("#" + loadingId + " .search-bubble-text");
+        if (bubbleErrEl) bubbleErrEl.textContent = "Gagal memanggil " + AI_SEARCH_ENGINE.model + ": " + err.message;
+        if (statusEl) statusEl.textContent = "Error koneksi model";
+        showToast("Gagal memanggil deepseek-v4-flash");
+      } finally {
+        btnEl.disabled = false;
+        btnEl.classList.remove("opacity-60", "cursor-not-allowed");
+        var box = document.getElementById("aiSearchMessages");
+        if (box) box.scrollTop = box.scrollHeight;
+      }
+    }
+
+    // ==================== NAVIGATION & TOKENS ====================
+    function selectPipelineStep(idx) {
+      var step = PIPELINE_STEPS[idx] || PIPELINE_STEPS[0];
+      document.querySelectorAll(".pipeline-tab").forEach(function (btn, i) {
+        if (i === idx) {
+          btn.classList.add("nav-item-active");
+          btn.classList.remove("dash-card", "text-slate-300");
+        } else {
+          btn.classList.remove("nav-item-active");
+          btn.classList.add("dash-card", "text-slate-300");
+        }
+      });
+      document.getElementById("pipelineTag").textContent = step.tag;
+      document.getElementById("pipelineTitle").textContent = step.title;
+      document.getElementById("pipelineDesc").textContent = step.desc;
+    }
+
+    window.toggleSidebarMobile = function (forceOpen) {
+      var sb = document.getElementById("leftSidebar");
+      var bd = document.getElementById("sidebarBackdrop");
+      if (!sb || !bd) return;
+      var willOpen = typeof forceOpen === "boolean" ? forceOpen : sb.classList.contains("-translate-x-full");
+      if (willOpen) {
+        sb.classList.remove("-translate-x-full");
+        bd.classList.remove("hidden");
+      } else {
+        sb.classList.add("-translate-x-full");
+        bd.classList.add("hidden");
+      }
+    };
+
+    window.switchSection = function (target) {
+      document.querySelectorAll(".nav-btn").forEach(function (btn) {
+        btn.classList.remove("nav-item-active");
+        btn.classList.add("text-slate-300", "border-transparent");
+      });
+      var activeBtn = document.getElementById("nav-" + target);
+      if (activeBtn) {
+        activeBtn.classList.add("nav-item-active");
+        activeBtn.classList.remove("text-slate-300", "border-transparent");
+      }
+
+      var map = {
+        workspace: "sec-command",
+        search: "sec-ai-search",
+        divisions: "sec-divisions",
+        billing: "sec-billing",
+        output: "outputSection"
+      };
+      var elId = map[target];
+      if (elId) {
+        var el = document.getElementById(elId);
+        if (el) {
+          if (target === "output") el.classList.remove("hidden");
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+      window.toggleSidebarMobile(false);
+    };
+
+    function getAiTokenBalance() {
+      var rawAi = localStorage.getItem(TOKEN_STORAGE_KEYS.ai);
+      var ai = Number(rawAi);
+      return Number.isFinite(ai) && rawAi !== null ? ai : 100;
+    }
+
+    function saveAiTokenBalance(aiVal) {
+      localStorage.setItem(TOKEN_STORAGE_KEYS.ai, String(Math.max(0, aiVal)));
+      renderTokenWalletUI();
+    }
+
+    function getSelectedModelConfig() {
+      var select = document.getElementById("aiModelSelect");
+      var opt = select && select.selectedOptions ? select.selectedOptions[0] : null;
+      var parts = ((select && select.value) || "bykitsune|minimax-m3.1-flash|5").split("|");
+      return {
+        providerKey: (opt && opt.dataset && opt.dataset.provider) || parts[0] || "ByKitsune",
+        modelId: parts[1] || "minimax-m3.1-flash",
+        modelLabel: (opt && opt.dataset && opt.dataset.model) || parts[1] || "MiniMax M3.1 Flash",
+        aiTokenCost: Number((opt && opt.dataset && opt.dataset.cost) || parts[2] || 5)
+      };
+    }
+
+    function renderTokenWalletUI() {
+      var ai = getAiTokenBalance();
+      ["aiTokenDisplay", "headerAiTokens", "sidebarAiTokens"].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = ai;
+      });
+      updateTokenMultiplierCalculator();
+    }
+
+    function consumeAiTokens(totalNeeded) {
+      var current = getAiTokenBalance();
+      if (current < totalNeeded) {
+        showToast("Token AI kurang (sisa " + current + ", butuh " + totalNeeded + "). Buka Payment Gateway!");
+        openPaymentGatewayModal();
+        return false;
+      }
+      saveAiTokenBalance(current - totalNeeded);
+      return true;
+    }
+
+    function escapeHtml(str) {
   return String(str == null ? "" : str)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
