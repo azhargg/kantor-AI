@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>SAGITARIUS — AI Workspace, Multi-Episode Story, Search &amp; Payment Gateway</title>
+  <link rel="icon" href="data:," />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -1692,19 +1693,4 @@
         var cardClass = "dash-card hover:border-amber-500/40";
 
         if (state === "working") {
-          badgeHtml = '<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>Bekerja...</span>';
-          cardClass = "dash-card-active working-card";
-        } else if (state === "done") {
-          badgeHtml = '<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Selesai ✓</span>';
-          cardClass = "dash-card border-emerald-500/35";
-        } else if (state === "error") {
-          badgeHtml = '<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/30">Gagal (Klik Ulang)</span>';
-          cardClass = "dash-card border-rose-500/40";
-        }
-
-        var agentPreview = div.agents.map(function (a) { return a.name; }).join(" • ");
-
-        return (
-          '<div onclick="openDivisionModal(' + div.id + ')" class="' + cardClass + ' rounded-2xl p-4 cursor-pointer transition-all duration-200 flex flex-col justify-between gap-3">' +
-            '<div class="flex items-start justify-between gap-2">' +
-              '<div class
+          badgeHtml = '<span class
