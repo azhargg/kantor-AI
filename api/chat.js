@@ -10,10 +10,27 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const targetUrl = "https://bandelbanget.xyz/v1/chat/completions";
-  const authHeader =
-    req.headers.authorization ||
-    "Bearer sk-qwen-35d49aad7d69d30bcdbe5d05c9bbf205463ca54b9ddbc0f5";
+  const provider = (req.body?.provider || "").toLowerCase();
+
+  // Pilih endpoint upstream berdasarkan provider yang dipilih di UI
+  const targetUrl =
+    provider === "bykitsune"
+      ? "https://api.bykitsune.com/v1/chat/completions"
+      : "https://bandelbanget.xyz/v1/chat/completions";
+
+  // Ambil key dari env Vercel sesuai provider, atau fallback ke key yang diisi
+  const bykitsuneKey =
+    process.env.BYKITSUNE_API_KEY || "API_KEY_BYKITSUNE_BARU_KAMU";
+  const bbtokenKey =
+    process.env.BBTOKEN_API_KEY ||
+    "sk-qwen-35d49aad7d69d30bcdbe5d05c9bbf205463ca54b9ddbc0f5";
+
+  const selectedKey = provider === "bykitsune" ? bykitsuneKey : bbtokenKey;
+  const authHeader = `Bearer ${selectedKey}`;
+
+  // Bersihkan field 'provider' agar payload ke upstream tetap standar OpenAI-compatible
+  const forwardBody = { ...(req.body || {}) };
+  delete forwardBody.provider;
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 110000);
@@ -25,7 +42,7 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
         Authorization: authHeader,
       },
-      body: JSON.stringify(req.body),
+      body: JSON.stringify(forwardBody),
       signal: controller.signal,
     });
 
