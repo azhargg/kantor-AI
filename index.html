@@ -72,11 +72,10 @@
 
   <!-- ==================== INTERACTIVE LANDING PAGE ==================== -->
   <div id="landingView" class="min-h-screen flex flex-col justify-between bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.12),transparent_55%)]">
-    <!-- Landing Topbar -->
     <nav class="border-b border-amber-500/15 bg-[#07090e]/85 backdrop-blur-md sticky top-0 z-30">
       <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
         <div class="flex items-center gap-3">
-          <img src="./Gemini_Generated_Image_ss6vu0ss6vu0ss6v.jpg" alt="Logo Sagitarius" class="w-9 h-9 rounded-xl object-cover border border-amber-400/40 shadow-md shadow-amber-500/15" />
+          <div class="sagitarius-logo-slot w-9 h-9" data-variant="mini"></div>
           <span class="font-extrabold tracking-widest text-sm sm:text-base text-amber-400">SAGITARIUS</span>
         </div>
         <div class="flex items-center gap-2.5">
@@ -90,14 +89,12 @@
       </div>
     </nav>
 
-    <!-- Landing Main Content -->
     <main class="max-w-6xl w-full mx-auto px-4 py-10 sm:py-14 space-y-12">
-      <!-- Hero Split -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         <div class="lg:col-span-7 space-y-5">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono">
             <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-            <span>MULTI-AGENT WORKSPACE • MOTIONCRAFT • N8N</span>
+            <span>MULTI-AGENT WORKSPACE • MOTIONCRAFT • FLOW AI</span>
           </div>
 
           <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
@@ -105,7 +102,7 @@
           </h1>
 
           <p class="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
-            Kelola riset, naskah, <strong>Character Sheet</strong>, arahan gerak fisika <strong>MotionCraft</strong>, otomasi salin ke <strong>Google Flow</strong>, dan penjadwalan posting terpisah berbasis saldo token dalam satu panel hitam-emas.
+            Kelola riset, naskah, <strong>Character Sheet</strong>, arahan gerak fisika <strong>MotionCraft</strong>, dan otomasi salin ke <strong>Google Flow</strong> dalam satu panel hitam-emas. Fitur penjadwalan otomatis sedang disiapkan (<strong>Coming Soon</strong>).
           </p>
 
           <div class="flex flex-wrap items-center gap-3 pt-1">
@@ -129,20 +126,17 @@
               <p class="text-[11px] text-slate-400">Agen Aktif</p>
             </div>
             <div class="dash-card rounded-xl p-3">
-              <p class="text-lg sm:text-xl font-extrabold font-mono text-emerald-400">2 Wallet</p>
-              <p class="text-[11px] text-slate-400">Token AI &amp; Jadwal</p>
+              <p class="text-lg sm:text-xl font-extrabold font-mono text-amber-300">Soon</p>
+              <p class="text-[11px] text-slate-400">Auto-Jadwal Post</p>
             </div>
           </div>
         </div>
 
-        <!-- Interactive Logo Showcase Card -->
         <div class="lg:col-span-5 flex justify-center">
           <div id="logoTiltCard" onmousemove="handleLogoTilt(event)" onmouseleave="resetLogoTilt()"
             class="dash-card gold-glow rounded-3xl p-5 sm:p-6 max-w-sm w-full transition-transform duration-150 ease-out cursor-pointer"
             onclick="enterDashboard('workspace')">
-            <div class="relative overflow-hidden rounded-2xl border border-amber-400/30 bg-black aspect-square mb-4">
-              <img src="./Gemini_Generated_Image_ss6vu0ss6vu0ss6v.jpg" alt="Sagitarius Gold & Black Emblem" class="w-full h-full object-cover" />
-            </div>
+            <div class="sagitarius-logo-slot w-full aspect-square mb-4" data-variant="hero"></div>
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-xs font-mono uppercase tracking-wider text-amber-400">Emblem Resmi</p>
@@ -181,13 +175,13 @@
           </button>
           <button type="button" onclick="selectPipelineStep(3)" id="step-btn-3" class="pipeline-tab dash-card p-3 rounded-xl text-left text-slate-300 hover:border-amber-500/40 transition cursor-pointer">
             <span class="block text-[10px] font-mono text-amber-400">STEP 04</span>
-            <span class="text-xs font-bold">Flow AI &amp; Auto-Jadwal</span>
+            <span class="text-xs font-bold">Flow AI &amp; Jadwal (Soon)</span>
           </button>
         </div>
 
         <div id="pipelineDetailBox" class="rounded-xl bg-[#07090e] border border-amber-500/20 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div class="space-y-1.5">
-            <span id="pipelineTag" class="inline-block text-[11px] font-mono font-bold text-amber-400">DIVISI 01–04 • RISET, STRATEGI &amp; NASKAH</span>
+            <span id="pipelineTag" class="inline-block text-[11px] font-mono font-bold text-amber-400">STEP 01 • RISET, STRATEGI &amp; NASKAH</span>
             <h3 id="pipelineTitle" class="text-base font-bold text-white">Memetakan Masalah Audiens &amp; Naskah Hook</h3>
             <p id="pipelineDesc" class="text-xs sm:text-sm text-slate-300 leading-relaxed">
               Menggali pain point audiens, merancang sudut pandang konten, dan menyusun naskah video pendek berkonversi tinggi menggunakan model ByKitsune atau BB Token.
@@ -205,21 +199,20 @@
           <div class="md:col-span-7 space-y-4">
             <div>
               <span class="text-[11px] font-mono uppercase tracking-wider text-amber-400">Interactive Token Estimator</span>
-              <h2 class="text-lg font-bold text-white">Simulasi Pemakaian Token AI &amp; Auto-Jadwal</h2>
+              <h2 class="text-lg font-bold text-white">Simulasi Pemakaian Token AI</h2>
             </div>
             <div>
               <div class="flex justify-between text-xs mb-1.5">
-                <span class="text-slate-300">Jumlah Run Generasi AI (5 Token / run):</span>
+                <span class="text-slate-300">Jumlah Run Generasi AI:</span>
                 <span id="simAiRunsLabel" class="font-mono font-bold text-amber-400">4 run</span>
               </div>
               <input id="simAiSlider" type="range" min="1" max="20" value="4" oninput="updateTokenEstimator()" class="w-full accent-amber-400 cursor-pointer" />
             </div>
-            <div>
-              <div class="flex justify-between text-xs mb-1.5">
-                <span class="text-slate-300">Jumlah Jadwal Posting Otomatis (3 Token / post):</span>
-                <span id="simSchedRunsLabel" class="font-mono font-bold text-emerald-400">5 post</span>
-              </div>
-              <input id="simSchedSlider" type="range" min="1" max="20" value="5" oninput="updateTokenEstimator()" class="w-full accent-emerald-400 cursor-pointer" />
+            <div class="rounded-xl border border-slate-800 bg-[#07090e] p-3 flex items-center justify-between">
+              <span class="text-xs text-slate-400">Auto-Jadwal Posting Otomatis</span>
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                Coming Soon
+              </span>
             </div>
           </div>
 
@@ -229,8 +222,8 @@
               <span id="simAiTotal" class="font-mono font-bold text-amber-300 text-sm">20 Token AI</span>
             </div>
             <div class="flex items-center justify-between text-xs">
-              <span class="text-slate-400">Estimasi Token Auto-Jadwal:</span>
-              <span id="simSchedTotal" class="font-mono font-bold text-emerald-300 text-sm">15 Token Jadwal</span>
+              <span class="text-slate-400">Fitur Jadwal:</span>
+              <span class="font-mono font-semibold text-amber-400/90 text-xs">Coming Soon</span>
             </div>
             <button onclick="enterDashboard('workspace')" class="w-full mt-2 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-extrabold transition cursor-pointer">
               Masuk &amp; Jalankan Sekarang →
@@ -248,7 +241,6 @@
   <!-- ==================== DASHBOARD WORKSPACE ==================== -->
   <div id="dashboardView" class="hidden min-h-screen flex-col">
 
-    <!-- TOP NAVBAR -->
     <header class="sticky top-0 z-40 h-16 border-b border-amber-500/15 bg-[#07090e]/95 backdrop-blur-md">
       <div class="h-full px-4 lg:px-6 flex items-center justify-between gap-3">
         <div class="flex items-center gap-3">
@@ -256,7 +248,7 @@
             <i data-lucide="menu" class="w-4 h-4"></i>
           </button>
 
-          <img src="./Gemini_Generated_Image_ss6vu0ss6vu0ss6v.jpg" alt="Sagitarius Logo" onclick="backToLanding()" class="w-9 h-9 rounded-xl object-cover border border-amber-400/40 cursor-pointer" title="Kembali ke Landing Page" />
+          <div onclick="backToLanding()" class="sagitarius-logo-slot w-9 h-9 cursor-pointer" data-variant="mini" title="Kembali ke Landing Page"></div>
 
           <div>
             <div class="flex items-center gap-2">
@@ -274,9 +266,9 @@
             <span>AI:</span>
             <strong id="headerAiTokens">100</strong>
           </div>
-          <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono bg-panel2 border border-emerald-500/25 text-emerald-300">
+          <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono bg-panel2 border border-slate-700 text-slate-400">
             <span>Jadwal:</span>
-            <strong id="headerScheduleTokens">50</strong>
+            <strong class="text-amber-300/90">Coming Soon</strong>
           </div>
 
           <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
@@ -286,19 +278,15 @@
 
           <button onclick="openPostActionModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold transition cursor-pointer">
             <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-            <span>Flow &amp; Jadwal</span>
+            <span>Flow AI</span>
           </button>
         </div>
       </div>
     </header>
 
-    <!-- MAIN SHELL (LEFT SIDEBAR + CONTENT) -->
     <div class="flex-1 flex min-h-0 relative">
-
-      <!-- MOBILE BACKDROP -->
       <div id="sidebarBackdrop" onclick="toggleSidebarMobile(false)" class="fixed inset-0 z-30 bg-black/70 hidden lg:hidden"></div>
 
-      <!-- LEFT SIDEBAR -->
       <aside id="leftSidebar" class="fixed lg:static inset-y-0 left-0 top-16 z-30 w-64 shrink-0 border-r border-amber-500/15 bg-[#0a0e17] -translate-x-full lg:translate-x-0 transition-transform duration-200 flex flex-col justify-between p-4 custom-scroll overflow-y-auto">
         <div class="space-y-5">
           <div>
@@ -332,7 +320,14 @@
             <nav class="space-y-1">
               <button onclick="openPostActionModal(); toggleSidebarMobile(false);" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 transition cursor-pointer">
                 <i data-lucide="film" class="w-4 h-4 text-amber-400"></i>
-                <span>Copas Flow AI &amp; Jadwal</span>
+                <span>Copas ke Flow AI</span>
+              </button>
+              <button onclick="showToast('Fitur Jadwal Posting masih Coming Soon!')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-500 bg-panel2/40 border border-slate-800/80 cursor-not-allowed">
+                <span class="flex items-center gap-2.5">
+                  <i data-lucide="calendar-clock" class="w-4 h-4 text-slate-500"></i>
+                  <span>Jadwal Posting</span>
+                </span>
+                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300">Soon</span>
               </button>
               <button onclick="toggleHistoryModal(); toggleSidebarMobile(false);" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-panel2 hover:text-amber-300 transition cursor-pointer">
                 <i data-lucide="history" class="w-4 h-4 text-amber-400"></i>
@@ -342,7 +337,6 @@
           </div>
         </div>
 
-        <!-- SIDEBAR TOKEN SUMMARY -->
         <div class="mt-6 rounded-xl bg-panel2 border border-amber-500/20 p-3.5 space-y-2.5">
           <div class="flex items-center justify-between text-[11px]">
             <span class="text-slate-400">Provider Aktif</span>
@@ -353,19 +347,16 @@
             <span id="sidebarAiTokens" class="font-mono font-bold text-amber-300">100</span>
           </div>
           <div class="flex items-center justify-between text-xs">
-            <span class="text-slate-300">Token Auto-Jadwal</span>
-            <span id="sidebarScheduleTokens" class="font-mono font-bold text-emerald-300">50</span>
+            <span class="text-slate-400">Auto-Jadwal</span>
+            <span class="font-mono font-semibold text-amber-300/90">Coming Soon</span>
           </div>
           <button type="button" onclick="topUpDemoTokens()" class="w-full py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 text-[11px] font-bold text-amber-300 transition cursor-pointer">
-            + Top-Up Saldo Token
+            + Top-Up Token AI
           </button>
         </div>
       </aside>
 
-      <!-- CONTENT AREA -->
       <main class="flex-1 min-w-0 p-4 lg:p-6 space-y-6 max-w-6xl mx-auto w-full">
-
-        <!-- SECTION 1: COMMAND CENTER + MODEL & TOKEN -->
         <section id="sec-command" class="dash-card rounded-2xl p-4 sm:p-6 space-y-5">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-500/15 pb-4">
             <div>
@@ -385,18 +376,17 @@
             </div>
           </div>
 
-          <!-- MODEL & WALLET TOKEN PANEL -->
           <div id="sec-billing" class="rounded-xl border border-amber-500/25 bg-[#090d15] p-4 space-y-3">
             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
               <span class="text-xs font-mono font-bold uppercase tracking-wider text-amber-400">
-                Provider Model &amp; Dompet Token Terpisah
+                Provider Model &amp; Dompet Token AI
               </span>
               <div class="flex flex-wrap items-center gap-2 text-xs font-mono">
                 <span class="rounded-lg border border-amber-500/35 bg-amber-500/10 px-2.5 py-1 text-amber-300">
                   Token AI: <strong id="aiTokenDisplay">100</strong>
                 </span>
-                <span class="rounded-lg border border-emerald-500/35 bg-emerald-500/10 px-2.5 py-1 text-emerald-300">
-                  Token Jadwal: <strong id="scheduleTokenDisplay">50</strong>
+                <span class="rounded-lg border border-slate-700 bg-panel2 px-2.5 py-1 text-slate-400">
+                  Jadwal: <strong class="text-amber-300/90">Coming Soon</strong>
                 </span>
                 <button type="button" onclick="topUpDemoTokens()" class="rounded-lg border border-amber-500/30 bg-panel2 px-2.5 py-1 text-[11px] font-sans font-semibold text-amber-200 hover:bg-amber-500/20 cursor-pointer">
                   + Top-Up
@@ -438,14 +428,13 @@
                   <span id="aiCostPreview" class="font-mono font-semibold text-amber-300">5 Token AI (ByKitsune)</span>
                 </div>
                 <div class="mt-1 flex items-center justify-between">
-                  <span class="text-slate-400">Tarif Auto-Jadwal Posting:</span>
-                  <span id="scheduleCostPreview" class="font-mono font-semibold text-emerald-300">3 Token Jadwal</span>
+                  <span class="text-slate-400">Auto-Jadwal Posting:</span>
+                  <span class="font-mono font-semibold text-amber-400/90">Coming Soon</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- INPUT FORM -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1.5">Nama Brand / Produk *</label>
@@ -492,7 +481,6 @@
           </div>
         </section>
 
-        <!-- SECTION 2: DIVISIONS GRID -->
         <section id="sec-divisions" class="space-y-3">
           <div class="flex items-center justify-between">
             <div>
@@ -507,7 +495,6 @@
           <div id="divisionsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
         </section>
 
-        <!-- SECTION 3: OUTPUT WORKSPACE -->
         <section id="outputSection" class="hidden dash-card rounded-2xl p-4 sm:p-6 space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
             <div>
@@ -517,7 +504,7 @@
             <div class="flex flex-wrap items-center gap-2">
               <button onclick="openPostActionModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold transition cursor-pointer">
                 <i data-lucide="film" class="w-3.5 h-3.5"></i>
-                <span>Flow AI &amp; Jadwal</span>
+                <span>Copas Flow AI</span>
               </button>
               <button onclick="copyAllResults()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-panel2 hover:bg-slate-800 text-xs font-semibold text-slate-200 border border-slate-700 transition cursor-pointer">
                 <i data-lucide="copy" class="w-3.5 h-3.5 text-amber-400"></i>
@@ -537,7 +524,6 @@
           <div id="outputTabs" class="flex items-center gap-1.5 overflow-x-auto pb-2 custom-scroll"></div>
           <div id="outputBody" class="space-y-4"></div>
         </section>
-
       </main>
     </div>
 
@@ -546,13 +532,13 @@
     </footer>
   </div>
 
-  <!-- MODAL 2 OPSI (LANJUT FLOW AI / SIMPAN) + PENJADWALAN POSTING -->
+  <!-- MODAL 2 OPSI FLOW AI + CARD JADWAL COMING SOON -->
   <div id="postActionModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
     <div class="w-full max-w-2xl rounded-2xl border border-amber-500/30 bg-panel p-5 sm:p-6 text-slate-100 shadow-2xl max-h-[90vh] overflow-y-auto custom-scroll space-y-4">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <div>
-          <span class="text-xs font-mono font-semibold uppercase tracking-wider text-amber-400">Character Sheet • MotionCraft • Auto-Jadwal</span>
-          <h3 class="text-lg font-bold text-white">Kelanjutan Video &amp; Penjadwalan Posting</h3>
+          <span class="text-xs font-mono font-semibold uppercase tracking-wider text-amber-400">Character Sheet • MotionCraft • Flow AI</span>
+          <h3 class="text-lg font-bold text-white">Kelanjutan Video ke Google Flow</h3>
         </div>
         <button onclick="closePostActionModal()" class="rounded-lg px-2.5 py-1 text-slate-400 hover:bg-panel2 hover:text-white cursor-pointer">✕</button>
       </div>
@@ -577,46 +563,20 @@
         </p>
       </div>
 
-      <div class="rounded-xl border border-slate-800 bg-[#07090e]/80 p-4">
-        <div class="mb-3 flex items-center justify-between">
-          <h4 class="text-sm font-semibold text-amber-400">Penjadwalan Posting (Pakai Token Auto-Jadwal Terpisah)</h4>
-          <span id="modalScheduleCostBadge" class="text-[11px] font-mono font-semibold text-emerald-300">Biaya: 3 Token Jadwal</span>
-        </div>
-
-        <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <div>
-            <label class="mb-1 block text-xs text-slate-400">Platform</label>
-            <select id="schedulePlatform" class="w-full rounded-lg border border-slate-700 bg-panel2 px-3 py-2 text-xs text-white">
-              <option value="tiktok">TikTok</option>
-              <option value="youtube_shorts">YouTube Shorts</option>
-              <option value="facebook_reels">Facebook Reels</option>
-              <option value="instagram_reels">Instagram Reels</option>
-            </select>
+      <!-- FITUR JADWAL: COMING SOON -->
+      <div class="rounded-xl border border-amber-500/20 bg-[#07090e]/90 p-4 opacity-85">
+        <div class="flex items-center justify-between gap-2 mb-2">
+          <div class="flex items-center gap-2">
+            <i data-lucide="calendar-clock" class="w-4 h-4 text-amber-400"></i>
+            <h4 class="text-sm font-semibold text-white">Penjadwalan Posting Otomatis</h4>
           </div>
-          <div>
-            <label class="mb-1 block text-xs text-slate-400">Tanggal &amp; Jam Tayang</label>
-            <input id="scheduleDateTime" type="datetime-local" class="w-full rounded-lg border border-slate-700 bg-panel2 px-3 py-2 text-xs text-white" />
-          </div>
-          <div>
-            <label class="mb-1 block text-xs text-slate-400">Status</label>
-            <select id="scheduleStatus" class="w-full rounded-lg border border-slate-700 bg-panel2 px-3 py-2 text-xs text-white">
-              <option value="scheduled">Jadwalkan Otomatis</option>
-              <option value="draft">Simpan Draft</option>
-            </select>
-          </div>
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/35">
+            Coming Soon
+          </span>
         </div>
-
-        <div class="mt-3">
-          <label class="mb-1 block text-xs text-slate-400">Caption &amp; Hashtag Posting</label>
-          <textarea id="scheduleCaption" rows="2" placeholder="Tulis atau edit caption siap posting..." class="w-full rounded-lg border border-slate-700 bg-panel2 p-2.5 text-xs text-slate-200"></textarea>
-        </div>
-
-        <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
-          <span id="scheduleFeedback" class="text-xs text-slate-400"></span>
-          <button type="button" onclick="submitPostSchedule()" class="rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-emerald-500 cursor-pointer">
-            Simpan &amp; Kirim Jadwal ke n8n
-          </button>
-        </div>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Fitur jadwal posting otomatis ke TikTok, Reels, dan Shorts sedang dalam tahap pengembangan (<strong>Coming Soon</strong>). Saat ini kamu bisa langsung menyalin hasil &amp; prompt ke Google Flow atau mengunduh laporan <strong>.MD</strong>.
+        </p>
       </div>
     </div>
   </div>
@@ -685,11 +645,10 @@
       autoSendWebhookOnFinish: false
     };
 
-    const SCHEDULE_TOKEN_COST = 3;
+    const SCHEDULE_FEATURE_COMING_SOON = true;
 
     const TOKEN_STORAGE_KEYS = {
-      ai: "sagitarius_ai_token_balance_v1",
-      schedule: "sagitarius_schedule_token_balance_v1"
+      ai: "sagitarius_ai_token_balance_v1"
     };
 
     const PIPELINE_STEPS = [
@@ -709,9 +668,9 @@
         desc: "Merancang dinamika gravitasi, momentum, pantulan, pergerakan kamera, dan durasi adegan siap tempel."
       },
       {
-        tag: "STEP 04 • GOOGLE FLOW & AUTO-JADWAL N8N",
-        title: "2 Opsi Lanjut Flow AI + Penjadwalan Terpisah",
-        desc: "Pilih lanjut salin & buka Google Flow atau simpan saja, lalu jadwalkan posting ke n8n menggunakan saldo Token Auto-Jadwal terpisah."
+        tag: "STEP 04 • GOOGLE FLOW AI & AUTO-JADWAL (COMING SOON)",
+        title: "Salin Cepat ke Flow AI • Auto-Jadwal Segera Hadir",
+        desc: "Salin paket Character Sheet & MotionCraft langsung ke Google Flow. Fitur penjadwalan posting otomatis sedang disiapkan (Coming Soon)."
       }
     ];
 
@@ -783,6 +742,34 @@
     let selectedOutputTab = "all";
     let isRunning = false;
 
+    function renderSagitariusLogos() {
+      document.querySelectorAll(".sagitarius-logo-slot").forEach((slot, idx) => {
+        const variant = slot.dataset.variant || "mini";
+        const gradId = `sagGold_${variant}_${idx}`;
+        const isHero = variant === "hero";
+        slot.innerHTML = `
+          <div class="w-full h-full ${isHero ? "rounded-2xl bg-gradient-to-b from-[#131722] via-[#090c12] to-[#05070b] border border-amber-400/35 p-6 flex flex-col items-center justify-center gap-3" : "rounded-xl bg-[#07090e] border border-amber-400/45 p-1.5 flex items-center justify-center shadow-md shadow-amber-500/15"}">
+            <svg viewBox="0 0 120 120" class="${isHero ? "w-44 h-44" : "w-full h-full"}" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="${gradId}" x1="16" y1="16" x2="104" y2="104" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#fef3c7"/>
+                  <stop offset="48%" stop-color="#f59e0b"/>
+                  <stop offset="100%" stop-color="#b45309"/>
+                </linearGradient>
+              </defs>
+              <path d="M28 32L76 24L68 42L88 64L80 94L42 86L52 74L74 78L78 60L60 40L44 48L28 32Z" stroke="url(#${gradId})" stroke-width="5" stroke-linejoin="round"/>
+              <path d="M24 94L92 26" stroke="url(#${gradId})" stroke-width="5.5" stroke-linecap="round"/>
+              <path d="M74 26H92V44" stroke="url(#${gradId})" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M24 94L18 76L32 76L24 94Z" fill="url(#${gradId})"/>
+              <path d="M24 94L42 100L42 86L24 94Z" fill="url(#${gradId})"/>
+              <path d="M60 44L63 55L74 58L63 61L60 72L57 61L46 58L57 55L60 44Z" fill="#fef9c3"/>
+            </svg>
+            ${isHero ? `<span class="font-extrabold tracking-[0.26em] text-lg text-amber-400">SAGITARIUS</span>` : ""}
+          </div>
+        `;
+      });
+    }
+
     const totalAgentsCount = DIVISIONS.reduce((acc, d) => acc + d.agents.length, 0);
     document.getElementById("brandTitleDisplay").textContent = SERVER_CONFIG.brandName;
     document.getElementById("headerStatsBadge").textContent = `${DIVISIONS.length} Divisi • ${totalAgentsCount} Agen`;
@@ -843,11 +830,8 @@
     function updateTokenEstimator() {
       const cfg = getSelectedModelConfig();
       const aiRuns = Number(document.getElementById("simAiSlider")?.value || 4);
-      const schedRuns = Number(document.getElementById("simSchedSlider")?.value || 5);
       document.getElementById("simAiRunsLabel").textContent = `${aiRuns} run`;
-      document.getElementById("simSchedRunsLabel").textContent = `${schedRuns} post`;
       document.getElementById("simAiTotal").textContent = `${aiRuns * cfg.aiTokenCost} Token AI`;
-      document.getElementById("simSchedTotal").textContent = `${schedRuns * SCHEDULE_TOKEN_COST} Token Jadwal`;
     }
 
     function toggleSidebarMobile(forceOpen) {
@@ -891,20 +875,14 @@
       toggleSidebarMobile(false);
     }
 
-    function getTokenBalances() {
+    function getAiTokenBalance() {
       const rawAi = localStorage.getItem(TOKEN_STORAGE_KEYS.ai);
-      const rawSched = localStorage.getItem(TOKEN_STORAGE_KEYS.schedule);
       const ai = Number(rawAi);
-      const schedule = Number(rawSched);
-      return {
-        ai: Number.isFinite(ai) && rawAi !== null ? ai : 100,
-        schedule: Number.isFinite(schedule) && rawSched !== null ? schedule : 50
-      };
+      return Number.isFinite(ai) && rawAi !== null ? ai : 100;
     }
 
-    function saveTokenBalances(aiVal, scheduleVal) {
+    function saveAiTokenBalance(aiVal) {
       localStorage.setItem(TOKEN_STORAGE_KEYS.ai, String(Math.max(0, aiVal)));
-      localStorage.setItem(TOKEN_STORAGE_KEYS.schedule, String(Math.max(0, scheduleVal)));
       renderTokenWalletUI();
     }
 
@@ -931,41 +909,28 @@
     }
 
     function renderTokenWalletUI() {
-      const { ai, schedule } = getTokenBalances();
-      const ids = {
-        ai: ["aiTokenDisplay", "headerAiTokens", "sidebarAiTokens"],
-        sched: ["scheduleTokenDisplay", "headerScheduleTokens", "sidebarScheduleTokens"]
-      };
-      ids.ai.forEach(id => {
+      const ai = getAiTokenBalance();
+      ["aiTokenDisplay", "headerAiTokens", "sidebarAiTokens"].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.textContent = ai;
       });
-      ids.sched.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = schedule;
-      });
-
-      const schedCostEl = document.getElementById("scheduleCostPreview");
-      const modalCostEl = document.getElementById("modalScheduleCostBadge");
-      if (schedCostEl) schedCostEl.textContent = `${SCHEDULE_TOKEN_COST} Token Jadwal`;
-      if (modalCostEl) modalCostEl.textContent = `Biaya: ${SCHEDULE_TOKEN_COST} Token Jadwal`;
       updateModelCostPreview();
     }
 
-    function topUpDemoTokens(addAi = 100, addSchedule = 50) {
-      const current = getTokenBalances();
-      saveTokenBalances(current.ai + addAi, current.schedule + addSchedule);
-      showToast(`+${addAi} Token AI & +${addSchedule} Token Auto-Jadwal ditambahkan!`);
+    function topUpDemoTokens(addAi = 100) {
+      const current = getAiTokenBalance();
+      saveAiTokenBalance(current + addAi);
+      showToast(`+${addAi} Token AI ditambahkan!`);
     }
 
     function consumeAiTokensForRun() {
       const cfg = getSelectedModelConfig();
-      const current = getTokenBalances();
-      if (current.ai < cfg.aiTokenCost) {
-        showToast(`Token AI kurang (sisa ${current.ai}, butuh ${cfg.aiTokenCost}). Klik + Top-Up!`);
+      const current = getAiTokenBalance();
+      if (current < cfg.aiTokenCost) {
+        showToast(`Token AI kurang (sisa ${current}, butuh ${cfg.aiTokenCost}). Klik + Top-Up!`);
         return false;
       }
-      saveTokenBalances(current.ai - cfg.aiTokenCost, current.schedule);
+      saveAiTokenBalance(current - cfg.aiTokenCost);
       return true;
     }
 
@@ -1191,23 +1156,12 @@
     function openPostActionModal() {
       const packaged = buildCharacterAndMotionPackage();
       const promptBox = document.getElementById("flowCombinedPrompt");
-      const captionBox = document.getElementById("scheduleCaption");
       const statusEl = document.getElementById("flowCopyStatus");
 
       if (promptBox && (packaged || !promptBox.value)) {
         promptBox.value = packaged || "Jalankan tugas terlebih dahulu atau tempel Character Sheet & MotionCraft prompt di sini.";
       }
-      if (captionBox && !captionBox.value && divisionOutputs[7]) {
-        captionBox.value = divisionOutputs[7].slice(0, 350);
-      }
       if (statusEl) statusEl.classList.add("hidden");
-
-      const dtInput = document.getElementById("scheduleDateTime");
-      if (dtInput && !dtInput.value) {
-        const nextHour = new Date(Date.now() + 60 * 60 * 1000);
-        nextHour.setMinutes(nextHour.getMinutes() - nextHour.getTimezoneOffset());
-        dtInput.value = nextHour.toISOString().slice(0, 16);
-      }
 
       renderTokenWalletUI();
       const modal = document.getElementById("postActionModal");
@@ -1215,6 +1169,7 @@
         modal.classList.remove("hidden");
         modal.classList.add("flex");
       }
+      lucide.createIcons();
     }
 
     function closePostActionModal() {
@@ -1235,81 +1190,8 @@
     }
 
     function skipVideoGeneration() {
-      const feedback = document.getElementById("scheduleFeedback");
-      if (feedback) {
-        feedback.className = "text-xs text-slate-300";
-        feedback.textContent = "Opsi lanjut video dilewati. Hasil tersimpan di workspace.";
-      }
       showToast("Disimpan tanpa membuka Google Flow.");
-    }
-
-    async function submitPostSchedule() {
-      const feedback = document.getElementById("scheduleFeedback");
-      const cfg = getSelectedModelConfig();
-      const balances = getTokenBalances();
-      const scheduledAt = document.getElementById("scheduleDateTime")?.value || "";
-
-      if (!scheduledAt) {
-        if (feedback) {
-          feedback.className = "text-xs font-medium text-amber-300";
-          feedback.textContent = "Pilih tanggal & jam tayang dulu.";
-        }
-        return;
-      }
-
-      if (balances.schedule < SCHEDULE_TOKEN_COST) {
-        if (feedback) {
-          feedback.className = "text-xs font-medium text-rose-400";
-          feedback.textContent = `Token Auto-Jadwal kurang (sisa ${balances.schedule}, butuh ${SCHEDULE_TOKEN_COST} Token Jadwal).`;
-        }
-        return;
-      }
-
-      const payload = {
-        action: "schedule_post",
-        provider: cfg.providerKey,
-        model: cfg.modelId,
-        token_billing: {
-          ai_token_cost: cfg.aiTokenCost,
-          schedule_token_cost: SCHEDULE_TOKEN_COST,
-          remaining_ai_tokens: balances.ai,
-          remaining_schedule_tokens: balances.schedule - SCHEDULE_TOKEN_COST
-        },
-        brand: SERVER_CONFIG.brandName,
-        product: document.getElementById("productInput")?.value?.trim() || "Brand",
-        platform: document.getElementById("schedulePlatform")?.value || "tiktok",
-        scheduled_at: scheduledAt,
-        status: document.getElementById("scheduleStatus")?.value || "scheduled",
-        caption: document.getElementById("scheduleCaption")?.value?.trim() || "",
-        character_and_motion_prompt: document.getElementById("flowCombinedPrompt")?.value?.trim() || "",
-        created_at: new Date().toISOString()
-      };
-
-      if (feedback) {
-        feedback.className = "text-xs text-slate-300";
-        feedback.textContent = "Mengirim jadwal ke server n8n...";
-      }
-
-      try {
-        const res = await fetch(SERVER_CONFIG.webhookUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-        saveTokenBalances(balances.ai, balances.schedule - SCHEDULE_TOKEN_COST);
-        if (feedback) {
-          feedback.className = "text-xs font-medium text-emerald-400";
-          feedback.textContent = `✓ Terjadwal (${payload.platform.toUpperCase()}) • Terpotong ${SCHEDULE_TOKEN_COST} Token Jadwal.`;
-        }
-        showToast(`Jadwal terkirim! (-${SCHEDULE_TOKEN_COST} Token Jadwal)`);
-      } catch (err) {
-        if (feedback) {
-          feedback.className = "text-xs font-medium text-rose-400";
-          feedback.textContent = `Gagal kirim ke n8n (${err.message}). Saldo Token Jadwal aman tidak terpotong.`;
-        }
-      }
+      closePostActionModal();
     }
 
     function renderOutputWorkspace(productTitle) {
@@ -1562,6 +1444,7 @@
         .replace(/>/g, "&gt;");
     }
 
+    renderSagitariusLogos();
     renderTokenWalletUI();
     renderDivisions();
     updateTokenEstimator();
