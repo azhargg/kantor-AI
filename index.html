@@ -1092,7 +1092,7 @@
     let selectedPgMethod = "QRIS GoPay Merchant";
 
     // ==================== LANDING SIMULATOR & LAUNCHPAD ====================
-    function updateLandingSimulator() {
+    window.updateLandingSimulator = function () {
       var slider = document.getElementById("simEpSlider");
       var eps = parseInt((slider && slider.value) || "4", 10);
       var tokens = eps * 5;
@@ -1103,7 +1103,7 @@
       if (epEl) epEl.textContent = eps + " Episode";
       if (tokEl) tokEl.textContent = tokens + " Token";
       if (rpEl) rpEl.textContent = formatRupiah(rupiah);
-    }
+    };
 
     function applySimulatorToDashboard() {
       var slider = document.getElementById("simEpSlider");
@@ -1672,7 +1672,7 @@
     function consumeAiTokens(totalNeeded) {
       var current = getAiTokenBalance();
       if (current < totalNeeded) {
-        showToast("Token AI kurang (sisa " + current + ", butuh " + totalNeeded + "). Buka Payment Gateway!");
+        showToast("Token AI kurang (sisa " + current + ", butuh " + totalNeeded + "). Buka QRIS GoPay / Custom Token!");
         openPaymentGatewayModal();
         return false;
       }
@@ -1680,512 +1680,598 @@
       return true;
     }
 
-    function escapeHtml(str) {
-  return String(str == null ? "" : str)
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-}
+    function renderDivisions() {
+      var grid = document.getElementById("divisionsGrid");
+      if (!grid) return;
+      var doneCount = 0;
 
-function copyTextFallback(text) {
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    return navigator.clipboard.writeText(text).catch(function () { legacyCopy(text); });
-  }
-  legacyCopy(text);
-  return Promise.resolve();
-}
-function legacyCopy(text) {
-  var ta = document.createElement("textarea");
-  ta.value = text;
-  ta.style.position = "fixed";
-  ta.style.opacity = "0";
-  document.body.appendChild(ta);
-  ta.select();
-  try { document.execCommand("copy"); } catch (e) {}
-  document.body.removeChild(ta);
-}
+      grid.innerHTML = DIVISIONS.map(function (div) {
+        var state = divisionStates[div.id] || "idle";
+        if (state === "done") doneCount++;
 
-var toastTimer = null;
-function showToast(msg) {
-  var t = document.getElementById("toast");
-  var tt = document.getElementById("toastText");
-  if (!t || !tt) return;
-  tt.textContent = msg;
-  t.classList.remove("hidden");
-  t.classList.add("flex");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(function () {
-    t.classList.add("hidden");
-    t.classList.remove("flex");
-  }, 3200);
-}
+        var badgeHtml = '<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-panel2 text-slate-400 border border-slate-700">' + div.agents.length + ' Agen • Standby</span>';
+        var cardClass = "dash-card hover:border-amber-500/40";
 
-// ---------------- DENAH DIVISI ----------------
-function renderDivisions() {
-  var grid = document.getElementById("divisionsGrid");
-  if (!grid) return;
-  var doneCount = 0;
+        if (state === "working") {
+          badgeHtml = '<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>Bekerja...</span>';
+          cardClass = "dash-card-active working-card";
+        } else if (state === "done") {
+          badgeHtml = '<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Selesai ✓</span>';
+          cardClass = "dash-card border-emerald-500/35";
+        } else if (state === "error") {
+          badgeHtml = '<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/30">Gagal (Klik Ulang)</span>';
+          cardClass = "dash-card border-rose-500/40";
+        }
 
-  grid.innerHTML = DIVISIONS.map(function (div) {
-    var state = divisionStates[div.id] || "idle";
-    if (state === "done") doneCount++;
+        var agentPreview = div.agents.map(function (a) { return a.name; }).join(" • ");
 
-    var badge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-panel2 text-slate-400 border border-slate-700">' + div.agents.length + ' Agen • Standby</span>';
-    var cardClass = "dash-card hover:border-amber-500/40";
+        return (
+          '<div onclick="openDivisionModal(' + div.id + ')" class="' + cardClass + ' rounded-2xl p-4 cursor-pointer transition-all duration-200 flex flex-col justify-between gap-3">' +
+            '<div class="flex items-start justify-between gap-2">' +
+              '<div class="flex items-center gap-2.5">' +
+                '<div class="w-8 h-8 rounded-xl bg-panel2 border border-amber-500/20 flex items-center justify-center shrink-0">' +
+                  '<i data-lucide="' + div.icon + '" class="w-4 h-4 ' + div.color + '"></i>' +
+                '</div>' +
+                '<div>' +
+                  '<span class="text-[10px] font-mono text-amber-400/80 uppercase">Divisi ' + String(div.id).padStart(2, "0") + '</span>' +
+                  '<h4 class="text-sm font-bold text-white leading-snug">' + div.name + '</h4>' +
+                '</div>' +
+              '</div>' +
+              badgeHtml +
+            '</div>' +
+            '<p class="text-[11px] text-slate-400 line-clamp-1">' + agentPreview + '</p>' +
+          '</div>'
+        );
+      }).join("");
 
-    if (state === "working") {
-      badge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/35">Bekerja...</span>';
-      cardClass = "dash-card working-card";
-    } else if (state === "done") {
-      badge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/35">Selesai</span>';
-      cardClass = "dash-card-active";
-    } else if (state === "error") {
-      badge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-500/15 text-rose-300 border border-rose-500/35">Gagal • klik untuk ulang</span>';
-      cardClass = "dash-card border-rose-500/40";
+      document.getElementById("activeDivisionCounter").textContent = doneCount + " / " + DIVISIONS.length + " Selesai";
+      refreshIconsSafely();
     }
 
-    return '<button type="button" onclick="openDivisionModal(' + div.id + ')" class="' + cardClass + ' rounded-xl p-4 text-left transition cursor-pointer">' +
-      '<div class="flex items-center justify-between gap-2 mb-2">' +
-        '<span class="flex items-center gap-2 text-sm font-bold text-white"><i data-lucide="' + div.icon + '" class="w-4 h-4 ' + div.color + '"></i>' + escapeHtml(div.name) + '</span>' +
-        badge +
-      '</div>' +
-      '<p class="text-[11px] text-slate-400">' + div.agents.map(function (a) { return escapeHtml(a.name); }).join(" • ") + '</p>' +
-    '</button>';
-  }).join("");
+    function applyPreset(type) {
+      var prod = document.getElementById("productInput");
+      var aud = document.getElementById("audienceInput");
+      var brief = document.getElementById("briefInput");
 
-  var counter = document.getElementById("activeDivisionCounter");
-  if (counter) counter.textContent = doneCount + " / " + DIVISIONS.length + " Selesai";
-  if (window.lucide) { try { window.lucide.createIcons(); } catch (e) {} }
-}
-
-var currentModalDivId = null;
-function openDivisionModal(id) {
-  var div = DIVISIONS.find(function (d) { return d.id === id; });
-  if (!div) return;
-  currentModalDivId = id;
-  document.getElementById("divModalBadge").textContent = "Divisi " + id;
-  document.getElementById("divModalTitle").textContent = div.name;
-  document.getElementById("divModalAgents").innerHTML = div.agents.map(function (a) {
-    return '<div class="rounded-lg bg-panel2 border border-slate-800 p-2.5"><p class="text-xs font-bold text-amber-300">' + escapeHtml(a.name) + '</p><p class="text-[11px] text-slate-400">' + escapeHtml(a.role) + '</p></div>';
-  }).join("");
-
-  var wrap = document.getElementById("divModalResultWrapper");
-  var out = divisionOutputs[id];
-  if (out) {
-    wrap.classList.remove("hidden");
-    document.getElementById("divModalResult").textContent = out;
-    document.getElementById("divModalCopyBtn").onclick = function () {
-      copyTextFallback(out); showToast("Output divisi disalin!");
-    };
-  } else {
-    wrap.classList.add("hidden");
-  }
-  document.getElementById("divModalRetryBtn").onclick = function () {
-    closeDivisionModal();
-    retryDivision(id);
-  };
-  var m = document.getElementById("divisionModal");
-  m.classList.remove("hidden"); m.classList.add("flex");
-  if (window.lucide) { try { window.lucide.createIcons(); } catch (e) {} }
-}
-function closeDivisionModal() {
-  var m = document.getElementById("divisionModal");
-  m.classList.add("hidden"); m.classList.remove("flex");
-}
-
-// ---------------- PANGGIL MODEL ----------------
-async function callModel(systemPrompt, userPrompt, maxTokens) {
-  var res = await fetch(SERVER_CONFIG.endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: SERVER_CONFIG.model,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt }
-      ],
-      temperature: 0.7,
-      max_tokens: maxTokens || 1400
-    })
-  });
-  if (!res.ok) {
-    var t = await res.text();
-    throw new Error("HTTP " + res.status + ": " + t.slice(0, 140));
-  }
-  var data = await res.json();
-  var raw = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-  if (!raw) throw new Error("Respons model kosong");
-  return sanitizeModelOutput(raw);
-}
-
-function getBriefValues() {
-  return {
-    product: document.getElementById("productInput").value.trim(),
-    audience: document.getElementById("audienceInput").value.trim() || "Audiens umum media sosial Indonesia",
-    brief: document.getElementById("briefInput").value.trim()
-  };
-}
-
-function setProgress(pct, label) {
-  var c = document.getElementById("progressContainer");
-  c.classList.remove("hidden");
-  document.getElementById("progressBar").style.width = pct + "%";
-  document.getElementById("progressPercent").textContent = Math.round(pct) + "%";
-  if (label) {
-    document.getElementById("progressLabel").innerHTML =
-      '<span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>' + escapeHtml(label);
-  }
-}
-
-// ---------------- MODE 10 DIVISI ----------------
-function buildDivisionPrompt(div, ctx, prevOutputs) {
-  var agentList = div.agents.map(function (a) { return "- " + a.name + ": " + a.role; }).join("\n");
-  var prev = Object.keys(prevOutputs).map(function (k) {
-    return "[Divisi " + k + "] " + prevOutputs[k].slice(0, 500);
-  }).join("\n\n");
-  return "Produk/Judul: " + ctx.product + "\nAudiens & Platform: " + ctx.audience + "\nBrief: " + ctx.brief +
-    "\n\nKamu mewakili divisi \"" + div.name + "\" dengan agen:\n" + agentList +
-    "\n\nKonteks dari divisi sebelumnya (ringkas):\n" + (prev || "(belum ada)") +
-    "\n\nHasilkan output kerja divisi ini, dibagi per agen dengan sub-judul. Bahasa Indonesia, ringkas, praktis, tanpa pengulangan.";
-}
-
-async function runDivisionCore(div, ctx) {
-  divisionStates[div.id] = "working";
-  renderDivisions();
-  try {
-    var out = await callModel(
-      "Kamu adalah tim agen AI Sagitarius yang menghasilkan konten pemasaran & cerita pendek berbahasa Indonesia.",
-      buildDivisionPrompt(div, ctx, divisionOutputs),
-      1300
-    );
-    divisionOutputs[div.id] = out;
-    divisionStates[div.id] = "done";
-    renderDivisions();
-    return true;
-  } catch (e) {
-    divisionStates[div.id] = "error";
-    divisionOutputs[div.id] = "";
-    renderDivisions();
-    console.error("Divisi " + div.id + " gagal:", e);
-    return false;
-  }
-}
-
-async function retryDivision(id) {
-  if (isRunning) { showToast("Tunggu proses yang sedang berjalan selesai."); return; }
-  var div = DIVISIONS.find(function (d) { return d.id === id; });
-  var cfg = getSelectedModelConfig();
-  var cost = Math.max(1, Math.round(cfg.aiTokenCost / 2));
-  if (!consumeAiTokens(cost)) return;
-  var ok = await runDivisionCore(div, getBriefValues());
-  if (!ok) { saveAiTokenBalance(getAiTokenBalance() + cost); showToast("Divisi gagal lagi, token dikembalikan."); }
-  else { renderOutput(); showToast("Divisi " + div.name + " selesai diulang (" + cost + " token)."); }
-}
-
-// ---------------- MODE STORY MULTI-EPISODE ----------------
-async function runStorySeries(ctx, cfg) {
-  storyEpisodes = [];
-  var recap = "";
-  for (var i = 1; i <= episodeCount; i++) {
-    setProgress(((i - 1) / episodeCount) * 100, "Menulis Episode " + i + " dari " + episodeCount + "...");
-    var isLast = i === episodeCount;
-    var prompt =
-      "Judul seri: " + ctx.product + "\nAudiens & Platform: " + ctx.audience + "\nPremis: " + ctx.brief +
-      "\nTotal episode: " + episodeCount + "\n\nRingkasan episode sebelumnya:\n" + (recap || "(ini episode pertama)") +
-      "\n\nTulis EPISODE " + i + ". Wajib nyambung dengan episode sebelumnya. Format:\n" +
-      "JUDUL EPISODE:\nNASKAH ADEGAN (hook 3 detik, 4-6 adegan singkat):\n" +
-      (isLast ? "PENUTUP: selesaikan konflik utama dengan akhir memuaskan.\n" : "CLIFFHANGER: akhir yang memancing lanjut ke episode berikutnya.\n") +
-      "CAPTION SIAP POSTING (2 opsi):\nHASHTAG TREN (8-10 tagar relevan):\nRINGKASAN 2 KALIMAT untuk jembatan episode berikutnya:";
-    try {
-      var out = await callModel("Kamu penulis serial drama pendek vertikal Indonesia. Jaga kontinuitas tokoh dan plot.", prompt, 1300);
-      storyEpisodes.push({ ep: i, text: out, ok: true });
-      var m = out.split(/RINGKASAN[^:]*:/i);
-      recap += "Eps " + i + ": " + (m.length > 1 ? m[m.length - 1].trim().slice(0, 300) : out.slice(0, 300)) + "\n";
-    } catch (e) {
-      storyEpisodes.push({ ep: i, text: "Gagal: " + e.message, ok: false });
-      saveAiTokenBalance(getAiTokenBalance() + cfg.aiTokenCost);
+      if (type === "story") {
+        setExecutionMode("story_series");
+        document.getElementById("episodeCountInput").value = "4";
+        syncEpisodeCount();
+        prod.value = "Seri Drama Singkat: Pesan dari Masa Depan";
+        aud.value = "Penonton TikTok Drama, Reels & Shorts";
+        brief.value = "Tokoh utama menemukan jam saku yang berdetak mundur menuju keputusan penting. Buat alur bersambung yang saling nyambung tiap episode dengan hook kuat, konflik naik bertahap, cliffhanger di akhir tiap episode, plus caption & hashtag tren.";
+      } else if (type === "affiliate") {
+        setExecutionMode("divisions");
+        prod.value = "Sandal Clog Nyaman & Ringan + Charms";
+        aud.value = "Mahasiswa & anak muda aktif di TikTok & Shopee Video";
+        brief.value = "Buatkan paket konten affiliate lengkap: riset alasan beli, character sheet, 3 angle konten viral, naskah video 30 detik dengan hook kuat, caption & hashtag tren, prompt gerak MotionCraft, dan balasan DM.";
+      } else {
+        setExecutionMode("divisions");
+        prod.value = "Kopi Susu Gula Aren & Paket Jualan";
+        aud.value = "Mahasiswa & pekerja muda di TikTok & Instagram";
+        brief.value = "Rancang kampanye promosi 7 hari: analisis masalah pelanggan, susun penawaran promo, character sheet & visual prompt, caption & hashtag tren, prompt gerak fisika MotionCraft, dan skrip follow-up WhatsApp.";
+      }
+      showToast("Template tugas siap dijalankan!");
     }
-  }
-}
 
-// ---------------- JALANKAN ----------------
-async function startVirtualOffice() {
-  if (isRunning) return;
-  var ctx = getBriefValues();
-  if (!ctx.product || !ctx.brief) {
-    showToast("Isi Judul/Produk dan Brief dulu ya.");
-    return;
-  }
-  var cfg = getSelectedModelConfig();
-  SERVER_CONFIG.model = cfg.modelId;
-  var units = executionMode === "story_series" ? episodeCount : 1;
-  var total = cfg.aiTokenCost * units;
-  if (!consumeAiTokens(total)) return;
+    async function callLLM(systemPrompt, userPrompt, temp) {
+      var cfg = getSelectedModelConfig();
+      var response = await fetch(SERVER_CONFIG.endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: cfg.modelId || SERVER_CONFIG.model,
+          provider: cfg.providerKey,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt }
+          ],
+          temperature: typeof temp === "number" ? temp : 0.55,
+          max_tokens: 1300
+        })
+      });
 
-  isRunning = true;
-  var btn = document.getElementById("runOfficeBtn");
-  btn.disabled = true; btn.classList.add("opacity-60", "cursor-not-allowed");
-  selectedOutputTab = "all";
+      if (!response.ok) {
+        var errText = await response.text();
+        throw new Error("HTTP " + response.status + ": " + errText.slice(0, 180));
+      }
 
-  try {
-    if (executionMode === "story_series") {
-      await runStorySeries(ctx, cfg);
-    } else {
-      divisionStates = {}; divisionOutputs = {};
+      var data = await response.json();
+      var raw = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || "";
+      return sanitizeModelOutput(raw);
+    }
+
+    function buildDivisionTaskPrompt(divId, product, audience, brief) {
+      var ctx = "Produk/Judul: " + product + " | Audiens & Platform: " + audience + " | Brief: " + brief;
+      var prev1 = divisionOutputs[1] ? "\nRiset Divisi 1:\n" + divisionOutputs[1].slice(0, 450) : "";
+      var prev4 = divisionOutputs[4] ? "\nNaskah Divisi 4:\n" + divisionOutputs[4].slice(0, 450) : "";
+      var prev5 = divisionOutputs[5] ? "\nCharacter Sheet & Visual Divisi 5:\n" + divisionOutputs[5].slice(0, 450) : "";
+
+      var tasks = {
+        1: ctx + "\nTugas Divisi Riset: Sebutkan 3 pain point utama audiens, 3 celah kompetitor, dan 3 tren format konten secara ringkas.",
+        2: ctx + prev1 + "\nTugas Divisi Strategi & Funnel: Susun alur kampanye konten dari menarik perhatian sampai closing beserta penawaran utamanya.",
+        3: ctx + prev1 + "\nTugas Divisi Ideasi: Berikan 3 sudut pandang (angle) berbeda dan 5 hook 3 detik pertama.",
+        4: ctx + prev1 + "\nTugas Divisi Copywriting & Naskah: Tulis 2 naskah video pendek (30-45 detik) lengkap dengan hook, isi, dan CTA.",
+        5: ctx + prev4 + "\nTugas Sutradara Visual & Character Sheet: Susun CHARACTER SHEET terstruktur (identitas, pakaian/detail fisik, pencahayaan, rasio aspek) + 2 prompt visual yang konsisten.",
+        6: ctx + "\nTugas Penawaran & Konversi: Berikan ide bonus, jawaban 3 keraguan pembeli, dan kalimat jaminan.",
+        7: ctx + prev4 + "\nWAJIB KERJAKAN CAPTION & HASHTAG TREN: Berikan (1) 3 opsi caption siap posting yang engaging untuk " + audience + ", dan (2) daftar hashtag tren & kata kunci pencarian yang relevan dengan " + product + ". Jangan dikosongkan.",
+        8: ctx + "\nTugas CRM & Skrip Closing: Tulis template balasan chat/DM calon pembeli dan 1 pesan follow-up ramah.",
+        9: ctx + "\nTugas Quality Control: Berikan 5 langkah eksekusi prioritas hari ini.",
+        10: ctx + prev5 + "\nTugas MotionCraft Physics Lab: Berikan (1) Arahan Gerak Berbasis Fisika, (2) Zero-Shot Motion Prompt siap pakai, dan (3) Durasi adegan, kamera & batas konsistensi gerak."
+      };
+      return tasks[divId];
+    }
+
+    async function runSingleDivision(divId, product, audience, brief) {
+      var div = DIVISIONS.find(function (d) { return d.id === divId; });
+      divisionStates[divId] = "working";
       renderDivisions();
-      var failed = 0;
-      for (var i = 0; i < DIVISIONS.length; i++) {
-        setProgress((i / DIVISIONS.length) * 100, "Divisi " + DIVISIONS[i].name + "...");
-        var ok = await runDivisionCore(DIVISIONS[i], ctx);
-        if (!ok) failed++;
-      }
-      if (failed > 0) {
-        var refund = Math.round(total * failed / DIVISIONS.length);
-        saveAiTokenBalance(getAiTokenBalance() + refund);
-        showToast(failed + " divisi gagal. " + refund + " token dikembalikan, klik kartu untuk ulang.");
+
+      try {
+        var systemPrompt = "Kamu adalah tim " + div.name + " di Sagitarius AI (" + div.agents.map(function (a) { return a.name; }).join(", ") + "). Jawab ringkas, terstruktur, langsung ke inti, dalam Bahasa Indonesia natural. Jangan pernah mengulang kata/karakter yang sama secara beruntun.";
+        var result = await callLLM(systemPrompt, buildDivisionTaskPrompt(divId, product, audience, brief), 0.55);
+        divisionOutputs[divId] = result || "Output kosong dari model.";
+        divisionStates[divId] = "done";
+        renderDivisions();
+        return true;
+      } catch (err) {
+        divisionOutputs[divId] = "[Error Divisi " + String(divId).padStart(2, "0") + "] " + err.message;
+        divisionStates[divId] = "error";
+        renderDivisions();
+        return false;
       }
     }
-    setProgress(100, "Selesai!");
-    saveHistory(ctx, total);
-    renderOutput();
-    switchSection("output");
-  } finally {
-    isRunning = false;
-    btn.disabled = false; btn.classList.remove("opacity-60", "cursor-not-allowed");
-  }
-}
 
-// ---------------- OUTPUT ----------------
-function getOutputItems() {
-  if (executionMode === "story_series" && storyEpisodes.length) {
-    return storyEpisodes.map(function (e) { return { key: "ep" + e.ep, label: "Eps " + e.ep, title: "Episode " + e.ep, text: e.text }; });
-  }
-  return DIVISIONS.filter(function (d) { return divisionOutputs[d.id]; })
-    .map(function (d) { return { key: "d" + d.id, label: d.id + ". " + d.name, title: d.name, text: divisionOutputs[d.id] }; });
-}
+    async function runStorySeries(title, audience, premise, totalEpisodes, cfg) {
+      storyEpisodes = [];
+      var continuityLog = "";
 
-function renderOutput() {
-  var items = getOutputItems();
-  var sec = document.getElementById("outputSection");
-  sec.classList.remove("hidden");
-  document.getElementById("outputHeading").textContent =
-    executionMode === "story_series" ? "Seri " + episodeCount + " Episode Bersambung" : "Hasil Kerja 10 Divisi";
+      var updateProgress = function (pct, text) {
+        document.getElementById("progressBar").style.width = pct + "%";
+        document.getElementById("progressPercent").textContent = pct + "%";
+        document.getElementById("progressLabel").innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>' + text;
+      };
 
-  var tabs = [{ key: "all", label: "Semua" }].concat(items);
-  document.getElementById("outputTabs").innerHTML = tabs.map(function (t) {
-    var active = t.key === selectedOutputTab;
-    return '<button type="button" onclick="selectOutputTab(\'' + t.key + '\')" class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold border transition cursor-pointer ' +
-      (active ? "bg-amber-500 text-black border-amber-400" : "bg-panel2 text-slate-300 border-slate-700 hover:border-amber-500/40") + '">' + escapeHtml(t.label) + '</button>';
-  }).join("");
+      for (var ep = 1; ep <= totalEpisodes; ep++) {
+        var pct = Math.round(((ep - 0.5) / totalEpisodes) * 100);
+        updateProgress(pct, "Menulis Episode " + ep + "/" + totalEpisodes + " + Caption & Hashtag Tren via " + cfg.modelLabel + "...");
 
-  var shown = selectedOutputTab === "all" ? items : items.filter(function (i) { return i.key === selectedOutputTab; });
-  document.getElementById("outputBody").innerHTML = shown.length ? shown.map(function (i) {
-    return '<div class="rounded-xl bg-[#07090e] border border-slate-800 p-4">' +
-      '<p class="text-xs font-mono font-bold text-amber-400 mb-2">' + escapeHtml(i.title) + '</p>' +
-      '<div class="text-xs sm:text-sm text-slate-200 whitespace-pre-wrap leading-relaxed">' + escapeHtml(i.text) + '</div></div>';
-  }).join("") : '<p class="text-xs text-slate-500">Belum ada hasil.</p>';
-}
+        var systemPrompt = "Kamu adalah penulis skenario & spesialis distribusi konten di SAGITARIUS AI. Setiap episode WAJIB menyambung secara logis dari episode sebelumnya tanpa mengulang pembukaan yang sama, dan WAJIB menyertakan Caption serta Hashtag Tren di bagian akhir tiap episode. Tulis dalam Bahasa Indonesia yang jelas dan bebas pengulangan karakter/kata aneh.";
 
-function selectOutputTab(key) { selectedOutputTab = key; renderOutput(); }
+        var userPrompt = [
+          "Judul Seri: " + title,
+          "Audiens & Platform: " + audience,
+          "Premis Utama: " + premise,
+          "Episode Saat Ini: Episode " + ep + " dari " + totalEpisodes,
+          continuityLog
+            ? "\nRINGKASAN KONTINUITAS EPISODE SEBELUMNYA (WAJIB DISAMBUNGKAN):\n" + continuityLog
+            : "\nIni adalah Episode 1 (pembukaan cerita, perkenalan tokoh, hook awal, dan konflik pertama).",
+          "\nFormat wajib untuk Episode " + ep + ":\n1. Judul Episode " + ep + "\n2. Sambungan Alur dari Episode Sebelumnya (atau Pembukaan Seri jika Eps 1)\n3. Hook, Narasi/Dialog & Adegan Utama\n4. Cliffhanger Penutup (nyambung ke " + (ep < totalEpisodes ? "Episode " + (ep + 1) : "Ending Seri") + ")\n5. Caption Siap Posting & Hashtag Tren (2 opsi caption + hashtag tren relevan untuk " + audience + ")"
+        ].join("\n");
 
-function buildMarkdown() {
-  var ctx = getBriefValues();
-  var md = "# " + (ctx.product || "Sagitarius Output") + "\n\n";
-  getOutputItems().forEach(function (i) { md += "## " + i.title + "\n\n" + i.text + "\n\n"; });
-  return md;
-}
-function copyAllResults() {
-  copyTextFallback(buildMarkdown()); showToast("Semua hasil disalin!");
-}
-function downloadMarkdown() {
-  var blob = new Blob([buildMarkdown()], { type: "text/markdown" });
-  var a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "sagitarius-output.md";
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
-}
+        try {
+          var epText = await callLLM(systemPrompt, userPrompt, 0.6);
+          storyEpisodes.push({
+            episode: ep,
+            title: "Episode " + ep,
+            content: epText || "Output episode kosong."
+          });
+          continuityLog += "\n- Eps " + ep + ": " + epText.slice(0, 260).replace(/\s+/g, " ") + "...";
+          if (continuityLog.length > 1400) {
+            continuityLog = continuityLog.slice(-1400);
+          }
+        } catch (err) {
+          storyEpisodes.push({
+            episode: ep,
+            title: "Episode " + ep,
+            content: "[Gagal membuat Episode " + ep + "]: " + err.message
+          });
+        }
+      }
 
-// ---------------- PRESET ----------------
-function applyPreset(kind) {
-  var p = document.getElementById("productInput");
-  var a = document.getElementById("audienceInput");
-  var b = document.getElementById("briefInput");
-  if (kind === "story") {
-    setExecutionMode("story_series");
-    p.value = "Detak di Kecepatan Cahaya";
-    a.value = "Penonton TikTok Drama & Reels";
-    b.value = "Seorang pilot muda menemukan sinyal misterius dari masa depan. Tiap episode membuka satu rahasia baru, akhir serial mengungkap siapa pengirim sinyal itu.";
-  } else if (kind === "affiliate") {
-    setExecutionMode("divisions");
-    p.value = "Sandal Crocs Classic";
-    a.value = "Ibu muda & mahasiswa, TikTok Shop";
-    b.value = "Buat paket konten affiliate: hook, naskah 30 detik, character sheet, caption, balasan DM.";
-  } else {
-    setExecutionMode("divisions");
-    p.value = "Warung Kopi Senja";
-    a.value = "Warga sekitar & pekerja kantoran, Instagram Reels";
-    b.value = "Promo grand opening dengan diskon 20% minggu pertama, fokus suasana nyaman untuk kerja.";
-  }
-  showToast("Preset diterapkan.");
-}
+      updateProgress(100, "Selesai membuat " + totalEpisodes + " Episode Storytelling + Caption & Hashtag Tren!");
+      saveToHistory(title + " (" + totalEpisodes + " Eps)", audience, premise, {
+        story_series: storyEpisodes.map(function (s) { return "=== " + s.title.toUpperCase() + " ===\n" + s.content; }).join("\n\n")
+      });
+      renderStorySeriesOutput(title, totalEpisodes);
+      showToast("Selesai " + totalEpisodes + " Episode! Terpakai " + (cfg.aiTokenCost * totalEpisodes) + " Token AI.");
+    }
 
-// ---------------- FLOW AI ----------------
-function openPostActionModal() {
-  var ctx = getBriefValues();
-  var items = getOutputItems();
-  var charSheet = divisionOutputs[5] || "";
-  var motion = divisionOutputs[10] || "";
-  var text = "";
-  if (executionMode === "story_series" && items.length) {
-    text = "SERI: " + ctx.product + "\n\n" + items.map(function (i) { return "[" + i.title + "]\n" + i.text.slice(0, 700); }).join("\n\n");
-  } else if (charSheet || motion) {
-    text = "CHARACTER SHEET:\n" + charSheet + "\n\nMOTIONCRAFT PROMPT:\n" + motion;
-  } else {
-    text = "Belum ada hasil. Jalankan agen dulu, atau tulis prompt manual di sini.";
-  }
-  document.getElementById("flowCombinedPrompt").value = text;
-  document.getElementById("flowCopyStatus").classList.add("hidden");
-  var m = document.getElementById("postActionModal");
-  m.classList.remove("hidden"); m.classList.add("flex");
-}
-function closePostActionModal() {
-  var m = document.getElementById("postActionModal");
-  m.classList.add("hidden"); m.classList.remove("flex");
-}
-function proceedToGoogleFlow() {
-  var text = document.getElementById("flowCombinedPrompt").value;
-  copyTextFallback(text);
-  document.getElementById("flowCopyStatus").classList.remove("hidden");
-  window.open("https://labs.google/fx/tools/flow", "_blank", "noopener");
-}
-function skipVideoGeneration() {
-  closePostActionModal(); showToast("Hasil tersimpan di dashboard.");
-}
+    async function startVirtualOffice() {
+      if (isRunning) return;
 
-// ---------------- RIWAYAT ----------------
-var HISTORY_KEY = "sagitarius_task_history_v1";
-function saveHistory(ctx, tokens) {
-  try {
-    var list = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
-    list.unshift({
-      title: ctx.product, mode: executionMode === "story_series" ? episodeCount + " Episode" : "10 Divisi",
-      tokens: tokens, date: new Date().toLocaleString("id-ID")
+      var product = document.getElementById("productInput").value.trim();
+      var audience = document.getElementById("audienceInput").value.trim() || "Audiens umum di TikTok, Instagram Reels, dan YouTube Shorts";
+      var brief = document.getElementById("briefInput").value.trim();
+
+      if (!product || !brief) {
+        showToast("Isi Judul/Produk dan Premis/Brief dulu ya!");
+        return;
+      }
+
+      var cfg = getSelectedModelConfig();
+      var units = executionMode === "story_series" ? episodeCount : 1;
+      var totalCost = cfg.aiTokenCost * units;
+
+      if (!consumeAiTokens(totalCost)) {
+        return;
+      }
+
+      isRunning = true;
+      var btn = document.getElementById("runOfficeBtn");
+      btn.disabled = true;
+      btn.classList.add("opacity-60", "cursor-not-allowed");
+
+      var progressWrap = document.getElementById("progressContainer");
+      progressWrap.classList.remove("hidden");
+
+      try {
+        if (executionMode === "story_series") {
+          await runStorySeries(product, audience, brief, episodeCount, cfg);
+        } else {
+          divisionOutputs = {};
+          storyEpisodes = [];
+          DIVISIONS.forEach(function (d) { divisionStates[d.id] = "idle"; });
+          renderDivisions();
+
+          var updateProgress = function (pct, text) {
+            document.getElementById("progressBar").style.width = pct + "%";
+            document.getElementById("progressPercent").textContent = pct + "%";
+            document.getElementById("progressLabel").innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>' + text;
+          };
+
+          for (var i = 0; i < DIVISIONS.length; i++) {
+            var div = DIVISIONS[i];
+            var pct = Math.round(((i + 0.5) / DIVISIONS.length) * 100);
+            updateProgress(pct, "Divisi " + String(div.id).padStart(2, "0") + " (" + div.name + ") via " + cfg.modelLabel + "...");
+            await runSingleDivision(div.id, product, audience, brief);
+          }
+
+          updateProgress(100, "Seluruh " + totalAgentsCount + " Agen di " + DIVISIONS.length + " Divisi selesai bekerja!");
+          saveToHistory(product, audience, brief, divisionOutputs);
+          renderOutputWorkspace(product);
+          showToast("Selesai! Terpakai " + totalCost + " Token AI (" + cfg.providerKey + ").");
+          openPostActionModal();
+        }
+      } catch (err) {
+        document.getElementById("progressLabel").innerHTML = '<span class="text-rose-400 font-semibold">Error: ' + escapeHtml(err.message) + '</span>';
+        showToast("Gagal: " + err.message);
+      } finally {
+        isRunning = false;
+        btn.disabled = false;
+        btn.classList.remove("opacity-60", "cursor-not-allowed");
+      }
+    }
+
+    function renderStorySeriesOutput(seriesTitle, totalEps) {
+      var section = document.getElementById("outputSection");
+      section.classList.remove("hidden");
+      document.getElementById("outputHeading").textContent = "Seri Storytelling Nyambung: " + seriesTitle + " (" + totalEps + " Episode)";
+
+      var tabsEl = document.getElementById("outputTabs");
+      tabsEl.innerHTML = storyEpisodes.map(function (ep) {
+        return '<button type="button" onclick="scrollToEpisodeCard(' + ep.episode + ')" class="px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 bg-panel2 hover:bg-amber-500 hover:text-black text-amber-200 border border-amber-500/25 transition cursor-pointer">Episode ' + ep.episode + '</button>';
+      }).join("");
+
+      var bodyEl = document.getElementById("outputBody");
+      bodyEl.innerHTML = storyEpisodes.map(function (ep) {
+        return (
+          '<div id="ep-card-' + ep.episode + '" class="rounded-2xl bg-panel2/80 border border-amber-500/25 p-4 sm:p-5 space-y-3">' +
+            '<div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-800/90">' +
+              '<div class="flex items-center gap-2">' +
+                '<span class="px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">EPS ' + String(ep.episode).padStart(2, "0") + '</span>' +
+                '<h4 class="font-bold text-sm text-white">' + escapeHtml(seriesTitle) + ' — Episode ' + ep.episode + '</h4>' +
+              '</div>' +
+              '<button type="button" onclick="copyEpisodeText(' + ep.episode + ')" class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-panel hover:bg-slate-800 text-[11px] font-semibold text-amber-300 border border-amber-500/20 transition cursor-pointer">' +
+                '<i data-lucide="copy" class="w-3 h-3"></i>' +
+                '<span>Salin Eps ' + ep.episode + '</span>' +
+              '</button>' +
+            '</div>' +
+            '<div class="text-xs sm:text-sm text-slate-200 whitespace-pre-wrap leading-relaxed font-sans">' + escapeHtml(ep.content) + '</div>' +
+          '</div>'
+        );
+      }).join("");
+
+      refreshIconsSafely();
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function scrollToEpisodeCard(epNum) {
+      var card = document.getElementById("ep-card-" + epNum);
+      if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function copyEpisodeText(epNum) {
+      var found = storyEpisodes.find(function (s) { return s.episode === epNum; });
+      if (!found) return;
+      copyTextFallback(found.content);
+      showToast("Episode " + epNum + " disalin!");
+    }
+
+    function buildCharacterAndMotionPackage() {
+      var brand = (document.getElementById("productInput") && document.getElementById("productInput").value ? document.getElementById("productInput").value : "").trim() || "Brand";
+      var audience = (document.getElementById("audienceInput") && document.getElementById("audienceInput").value ? document.getElementById("audienceInput").value : "").trim();
+      var brief = (document.getElementById("briefInput") && document.getElementById("briefInput").value ? document.getElementById("briefInput").value : "").trim();
+      var visualOutput = divisionOutputs[5] || "";
+      var motionOutput = divisionOutputs[10] || "";
+
+      return [
+        "[CHARACTER SHEET & VISUAL SPEC - " + brand.toUpperCase() + "]",
+        audience ? "Audience & Platform: " + audience : "",
+        brief ? "Core Brief: " + brief : "",
+        visualOutput ? "\n--- CHARACTER SHEET & SCENE ---\n" + visualOutput : "",
+        motionOutput ? "\n--- MOTIONCRAFT PHYSICS & ZERO-SHOT PROMPT ---\n" + motionOutput : ""
+      ].filter(Boolean).join("\n").trim();
+    }
+
+    function openPostActionModal() {
+      var packaged = buildCharacterAndMotionPackage();
+      var promptBox = document.getElementById("flowCombinedPrompt");
+      var statusEl = document.getElementById("flowCopyStatus");
+      if (promptBox && (packaged || !promptBox.value)) {
+        promptBox.value = packaged || "Jalankan tugas terlebih dahulu atau tempel Character Sheet & MotionCraft prompt di sini.";
+      }
+      if (statusEl) statusEl.classList.add("hidden");
+      renderTokenWalletUI();
+      var modal = document.getElementById("postActionModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      refreshIconsSafely();
+    }
+
+    function closePostActionModal() {
+      var modal = document.getElementById("postActionModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    function proceedToGoogleFlow() {
+      var text = (document.getElementById("flowCombinedPrompt") && document.getElementById("flowCombinedPrompt").value) || "";
+      copyTextFallback(text);
+      var st = document.getElementById("flowCopyStatus");
+      if (st) st.classList.remove("hidden");
+      showToast("Tersalin ke clipboard! Membuka Google Flow...");
+      window.open("https://labs.google/fx/tools/flow", "_blank", "noopener,noreferrer");
+    }
+
+    function skipVideoGeneration() {
+      showToast("Disimpan tanpa membuka Google Flow.");
+      closePostActionModal();
+    }
+
+    function renderOutputWorkspace(productTitle) {
+      var section = document.getElementById("outputSection");
+      section.classList.remove("hidden");
+      document.getElementById("outputHeading").textContent = "Paket Eksekusi: " + productTitle;
+
+      var tabsEl = document.getElementById("outputTabs");
+      var allTab = '<button type="button" onclick="selectOutputTab(\'all\')" class="px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition cursor-pointer ' + (selectedOutputTab === "all" ? "bg-amber-500 text-black font-bold" : "bg-panel2 text-slate-300 hover:bg-slate-800") + '">Semua Divisi (' + DIVISIONS.length + ')</button>';
+      var divTabs = DIVISIONS.map(function (d) {
+        return '<button type="button" onclick="selectOutputTab(' + d.id + ')" class="px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition cursor-pointer ' + (selectedOutputTab === d.id ? "bg-amber-500 text-black font-bold" : "bg-panel2 text-slate-300 hover:bg-slate-800") + '">' + String(d.id).padStart(2, "0") + '. ' + d.name + '</button>';
+      }).join("");
+      tabsEl.innerHTML = allTab + divTabs;
+
+      var bodyEl = document.getElementById("outputBody");
+      var targetDivs = selectedOutputTab === "all" ? DIVISIONS : DIVISIONS.filter(function (d) { return d.id === selectedOutputTab; });
+
+      bodyEl.innerHTML = targetDivs.map(function (d) {
+        var content = divisionOutputs[d.id] || "Belum ada output.";
+        return (
+          '<div class="rounded-2xl bg-panel2/80 border border-slate-800 p-4 sm:p-5 space-y-3">' +
+            '<div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-800/90">' +
+              '<div class="flex items-center gap-2">' +
+                '<i data-lucide="' + d.icon + '" class="w-4 h-4 ' + d.color + '"></i>' +
+                '<h4 class="font-bold text-sm text-white">Divisi ' + String(d.id).padStart(2, "0") + ': ' + d.name + '</h4>' +
+                '<span class="text-[11px] text-slate-500">(' + d.agents.length + ' Agen)</span>' +
+              '</div>' +
+              '<button type="button" onclick="copyDivisionText(' + d.id + ')" class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-panel hover:bg-slate-800 text-[11px] font-semibold text-amber-300 border border-amber-500/20 transition cursor-pointer">' +
+                '<i data-lucide="copy" class="w-3 h-3"></i>' +
+                '<span>Salin</span>' +
+              '</button>' +
+            '</div>' +
+            '<div class="text-xs sm:text-sm text-slate-200 whitespace-pre-wrap leading-relaxed font-sans">' + escapeHtml(content) + '</div>' +
+          '</div>'
+        );
+      }).join("");
+
+      refreshIconsSafely();
+    }
+
+    function selectOutputTab(tabId) {
+      selectedOutputTab = tabId;
+      var heading = document.getElementById("outputHeading").textContent.replace("Paket Eksekusi: ", "");
+      renderOutputWorkspace(heading);
+    }
+
+    function compileFullReportText() {
+      if (storyEpisodes.length > 0) {
+        return storyEpisodes.map(function (ep) {
+          return "========================================\n" + ep.title.toUpperCase() + "\n========================================\n" + ep.content + "\n";
+        }).join("\n");
+      }
+      var title = document.getElementById("outputHeading").textContent;
+      var full = "# " + title + "\nDihasilkan oleh " + SERVER_CONFIG.brandName + "\n\n";
+      DIVISIONS.forEach(function (d) {
+        full += "========================================\nDIVISI " + String(d.id).padStart(2, "0") + ": " + d.name.toUpperCase() + "\n========================================\n" + (divisionOutputs[d.id] || "-") + "\n\n";
+      });
+      return full;
+    }
+
+    function copyTextFallback(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).catch(function () {});
+      } else {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+    }
+
+    function copyDivisionText(divId) {
+      copyTextFallback(divisionOutputs[divId] || "");
+      showToast("Hasil Divisi " + String(divId).padStart(2, "0") + " disalin!");
+    }
+
+    function copyAllResults() {
+      copyTextFallback(compileFullReportText());
+      showToast("Seluruh hasil disalin!");
+    }
+
+    function downloadMarkdown() {
+      var text = compileFullReportText();
+      var blob = new Blob([text], { type: "text/markdown;charset=utf-8" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "Sagitarius-Output-" + Date.now() + ".md";
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("File .MD diunduh!");
+    }
+
+    function saveToHistory(product, audience, brief, outputs) {
+      try {
+        var list = JSON.parse(localStorage.getItem("sagitarius_history_v1") || "[]");
+        list.unshift({
+          id: Date.now(),
+          date: new Date().toLocaleString("id-ID"),
+          product: product,
+          audience: audience,
+          brief: brief,
+          outputs: outputs
+        });
+        localStorage.setItem("sagitarius_history_v1", JSON.stringify(list.slice(0, 15)));
+      } catch (e) {}
+    }
+
+    function toggleHistoryModal() {
+      var modal = document.getElementById("historyModal");
+      var isHidden = modal.classList.contains("hidden");
+      if (isHidden) {
+        var list = JSON.parse(localStorage.getItem("sagitarius_history_v1") || "[]");
+        var container = document.getElementById("historyList");
+        if (!list.length) {
+          container.innerHTML = '<p class="text-xs text-slate-400 text-center py-6">Belum ada riwayat tugas tersimpan.</p>';
+        } else {
+          container.innerHTML = list.map(function (item, idx) {
+            return (
+              '<div onclick="loadHistoryItem(' + idx + ')" class="p-3.5 rounded-xl bg-panel2 hover:bg-slate-800 border border-slate-800 cursor-pointer transition">' +
+                '<div class="flex items-center justify-between text-[11px] text-slate-400 mb-1">' +
+                  '<span>' + item.date + '</span>' +
+                  '<span class="text-amber-400 font-semibold">Buka Laporan →</span>' +
+                '</div>' +
+                '<h4 class="text-sm font-bold text-white">' + escapeHtml(item.product) + '</h4>' +
+                '<p class="text-xs text-slate-400 line-clamp-1 mt-0.5">' + escapeHtml(item.brief) + '</p>' +
+              '</div>'
+            );
+          }).join("");
+        }
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+      } else {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }
+    }
+
+    function loadHistoryItem(idx) {
+      var list = JSON.parse(localStorage.getItem("sagitarius_history_v1") || "[]");
+      var item = list[idx];
+      if (!item) return;
+      document.getElementById("productInput").value = item.product;
+      document.getElementById("audienceInput").value = item.audience;
+      document.getElementById("briefInput").value = item.brief;
+      divisionOutputs = item.outputs || {};
+      DIVISIONS.forEach(function (d) { divisionStates[d.id] = divisionOutputs[d.id] ? "done" : "idle"; });
+      renderDivisions();
+      selectedOutputTab = "all";
+      renderOutputWorkspace(item.product);
+      toggleHistoryModal();
+    }
+
+    function openDivisionModal(divId) {
+      var div = DIVISIONS.find(function (d) { return d.id === divId; });
+      if (!div) return;
+
+      document.getElementById("divModalBadge").textContent = "Divisi " + String(div.id).padStart(2, "0") + " • " + div.agents.length + " Agen Aktif";
+      document.getElementById("divModalTitle").textContent = div.name;
+      document.getElementById("divModalAgents").innerHTML = div.agents.map(function (a) {
+        return '<div class="p-2.5 rounded-xl bg-panel2 border border-slate-800"><p class="text-xs font-bold text-white">' + a.name + '</p><p class="text-[11px] text-slate-400">' + a.role + '</p></div>';
+      }).join("");
+
+      var resWrap = document.getElementById("divModalResultWrapper");
+      if (divisionOutputs[div.id]) {
+        resWrap.classList.remove("hidden");
+        document.getElementById("divModalResult").textContent = divisionOutputs[div.id];
+        document.getElementById("divModalCopyBtn").onclick = function () { copyDivisionText(div.id); };
+      } else {
+        resWrap.classList.add("hidden");
+      }
+
+      document.getElementById("divModalRetryBtn").onclick = async function () {
+        closeDivisionModal();
+        var product = document.getElementById("productInput").value.trim() || "Produk";
+        var audience = document.getElementById("audienceInput").value.trim() || "Audiens umum";
+        var brief = document.getElementById("briefInput").value.trim() || "Buat konsep konten";
+        await runSingleDivision(div.id, product, audience, brief);
+        renderOutputWorkspace(product);
+        showToast("Divisi " + String(div.id).padStart(2, "0") + " selesai diperbarui!");
+      };
+
+      var modal = document.getElementById("divisionModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      refreshIconsSafely();
+    }
+
+    function closeDivisionModal() {
+      var modal = document.getElementById("divisionModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    function showToast(msg) {
+      var toast = document.getElementById("toast");
+      document.getElementById("toastText").textContent = msg;
+      toast.classList.remove("hidden");
+      toast.classList.add("flex");
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(function () {
+        toast.classList.add("hidden");
+        toast.classList.remove("flex");
+      }, 3000);
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function refreshIconsSafely() {
+      try {
+        if (window.lucide && typeof window.lucide.createIcons === "function") {
+          window.lucide.createIcons();
+        }
+      } catch (e) {}
+    }
+
+    window.addEventListener("DOMContentLoaded", function () {
+      renderSagitariusLogos();
+      renderTokenWalletUI();
+      renderDivisions();
+      renderPgSummary();
+      renderPgHistory();
+      renderAccountBadge();
+      updateLandingSimulator();
+      refreshIconsSafely();
     });
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(list.slice(0, 20)));
-  } catch (e) {}
-}
-function toggleHistoryModal() {
-  var m = document.getElementById("historyModal");
-  var open = m.classList.contains("hidden");
-  if (open) {
-    var list = [];
-    try { list = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]"); } catch (e) {}
-    document.getElementById("historyList").innerHTML = list.length ? list.map(function (h) {
-      return '<div class="rounded-lg bg-panel2 border border-slate-800 p-3"><p class="text-xs font-bold text-white">' + escapeHtml(h.title) +
-        '</p><p class="text-[11px] font-mono text-slate-400">' + escapeHtml(h.mode) + ' • ' + escapeHtml(String(h.tokens)) + ' token • ' + escapeHtml(h.date) + '</p></div>';
-    }).join("") : '<p class="text-xs text-slate-500">Belum ada riwayat.</p>';
-    m.classList.remove("hidden"); m.classList.add("flex");
-  } else {
-    m.classList.add("hidden"); m.classList.remove("flex");
-  }
-}
-
-// =====================================================================
-// PERBAIKAN (menimpa fungsi lama)
-// =====================================================================
-
-// 1. Simulator memakai tarif model terpilih, bukan angka 5 tetap
-function updateLandingSimulator() {
-  var slider = document.getElementById("simEpSlider");
-  var eps = parseInt((slider && slider.value) || "4", 10);
-  var cost = getSelectedModelConfig().aiTokenCost;
-  var tokens = eps * cost;
-  document.getElementById("simEpValue").textContent = eps + " Episode";
-  document.getElementById("simTotalTokens").textContent = tokens + " Token";
-  document.getElementById("simCustomRupiah").textContent = formatRupiah(tokens * CUSTOM_TOKEN_RATE);
-}
-
-// 2. Bonus +30 hanya sekali per kontak (di klien; validasi sejati harus di server)
-var BONUS_KEY = "sagitarius_bonus_claimed_v1";
-function submitAuthForm(ev) {
-  ev.preventDefault();
-  var name = (document.getElementById("authNameInput").value || "Kreator").trim();
-  var contact = (document.getElementById("authContactInput").value || "").trim().toLowerCase();
-  var claimed = [];
-  try { claimed = JSON.parse(localStorage.getItem(BONUS_KEY) || "[]"); } catch (e) {}
-  var gotBonus = false;
-  if (authMode === "register" && claimed.indexOf(contact) === -1) {
-    claimed.push(contact);
-    try { localStorage.setItem(BONUS_KEY, JSON.stringify(claimed)); } catch (e) {}
-    saveAiTokenBalance(getAiTokenBalance() + 30);
-    gotBonus = true;
-  }
-  try { localStorage.setItem(TOKEN_STORAGE_KEYS.user, JSON.stringify({ name: name, contact: contact, updatedAt: Date.now() })); } catch (e) {}
-  renderAccountBadge();
-  closeAuthModal();
-  enterDashboard("workspace");
-  showToast(gotBonus ? "Selamat datang, " + name + "! Bonus +30 Token masuk." : "Halo lagi, " + name + "! Bonus sudah pernah diklaim.");
-}
-
-// 3. Pembayaran: coba server dulu; tanpa server = mode simulasi yang jelas
-async function processPgPayment() {
-  var pkg = selectedPgPkg, method = selectedPgMethod;
-  var trxId = "SGT-" + Date.now().toString().slice(-6);
-  var credited = false, simulated = false;
-  try {
-    var res = await fetch("/api/payments/create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tokens: pkg.tokens, amount: pkg.price, method: method })
-    });
-    if (!res.ok) throw new Error("no-server");
-    var data = await res.json();
-    if (data.paymentUrl) { window.open(data.paymentUrl, "_blank", "noopener"); }
-    // Saldo BARU bertambah setelah server menerima webhook; klien hanya menampilkan status.
-    showToast("Selesaikan pembayaran di jendela baru. Token masuk setelah terverifikasi.");
-    return;
-  } catch (e) {
-    simulated = true;
-  }
-  if (simulated) {
-    saveAiTokenBalance(getAiTokenBalance() + pkg.tokens);
-    credited = true;
-  }
-  try {
-    var list = JSON.parse(localStorage.getItem(TOKEN_STORAGE_KEYS.pgHistory) || "[]");
-    list.unshift({ trxId: trxId + (credited ? "-SIM" : ""), date: new Date().toLocaleString("id-ID"), tokens: pkg.tokens, price: pkg.price, method: method });
-    localStorage.setItem(TOKEN_STORAGE_KEYS.pgHistory, JSON.stringify(list.slice(0, 10)));
-  } catch (e) {}
-  renderPgHistory();
-  showToast("MODE SIMULASI (server pembayaran belum terhubung): +" + pkg.tokens + " token uji.");
-}
-
-// 4. Riwayat pembayaran: semua field di-escape
-function renderPgHistory() {
-  var container = document.getElementById("pgHistoryList");
-  if (!container) return;
-  var list = [];
-  try { list = JSON.parse(localStorage.getItem(TOKEN_STORAGE_KEYS.pgHistory) || "[]"); } catch (e) {}
-  if (!list.length) {
-    container.innerHTML = '<p class="text-slate-500">Belum ada riwayat transaksi top-up.</p>';
-    return;
-  }
-  container.innerHTML = list.map(function (item) {
-    return '<div class="flex items-center justify-between rounded-lg bg-panel2/80 border border-slate-800 px-3 py-2">' +
-      '<div><span class="font-mono font-bold text-emerald-300">+' + escapeHtml(String(item.tokens)) + ' Token</span> <span class="text-slate-400">via ' + escapeHtml(item.method) + '</span>' +
-      '<div class="text-[10px] font-mono text-slate-500">' + escapeHtml(item.trxId) + ' • ' + escapeHtml(item.date) + '</div></div>' +
-      '<span class="font-mono font-bold text-amber-300">' + formatRupiah(item.price) + '</span></div>';
-  }).join("");
-}
-
-// ---------------- INISIALISASI ----------------
-document.addEventListener("DOMContentLoaded", function () {
-  renderSagitariusLogos();
-  renderTokenWalletUI();
-  renderAccountBadge();
-  renderDivisions();
-  updateLandingSimulator();
-  var sel = document.getElementById("aiModelSelect");
-  if (sel) sel.addEventListener("change", updateLandingSimulator);
-  if (window.lucide) { try { window.lucide.createIcons(); } catch (e) {} }
-});
+  </script>
+</body>
+</html>
